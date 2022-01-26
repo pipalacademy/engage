@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include engage *.css
+recursive-include engage *.csv
+recursive-include engage *.html
+recursive-include engage *.ico
+recursive-include engage *.js
+recursive-include engage *.json
+recursive-include engage *.md
+recursive-include engage *.png
+recursive-include engage *.py
+recursive-include engage *.svg
+recursive-include engage *.txt
+recursive-exclude engage *.pyc
