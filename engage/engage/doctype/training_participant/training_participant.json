@@ -24,7 +24,7 @@
  "modified": "2022-05-18 19:15:29.372713",
  "modified_by": "Administrator",
  "module": "Engage",
- "name": "Training Participants Child Table",
+ "name": "Training Participant",
  "naming_rule": "Autoincrement",
  "owner": "Administrator",
  "permissions": [],
