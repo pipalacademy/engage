@@ -1,3 +1,35 @@
+:root {
+  --dark-slate: #192734;
+  --light-slate: #f1f5f9;
+  --muted-slate: #475569;
+
+  --dark: var(--dark-slate);
+  --light: var(--light-slate);
+}
+
 body {
-  font-family: 'Inter', sans-serif;
+}
+
+.text-muted {
+  color: var(--muted-slate);
+}
+
+.bg-muted {
+  background-color: var(--muted-slate);
+}
+
+.text-dark {
+  color: var(--dark) !important;
+}
+
+.text-light {
+  color: var(--light) !important;
+}
+
+.bg-dark {
+  background-color: var(--dark) !important;
+}
+
+.bg-light {
+  background-color: var(--light) !important;
 }
