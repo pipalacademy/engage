@@ -17,8 +17,8 @@ app_license = "MIT"
 # app_include_js = "/assets/engage/js/engage.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/engage/css/engage.css"
-# web_include_js = "/assets/engage/js/engage.js"
+web_include_css = "/assets/engage/css/engage.css"
+web_include_js = "/assets/engage/js/engage.js"
 
 # include custom scss in every website theme (without file extension ".scss")
 # website_theme_scss = "engage/public/scss/website"
