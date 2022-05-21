@@ -12,14 +12,16 @@
   {
    "fieldname": "user",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "User",
-   "options": "User"
+   "options": "User",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-05-19 19:30:02.133301",
+ "modified": "2022-05-20 14:42:26.563787",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Training Trainer",
