@@ -1,10 +1,11 @@
 {% extends "templates/custom_web.html" %}
 
 {% macro training_row(training, is_last) -%}
+  {% set client = frappe.get_doc("Client", training.client) %}
   <div class="d-flex align-items-center p-6 {% if not is_last %} border-bottom border-dark {% endif %}">
 	<div class="col-5 p-0">
 	  <div class="h5"><a class="text-decoration-none" href="/trainings/{{ training.name }}">{{ training.title }}</a></div>
-	  <div class="small text-muted">for <strong>{{ training.client }}</strong> <em>({{ training.name }})</em></div>
+	  <div class="small text-muted">for <strong>{{ client.title }}</strong> <em>({{ training.name }})</em></div>
 	</div>
 	<div class="col-3 p-0 text-center">
 	  {# hacky solution to cut the year from the formatted date. this may create problems when begin date and end date are >1 year apart, unlikely case #}

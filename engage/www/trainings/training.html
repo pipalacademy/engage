@@ -1,9 +1,10 @@
 {% extends "templates/custom_web.html" %}
 
 {% block page_content %}
+{% set client = frappe.get_doc("Client", training.client) %}
 <div class="mb-4">
   <div class="h1">{{ training.title }}</div>
-  <div class="text-muted">For <strong>{{ training.client }}, {{ training.year }}</strong> <em>({{ training.name }})</em></div>
+  <div class="text-muted">For <strong>{{ client.title }}, {{ training.year }}</strong> <em>({{ training.name }})</em></div>
 </div>
 <div class="mb-4">
   <div class="h4 pb-0 mb-0">

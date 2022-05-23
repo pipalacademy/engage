@@ -4,7 +4,5 @@
 # import frappe
 from frappe.model.document import Document
 
-class Client(Document):
-    def before_insert(self):
-        if not self.slug:
-            self.slug = self.title.lower().replace(" ", "-")
+class TrainingSidebarSection(Document):
+	pass

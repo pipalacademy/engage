@@ -24,7 +24,9 @@
   "trainers",
   "begin_date",
   "end_date",
-  "timing"
+  "timing",
+  "section_break_20",
+  "sidebar_sections"
  ],
  "fields": [
   {
@@ -131,11 +133,21 @@
    "fieldtype": "Data",
    "label": "Timing",
    "reqd": 1
+  },
+  {
+   "fieldname": "sidebar_sections",
+   "fieldtype": "Table",
+   "label": "Sidebar Sections",
+   "options": "Training Sidebar Section"
+  },
+  {
+   "fieldname": "section_break_20",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-05-21 15:53:18.737041",
+ "modified": "2022-05-24 00:36:30.812007",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Training",

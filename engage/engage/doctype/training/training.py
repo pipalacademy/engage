@@ -7,7 +7,7 @@ from frappe.model.document import Document
 class Training(Document):
     def autoname(self):
         if not self.slug:
-            self.slug = slugify(self.title) + "-" + slugify(self.client)
+            self.slug = slugify(self.title) + "-" + self.client
 
         self.name = f"{self.year}/{self.slug}"
 

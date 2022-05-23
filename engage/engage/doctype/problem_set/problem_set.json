@@ -1,40 +1,40 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2022-05-19 12:47:51.910273",
+ "creation": "2022-05-24 00:47:50.199624",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "slug",
-  "logo"
+  "published",
+  "problems"
  ],
  "fields": [
   {
    "fieldname": "title",
    "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Title",
-   "reqd": 1
+   "label": "Title"
   },
   {
-   "fieldname": "slug",
-   "fieldtype": "Data",
-   "label": "Slug"
+   "default": "0",
+   "fieldname": "published",
+   "fieldtype": "Check",
+   "label": "Published"
   },
   {
-   "fieldname": "logo",
-   "fieldtype": "Attach Image",
-   "label": "Logo"
+   "fieldname": "problems",
+   "fieldtype": "Table",
+   "label": "Problems",
+   "options": "Problem Reference"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-05-24 00:38:09.866810",
+ "modified": "2022-05-24 00:47:50.199624",
  "modified_by": "Administrator",
  "module": "Engage",
- "name": "Client",
+ "name": "Problem Set",
  "owner": "Administrator",
  "permissions": [
   {
@@ -52,5 +52,6 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }
