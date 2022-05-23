@@ -191,5 +191,5 @@ web_include_js = "/assets/engage/js/engage.js"
 
 # Website routes
 website_route_rules = [
-    {"from_route": "/trainings/<year>/<training_slug>", "to_route": "trainings/training"}
+    {"from_route": "/trainings/<int:year>/<slug>", "to_route": "trainings/training"}
 ]

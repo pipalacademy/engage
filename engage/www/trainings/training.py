@@ -6,18 +6,36 @@ def get_context(context):
 
     try:
         year = frappe.form_dict["year"]
-        training_slug = frappe.form_dict["training_slug"]
-        training_id = f"{year}/{training_slug}"
+        slug = frappe.form_dict["slug"]
     except KeyError:
         context.template = "www/404.html"
         return
+    else:
+        tname = f"{year}/{slug}" 
 
-    training = get_training(training_id)
+    training = get_training(tname)
     if not training:
         context.template = "www/404.html"
         return
 
-    context.training = training
+    client = frappe.get_doc("Client", training.client)
+
+    participants = frappe.get_all("Training Participant", filters={"user": frappe.session.user, "parent": tname}, fields=["jh_username", "jh_password", "parent"])
+
+    rows = frappe.get_all(
+        "Practice Problem Submission", 
+        filters={"training": tname, "author": frappe.session.user}, 
+        fields="*", 
+        page_length=1000)
+    
+    submissions = {row.problem: row for row in rows}
+
+    context.t = training
+    context.client = client
+    context.participant = participants and participants[0] or None
+
+    context.title = t.title
+    context.submissions = submissions
 
 
 def get_training(id):
