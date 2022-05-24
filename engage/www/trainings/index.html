@@ -1,61 +1,64 @@
 {% extends "templates/custom_web.html" %}
 
 {% macro training_row(training, is_last) -%}
-  {% set client = frappe.get_doc("Client", training.client) %}
-  <div class="d-flex align-items-center p-6 {% if not is_last %} border-bottom border-dark {% endif %}">
+{% set client = frappe.get_doc("Client", training.client) %}
+<div class="d-flex align-items-center p-6 {% if not is_last %} border-bottom border-dark {% endif %}">
 	<div class="col-5 p-0">
-	  <div class="h5"><a class="text-decoration-none" href="/trainings/{{ training.name }}/review">{{ training.title }}</a></div>
-	  <div class="small text-muted">for <strong>{{ client.title }}</strong> <em>({{ training.name }})</em></div>
+		<div class="h5"><a class="text-decoration-none" href="/trainings/{{ training.name }}/review">{{ training.title
+				}}</a></div>
+		<div class="text-muted">{{ client.title }}</div>
 	</div>
 	<div class="col-3 p-0 text-center">
-	  {# hacky solution to cut the year from the formatted date. this may create problems when begin date and end date are >1 year apart, unlikely case #}
-	  <i class="fa-solid fa-calendar"></i> {{ frappe.format_date(training.begin_date)[:-6] }} → {{ frappe.format_date(training.end_date)[:-6] }}
+		{# hacky solution to cut the year from the formatted date. this may create problems when begin date and end date
+		are >1 year apart, unlikely case #}
+		<i class="fa-solid fa-calendar"></i> {{ frappe.format_date(training.begin_date)[:-6] }} → {{
+		frappe.format_date(training.end_date)[:-6] }}
 	</div>
 	<div class="col-3 p-0 text-center">
-	  <i class="fa-solid fa-clock"></i> {{ training.timing }}
+		<i class="fa-solid fa-clock"></i> {{ training.timing }}
 	</div>
 	<div class="col-1 p-0 text-center">
-	  <i class="fa-solid fa-user-graduate"></i> {{ training.participants|length }}
+		<i class="fa-solid fa-user-graduate"></i> {{ training.participants|length }}
 	</div>
-  </div>
+</div>
 {%- endmacro %}
 
 {% block title %}{{ _("Trainings") }}{% endblock %}
 
 {% block page_content %}
 <div class="">
-  <div class="mb-2">
-	<div class="h1 font-weight-bold border-bottom border-dark mb-1">Your Trainings</div>
-	<p><em>Hello, welcome to your trainer dashboard!</em></p>
-  </div>
-  <div class="pt-6 mb-2">
-	<div class="h2">Active</div>
-	  {% if trainings['Active'] %}
-	  <div class="col-12 p-0 align-items-center rounded border border-dark bg-white text-dark">
-		{% for training in trainings['Active'] %}
-		{{ training_row(training, is_last=loop.last) }}
-		{% endfor %}
-	  </div>
-	  {% else %}
-	  <div class="col-12 p-8 d-flex justify-content-center align-items-center rounded border border-dark bg-light text-dark">
-		<em>No active trainings</em>
-	  </div>
-	  {% endif %}
+	<div class="mb-2">
+		<div class="h1 font-weight-bold border-bottom border-dark mb-1">Your Trainings</div>
+		<p><em>Hello, welcome to your trainer dashboard!</em></p>
 	</div>
-  <div class="mt-4 mb-2">
-	<div class="h2">Upcoming</div>
-	  {% if trainings['Upcoming'] %}
-	  <div class="col-12 p-0 align-items-center rounded border border-dark bg-white text-dark">
-		{% for training in trainings['Upcoming'] %}
-		{{ training_row(training, is_last=loop.last) }}
-		{% endfor %}
-	  </div>
-	  {% else %}
-	  <div class="col-12 p-8 d-flex justify-content-center align-items-center rounded border border-dark bg-light text-dark">
-		<em>No upcoming trainings</em>
-	  </div>
-	  {% endif %}
+	<div class="pt-6 mb-2">
+		<div class="h2">Active</div>
+		{% if trainings['Active'] %}
+		<div class="col-12 p-0 align-items-center rounded border border-dark bg-white text-dark">
+			{% for training in trainings['Active'] %}
+			{{ training_row(training, is_last=loop.last) }}
+			{% endfor %}
+		</div>
+		{% else %}
+		<div
+			class="col-12 p-8 d-flex justify-content-center align-items-center rounded border border-dark bg-light text-dark">
+			<em>No active trainings</em>
+		</div>
+		{% endif %}
 	</div>
-  </div>
+	<div class="mt-4 mb-2">
+		<div class="h2">Upcoming</div>
+		{% if trainings['Upcoming'] %}
+		<div class="col-12 p-0 align-items-center rounded border border-dark bg-white text-dark">
+			{% for training in trainings['Upcoming'] %}
+			{{ training_row(training, is_last=loop.last) }}
+			{% endfor %}
+		</div>
+		{% else %}
+		<div>
+			<em>No upcoming trainings</em>
+		</div>
+		{% endif %}
+	</div>
 </div>
 {% endblock %}
