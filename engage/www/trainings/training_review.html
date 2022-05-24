@@ -5,34 +5,34 @@
 {{ super() }}
 
 <style>
-.training-page {
-    padding: 20px 0px;
+  body {
     background: #F8F9FA;
-}
+  }
 
-.training-header {
+  .training-header {
     margin-bottom: 20px;
     padding: 20px;
     background: #eee;
     border-radius: 8px;
-}
+  }
 
-.training-header h2 {
+  .training-header h2 {
     font-weight: 500;
     margin-bottom: 0px;
-    paddint-bottom: 0px;
-}
+    padding-bottom: 0px;
+  }
 
-.sidebar .card {
+  .sidebar .card {
     margin: 20px 0px;
-}
-.training-body {
-    margin: 20px 0px;
-}
+  }
 
-.tick {
+  .training-body {
+    margin: 20px 0px;
+  }
+
+  .tick {
     color: green;
-}
+  }
 </style>
 
 {% endblock %}
@@ -40,7 +40,7 @@
 {% macro render_breadcrumbs() %}
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/">Trainings</a></li>
+    <li class="breadcrumb-item"><a href="/trainings/">Trainings</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ t.title }}</li>
   </ol>
 </nav>
@@ -77,28 +77,27 @@
 {% endmacro %}
 
 {% block page_content %}
-<div class="section training-page">
-  <div class="container">
-    {{ render_breadcrumbs() }}
+<div class="training-page">
+  {{ render_breadcrumbs() }}
 
-    <div class="training-header">
-      <h2>{{t.title}}</h2>
-      <div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} -  {{ frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
-      <div>
-	<div>{{client.title}}</div>
-      </div>
-      {% if trainers|length > 1 %}
-      {% set other_trainers = trainers|selectattr("user", "!=", frappe.session.user) %}
-      {# other_trainers = (t for t in trainers if t.user != frappe.session.user) #}
-      <div>
-	With
-	{% for trainer in other_trainers %}
-	{{trainer.full_name}}{% if not loop.last %},{% endif %}
-	{% endfor %}
-      </div>
-      {% endif %}
+  <div class="training-header">
+    <h2>{{t.title}}</h2>
+    <div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
+      frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
+    <div>
+      <div>{{client.title}}</div>
     </div>
-    {{ TrainingBody() }}
+    {% if trainers|length > 1 %}
+    {% set other_trainers = trainers|selectattr("user", "!=", frappe.session.user) %}
+    {# other_trainers = (t for t in trainers if t.user != frappe.session.user) #}
+    <div>
+      With
+      {% for trainer in other_trainers %}
+      {{trainer.full_name}}{% if not loop.last %},{% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
   </div>
+  {{ TrainingBody() }}
 </div>
 {% endblock %}
