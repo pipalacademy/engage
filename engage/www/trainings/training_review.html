@@ -1,0 +1,104 @@
+{% extends "templates/custom_web.html" %}
+
+{% block head_include %}
+
+{{ super() }}
+
+<style>
+.training-page {
+    padding: 20px 0px;
+    background: #F8F9FA;
+}
+
+.training-header {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #eee;
+    border-radius: 8px;
+}
+
+.training-header h2 {
+    font-weight: 500;
+    margin-bottom: 0px;
+    paddint-bottom: 0px;
+}
+
+.sidebar .card {
+    margin: 20px 0px;
+}
+.training-body {
+    margin: 20px 0px;
+}
+
+.tick {
+    color: green;
+}
+</style>
+
+{% endblock %}
+
+{% macro render_breadcrumbs() %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Trainings</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ t.title }}</li>
+  </ol>
+</nav>
+{% endmacro %}
+
+{% macro Sidebar() %}
+<div class="sidebar">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Participants</h5>
+    </div>
+
+    <ul class="list-group list-group-flush">
+      {% for p in participants %}
+      <span class="list-group-item list-group-item-action">{{p.full_name}}</span>
+      {% endfor %}
+    </ul>
+
+  </div>
+
+</div>
+{% endmacro %}
+
+{% macro TrainingBody() %}
+<div class="row">
+  <div class="col-md-9">
+    <div class="training-body">
+    </div>
+  </div>
+  <div class="col-md-3">
+    {{ Sidebar() }}
+  </div>
+</div>
+{% endmacro %}
+
+{% block page_content %}
+<div class="section training-page">
+  <div class="container">
+    {{ render_breadcrumbs() }}
+
+    <div class="training-header">
+      <h2>{{t.title}}</h2>
+      <div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} -  {{ frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
+      <div>
+	<div>{{client.title}}</div>
+      </div>
+      {% if trainers|length > 1 %}
+      {% set other_trainers = trainers|selectattr("user", "!=", frappe.session.user) %}
+      {# other_trainers = (t for t in trainers if t.user != frappe.session.user) #}
+      <div>
+	With
+	{% for trainer in other_trainers %}
+	{{trainer.full_name}}{% if not loop.last %},{% endif %}
+	{% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {{ TrainingBody() }}
+  </div>
+</div>
+{% endblock %}

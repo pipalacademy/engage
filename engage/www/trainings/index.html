@@ -4,7 +4,7 @@
   {% set client = frappe.get_doc("Client", training.client) %}
   <div class="d-flex align-items-center p-6 {% if not is_last %} border-bottom border-dark {% endif %}">
 	<div class="col-5 p-0">
-	  <div class="h5"><a class="text-decoration-none" href="/trainings/{{ training.name }}">{{ training.title }}</a></div>
+	  <div class="h5"><a class="text-decoration-none" href="/trainings/{{ training.name }}/review">{{ training.title }}</a></div>
 	  <div class="small text-muted">for <strong>{{ client.title }}</strong> <em>({{ training.name }})</em></div>
 	</div>
 	<div class="col-3 p-0 text-center">

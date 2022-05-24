@@ -11,6 +11,14 @@ class Training(Document):
 
         self.name = f"{self.year}/{self.slug}"
 
+    def has_user_as_trainer(self, user):
+        """Returns a boolean for whether the given user is a trainer for this training or not
+        """
+        if not isinstance(user, str):
+            user = user.name
+
+        return bool(filter(lambda t: t.user == user, self.trainers))
+
 
 def slugify(s):
     return s.lower().replace(" ", "-")
