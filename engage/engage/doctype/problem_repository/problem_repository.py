@@ -9,7 +9,7 @@ import requests
 # import frappe
 from frappe.model.document import Document
 
-from git_util import get_github_repo_url, shallow_clone
+from .util import get_github_repo_url, shallow_clone
 
 
 class ProblemRepository(Document):
