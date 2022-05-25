@@ -3,34 +3,35 @@
 {% block head_include %}
 
 <style>
-.training-page {
-    padding: 20px 0px;
-    background: #F8F9FA;
-}
+    .training-page {
+        padding: 20px 0px;
+        background: #F8F9FA;
+    }
 
-.training-header {
-    margin-bottom: 20px;
-    padding: 20px;
-    background: #eee;
-    border-radius: 8px;
-}
+    .training-header {
+        margin-bottom: 20px;
+        padding: 20px;
+        background: #eee;
+        border-radius: 8px;
+    }
 
-.training-header h2 {
-    font-weight: 500;
-    margin-bottom: 0px;
-    paddint-bottom: 0px;
-}
+    .training-header h2 {
+        font-weight: 500;
+        margin-bottom: 0px;
+        padding-bottom: 0px;
+    }
 
-.sidebar .card {
-    margin: 20px 0px;
-}
-.training-body {
-    margin: 20px 0px;
-}
+    .sidebar .card {
+        margin: 20px 0px;
+    }
 
-.tick {
-    color: green;
-}
+    .training-body {
+        margin: 20px 0px;
+    }
+
+    .tick {
+        color: green;
+    }
 </style>
 
 {{ super() }}
@@ -39,108 +40,110 @@
 
 {% block page_content %}
 {% macro render_breadcrumbs() %}
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Trainings</a></li>
         <li class="breadcrumb-item active" aria-current="page">{{ t.title }}</li>
-      </ol>
-    </nav>
+    </ol>
+</nav>
 {% endmacro %}
 
 {% macro Sidebar() %}
 <div class="sidebar">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Training Notes</h5>    
+            <h5 class="card-title">Training Notes</h5>
             <a href="{{ t.live_notes_url }}" class="btn btn-secondary" target="_blank">Open Training Notes</a>
         </div>
     </div>
 
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Jupyter Lab</h5>    
-            
+            <h5 class="card-title">Jupyter Lab</h5>
+
             <p>Your credentials to access Jupyter Lab:</p>
             <p>
                 Username: {{participant.jh_username}}<br>
                 Password: {{participant.jh_password}}
             </p>
-            
+
             <a href="{{ t.jupyterhub_url }}" class="btn btn-secondary" target="_blank">Launch Jupyter Lab</a>
         </div>
     </div>
     {% for s in t.sidebar_sections %}
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">{{ s.title }}</h5>    
-                {{ frappe.utils.md_to_html(s.body) }}
-            </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ s.title }}</h5>
+            {{ frappe.utils.md_to_html(s.body) }}
         </div>
+    </div>
     {% endfor %}
 </div>
 {% endmacro %}
 
 {% macro ProblemSet(pset) %}
-    {% set doc = frappe.get_doc("Problem Set", pset.problem_set) %}
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">{{ pset.title }}</h5>    
-            
-            <div>{{doc.problems | length}} problems</div>
-        </div>
-            
-            <ul class="list-group list-group-flush">
-                {% for p in doc.problems %}
-                    <li class="list-group-item"><a href="/trainings/{{t.name}}/problems/{{pset.slug}}/{{p.problem}}">{{p.problem_title}}</a>
-                        {% if p.problem in submissions %} - submitted
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
+{% set doc = frappe.get_doc("Problem Set", pset.problem_set) %}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{{ pset.title }}</h5>
+
+        <div>{{doc.problems | length}} problems</div>
     </div>
+
+    <ul class="list-group list-group-flush">
+        {% for p in doc.problems %}
+        <li class="list-group-item"><a
+                href="/trainings/{{t.name}}/problems/{{pset.slug}}/{{p.problem}}">{{p.problem_title}}</a>
+            {% if p.problem in submissions %} - submitted
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 {% endmacro %}
 
 {% macro ProblemSets() %}
-    <h3>Problem Sets</h3>
-    {% if t.problem_sets %}
-        <div class="row">
-        {% for pset in t.problem_sets %}
-            <div class="col-md-4">
-                {{ ProblemSet(pset) }}
-            </div>            
-        {% endfor %}
-        </div>
-    {% else %}
-        <em>No problem sets have been assigned to you so far. Please check again later.</em>
-    {% endif %}
+<h3>Problem Sets</h3>
+{% if t.problem_sets %}
+<div class="row">
+    {% for pset in t.problem_sets %}
+    <div class="col-md-4">
+        {{ ProblemSet(pset) }}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<em>No problem sets have been assigned to you so far. Please check again later.</em>
+{% endif %}
 {% endmacro %}
 
 {% macro TrainingBody() %}
-    <div class="row">
-        <div class="col-md-9">
-            <div class="training-body">
+<div class="row">
+    <div class="col-md-9">
+        <div class="training-body">
             {{ ProblemSets() }}
-            </div>
-        </div>            
-        <div class="col-md-3">
-            {{ Sidebar() }}
         </div>
     </div>
+    <div class="col-md-3">
+        {{ Sidebar() }}
+    </div>
+</div>
 {% endmacro %}
 
 <div class="section training-page">
     <div class="container">
         {{ render_breadcrumbs() }}
-        
+
         <div class="training-header">
             <h2>{{t.title}}</h2>
-            <div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} -  {{ frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
+            <div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
+                frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
             <div>{{client.title}}</div>
         </div>
         {% if participant %}
-            {{ TrainingBody() }}
+        {{ TrainingBody() }}
         {% else %}
-            <div class="alert alert-danger">You are not a participant of this training.</div>
+        <div class="alert alert-danger">You are not a participant of this training.</div>
         {% endif %}
     </div>
 </div>
