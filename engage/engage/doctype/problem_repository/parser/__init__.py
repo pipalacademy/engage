@@ -24,10 +24,10 @@ class ParsedProblem:
             files: Dict[str, SingleOrList[PathString]],
             slug: Optional[str] = None,
             description_file: Optional[str] = "description.md",
-            source: Optional[str],
-            source_url: Optional[str]):
+            source: Optional[str] = None,
+            source_url: Optional[str] = None):
 
-        self.base_path = Path(path)  # path to problem's base dir
+        self.base_path = Path(base_path)  # path to problem's base dir
 
         self.slug = slug or self.base_path.name
         self.title = title
@@ -42,15 +42,17 @@ class ParsedProblem:
             "solution": [],
         }
 
-        # update from args
-        self.files.update(files)
-
         # convert PathLike/string to pathlib.Path
-        for key in ["code", "data", "test", "solution"]:
-            self.files[key] = [self.base_path / Path(f_path) for f_path in code]
+        for key in self.files:
+            if key in files:
+                self.files[key] += list(
+                    map(lambda f_path: self.base_path / f_path, files[key]))
+
+        self.source = source
+        self.source_url = source_url
 
 
-def parse_problem_directory(fs_path: Path, commit_version: str) -> ParsedProblem:
+def parse_problem_directory(fs_path: Path) -> ParsedProblem:
     if not (fs_path / "problem.yml").exists():
         raise NotAProblemDirectoryError("problem.yml not found")
 
