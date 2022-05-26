@@ -1,0 +1,10 @@
+blurb: For the fibonacci series starting with 0 and 1, calculate the n-th fibonacci number
+files:
+    code:
+        - fib.py
+    test:
+        - test_fib.py
+    data:
+        - input.txt
+    solution: 
+        - solution/fib.py
