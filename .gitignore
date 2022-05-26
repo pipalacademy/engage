@@ -4,3 +4,4 @@
 *.swp
 tags
 engage/docs/current
+__pycache__/
