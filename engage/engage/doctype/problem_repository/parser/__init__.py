@@ -15,6 +15,10 @@ class ProblemValidationError(Exception):
     pass
 
 
+class FileDoesNotExistError(Exception):
+    pass
+
+
 class ParsedProblem:
 
     def __init__(self,
@@ -58,10 +62,17 @@ def parse_problem_directory(fs_path: Path) -> ParsedProblem:
 
     config = parse_config(fs_path / "problem.yml")
 
-    return ParsedProblem(
+    problem = ParsedProblem(
         fs_path,
         **config,
     )
+
+    validate_files_list(problem, "code")
+    validate_files_list(problem, "data")
+    validate_files_list(problem, "test")
+    validate_files_list(problem, "solution")
+
+    return problem
 
 
 def parse_config(problem_yml: Path) -> Dict[str, Any]:
@@ -156,3 +167,11 @@ def validate_list_str(obj: Dict[Any, Any],
         if not isinstance(item, str):
             raise ProblemValidationError(
                 f"{err_prefix}: {key} should be of type list[str]")
+
+
+def validate_files_list(problem: ParsedProblem, key: str):
+    files = problem.files[key]
+
+    for f in files:
+        if not f.exists():
+            raise ReferencedFileDoesNotExistError(f"file {f} does not exist (referenced in files->{key})")
