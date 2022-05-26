@@ -3,24 +3,25 @@ from unittest import TestCase
 
 from . import NotAProblemDirectoryError, ProblemValidationError, parse_config, parse_problem_directory
 
-
 TEST_DATA_BASE = Path(__file__).parent / "data"
 TEST_PROB_DIRS_BASE = TEST_DATA_BASE / "problem_directories"
 
 
 class TestParseConfig(TestCase):
+
     def setUp(self):
         self.ok_config_file = TEST_DATA_BASE / "1_ok_problem.yml"
         self.parsed_ok_config_file = {
-                "title": "n-th Fibonacci number",
-                "blurb": "For the fibonacci series starting with 0 and 1, calculate the n-th fibonacci number",
-                "files": {
-                    "code": ["fib.py"],
-                    "test": ["test_fib.py"],
-                    "data": ["input.txt"],
-                    "solution": ["solution/fib.py"],
-                    }
-                }
+            "title": "n-th Fibonacci number",
+            "blurb":
+            "For the fibonacci series starting with 0 and 1, calculate the n-th fibonacci number",
+            "files": {
+                "code": ["fib.py"],
+                "test": ["test_fib.py"],
+                "data": ["input.txt"],
+                "solution": ["solution/fib.py"],
+            }
+        }
 
         self.missing_title_config_file = TEST_DATA_BASE / "2_missing_title_problem.yml"
 
@@ -41,6 +42,7 @@ class TestParseConfig(TestCase):
 
 
 class TestParseProblemDirectory(TestCase):
+
     def setUp(self):
         self.ok_problem_directory = TEST_PROB_DIRS_BASE / "fibonacci"
         self.normal_directory = TEST_PROB_DIRS_BASE / "not-a-problem-directory"
@@ -53,7 +55,10 @@ class TestParseProblemDirectory(TestCase):
         self.assertEqual(problem.base_path, base_path)
         self.assertEqual(problem.slug, "fibonacci")
         self.assertEqual(problem.title, "n-th Fibonacci number")
-        self.assertEqual(problem.blurb, "For the fibonacci series starting with 0 and 1, calculate the n-th fibonacci number")
+        self.assertEqual(
+            problem.blurb,
+            "For the fibonacci series starting with 0 and 1, calculate the n-th fibonacci number"
+        )
 
         expected_code_files = [base_path / "fib.py"]
         expected_data_files = []
@@ -63,7 +68,8 @@ class TestParseProblemDirectory(TestCase):
         self.assertListEqual(problem.files["code"], expected_code_files)
         self.assertListEqual(problem.files["data"], expected_data_files)
         self.assertListEqual(problem.files["test"], expected_test_files)
-        self.assertListEqual(problem.files["solution"], expected_solution_files)
+        self.assertListEqual(problem.files["solution"],
+                             expected_solution_files)
 
         self.assertIsNone(problem.source)
         self.assertIsNone(problem.source_url)

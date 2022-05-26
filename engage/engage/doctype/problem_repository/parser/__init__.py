@@ -16,16 +16,16 @@ class ProblemValidationError(Exception):
 
 
 class ParsedProblem:
-    def __init__(
-            self,
-            base_path: PathString,
-            title: str,
-            blurb: str,
-            files: Dict[str, SingleOrList[PathString]],
-            slug: Optional[str] = None,
-            description_file: Optional[str] = "description.md",
-            source: Optional[str] = None,
-            source_url: Optional[str] = None):
+
+    def __init__(self,
+                 base_path: PathString,
+                 title: str,
+                 blurb: str,
+                 files: Dict[str, SingleOrList[PathString]],
+                 slug: Optional[str] = None,
+                 description_file: Optional[str] = "description.md",
+                 source: Optional[str] = None,
+                 source_url: Optional[str] = None):
 
         self.base_path = Path(base_path)  # path to problem's base dir
 
@@ -129,21 +129,30 @@ def validate_config(config: Dict[Any, Any]):
     validate_list_str(config["files"], "test", err_prefix="problem.yml->files")
 
 
-def validate_required(obj: Dict[Any, Any], key: Any, err_prefix: str = "problem.yml"):
+def validate_required(obj: Dict[Any, Any],
+                      key: Any,
+                      err_prefix: str = "problem.yml"):
     if key not in obj:
         raise ProblemValidationError(f"{err_prefix}: {key} is required")
 
 
-def validate_type(obj: Dict[Any, Any], key: Any, expected_type: type, err_prefix: str = "problem.yml"):
+def validate_type(obj: Dict[Any, Any],
+                  key: Any,
+                  expected_type: type,
+                  err_prefix: str = "problem.yml"):
     if not isinstance(obj[key], expected_type):
-        raise ProblemValidationError(f"{err_prefix}: {key} should be of type {expected_type}")
+        raise ProblemValidationError(
+            f"{err_prefix}: {key} should be of type {expected_type}")
 
 
-def validate_list_str(obj: Dict[Any, Any], key: Any, err_prefix: str = "problem.yml"):
+def validate_list_str(obj: Dict[Any, Any],
+                      key: Any,
+                      err_prefix: str = "problem.yml"):
     """Validate that given key is a list of strings
     """
     validate_type(obj, key, list, err_prefix=err_prefix)
 
     for item in obj[key]:
         if not isinstance(item, str):
-            raise ProblemValidationError(f"{err_prefix}: {key} should be of type list[str]")
+            raise ProblemValidationError(
+                f"{err_prefix}: {key} should be of type list[str]")

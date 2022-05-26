@@ -4,6 +4,7 @@ from typing import Union, List
 
 
 class _SingleOrList:
+
     def __getitem__(self, typ):
         return Union[typ, List[typ]]
 
