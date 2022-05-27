@@ -5,4 +5,8 @@
 from frappe.model.document import Document
 
 class PracticeProblem(Document):
-	pass
+    def autoname(self):
+        if self.problem_repository:
+            self.name = f"{self.problem_repository}/{self.slug}"
+        else:
+            self.name = self.slug

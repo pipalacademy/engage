@@ -8,9 +8,11 @@
  "field_order": [
   "title",
   "github_repo_owner",
+  "github_token",
+  "column_break_4",
+  "commit_hash",
   "github_repo_name",
-  "parent_directory",
-  "github_token"
+  "parent_directory"
  ],
  "fields": [
   {
@@ -44,11 +46,20 @@
    "fieldtype": "Data",
    "label": "Title",
    "reqd": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "commit_hash",
+   "fieldtype": "Data",
+   "label": "Commit Hash of last update"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-05-25 17:37:52.967012",
+ "modified": "2022-05-28 02:02:40.089798",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Problem Repository",

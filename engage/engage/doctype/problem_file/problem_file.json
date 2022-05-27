@@ -1,0 +1,46 @@
+{
+ "actions": [],
+ "creation": "2022-05-28 00:15:10.959122",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "kind",
+  "relative_path",
+  "content"
+ ],
+ "fields": [
+  {
+   "fieldname": "kind",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Kind",
+   "options": "code\ndata\ntest\nsolution",
+   "reqd": 1
+  },
+  {
+   "fieldname": "relative_path",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Relative Path",
+   "reqd": 1
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Long Text",
+   "label": "Content"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-05-28 00:15:10.959122",
+ "modified_by": "Administrator",
+ "module": "Engage",
+ "name": "Problem File",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

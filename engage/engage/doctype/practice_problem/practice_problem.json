@@ -1,7 +1,6 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:slug",
  "creation": "2022-05-24 00:45:58.781225",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -9,11 +8,17 @@
  "field_order": [
   "slug",
   "title",
-  "description",
-  "setup_code",
   "column_break_3",
-  "code",
-  "tests"
+  "problem_repository",
+  "commit_hash",
+  "section_break_5",
+  "blurb",
+  "description",
+  "section_break_4",
+  "files",
+  "section_break_10",
+  "source",
+  "source_url"
  ],
  "fields": [
   {
@@ -39,32 +44,62 @@
    "label": "Description"
   },
   {
-   "fieldname": "setup_code",
-   "fieldtype": "Code",
-   "label": "Setup Code"
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "column_break_3",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "code",
-   "fieldtype": "Code",
-   "label": "Initial Code"
+   "fieldname": "problem_repository",
+   "fieldtype": "Link",
+   "label": "Problem Repository",
+   "options": "Problem Repository"
   },
   {
-   "fieldname": "tests",
-   "fieldtype": "Code",
-   "label": "Tests"
+   "fieldname": "section_break_5",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "blurb",
+   "fieldtype": "Data",
+   "label": "Blurb"
+  },
+  {
+   "fieldname": "section_break_10",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Data",
+   "label": "Source"
+  },
+  {
+   "fieldname": "source_url",
+   "fieldtype": "Data",
+   "label": "Source URL",
+   "options": "URL"
+  },
+  {
+   "fieldname": "files",
+   "fieldtype": "Table",
+   "label": "Files",
+   "options": "Problem File"
+  },
+  {
+   "description": "Commit Hash of Problem Repository when this problem was fetched",
+   "fieldname": "commit_hash",
+   "fieldtype": "Data",
+   "label": "Commit Hash"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-05-24 00:46:01.530671",
+ "modified": "2022-05-28 02:14:22.780455",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Practice Problem",
- "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {

@@ -1,7 +1,7 @@
 from pathlib import Path
 from unittest import TestCase
 
-from . import NotAProblemDirectoryError, ProblemValidationError, parse_config, parse_problem_directory
+from . import NotAProblemDirectoryError, ParsedFile, ProblemValidationError, parse_config, parse_problem_directory
 
 TEST_DATA_BASE = Path(__file__).parent / "data"
 TEST_PROB_DIRS_BASE = TEST_DATA_BASE / "problem_directories"
@@ -47,6 +47,36 @@ class TestParseProblemDirectory(TestCase):
         self.ok_problem_directory = TEST_PROB_DIRS_BASE / "fibonacci"
         self.normal_directory = TEST_PROB_DIRS_BASE / "not-a-problem-directory"
 
+        self.fibpy_content = """\
+def fib(n):
+    # insert code here
+    pass
+"""
+
+        self.test_fibpy_content = """\
+from unittest import TestCase
+
+from fib import fib
+
+
+class TestFibonacci(TestCase):
+
+    def test_fib(self):
+        self.assertEqual(fib(0), 0)
+        self.assertEqual(fib(1), 1)
+        self.assertEqual(fib(5), 5)
+"""
+
+        self.solution_fibpy_content = """\
+def fib(n):
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return fib(n - 1) + fib(n - 2)
+"""
+
     def test_ok_parse_problem_directory(self):
         problem = parse_problem_directory(self.ok_problem_directory)
 
@@ -60,10 +90,18 @@ class TestParseProblemDirectory(TestCase):
             "For the fibonacci series starting with 0 and 1, calculate the n-th fibonacci number"
         )
 
-        expected_code_files = [base_path / "fib.py"]
+        expected_code_files = [
+            ParsedFile(content=self.fibpy_content, relative_path="fib.py")
+        ]
         expected_data_files = []
-        expected_test_files = [base_path / "test_fib.py"]
-        expected_solution_files = [base_path / "solution" / "fib.py"]
+        expected_test_files = [
+            ParsedFile(content=self.test_fibpy_content,
+                       relative_path="test_fib.py")
+        ]
+        expected_solution_files = [
+            ParsedFile(content=self.solution_fibpy_content,
+                       relative_path="solution/fib.py")
+        ]
 
         self.assertListEqual(problem.files["code"], expected_code_files)
         self.assertListEqual(problem.files["data"], expected_data_files)

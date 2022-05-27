@@ -26,3 +26,6 @@ class TestProblemRepository(FrappeTestCase):
     def test_clone_repo_ok(self):
         self.problem_repository.clone(self.tempdir_path)
         self.assertFalse(git.Repo(self.tempdir_path).bare)
+
+    def test_sync_problems_ok(self):
+        pass

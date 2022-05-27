@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Union
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
 import git
 
@@ -18,3 +18,13 @@ def get_github_repo_url(owner: str, name: str, token: Optional[str] = None) -> s
 def shallow_clone(git_url: str, dir_path: PathString) -> git.Repo:
     repo = git.Repo.clone_from(git_url, dir_path, depth=1)
     return repo
+
+
+def get_commit_hash(repo: git.Repo) -> str:
+    return repo.head.commit.hexsha
+
+
+def flatten_to_tuples(dl: Dict[str, List]) -> Iterator[Tuple[Any, Any]]:
+    for key in dl:
+        for val in dl[key]:
+            yield (key, val)

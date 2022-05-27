@@ -1,10 +1,12 @@
+import os
 import yaml
+from collections import namedtuple
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, NamedTuple, Optional
 
 import git
 
-from .types import SingleOrList, PathString
+from .custom_types import PathString
 
 
 class NotAProblemDirectoryError(Exception):
@@ -19,15 +21,28 @@ class FileDoesNotExistError(Exception):
     pass
 
 
+class ParsedFile(NamedTuple):
+    """
+    Class to keep parsed problem files.
+
+    Have 2 data attributes:
+    1. content - content of file as a str
+    2. relative_path - path of the file relative to the problem directory base as a str.
+        This should be the path that was mentioned in problem.yml
+    """
+    content: str
+    relative_path: str
+
+
 class ParsedProblem:
 
     def __init__(self,
                  base_path: PathString,
                  title: str,
                  blurb: str,
-                 files: Dict[str, SingleOrList[PathString]],
+                 files: Dict[str, List[PathString]],
                  slug: Optional[str] = None,
-                 description_file: Optional[str] = "description.md",
+                 description_file: Optional[str] = None,
                  source: Optional[str] = None,
                  source_url: Optional[str] = None):
 
@@ -36,24 +51,49 @@ class ParsedProblem:
         self.slug = slug or self.base_path.name
         self.title = title
         self.blurb = blurb
-        self.description_file = self.base_path / description_file
+        self.description_file = self.base_path / (description_file or "description.md")
+
+        self.description = parse_description_file(
+            self.description_file,
+            default=get_default_description(self.title, self.blurb))
 
         # defaults
-        self.files = {
+        self.files: Dict[str, List[ParsedFile]] = {
             "code": [],
             "data": [],
             "test": [],
             "solution": [],
         }
 
-        # convert PathLike/string to pathlib.Path
-        for key in self.files:
-            if key in files:
-                self.files[key] += list(
-                    map(lambda f_path: self.base_path / f_path, files[key]))
+        for kind in self.files:
+            if kind in files:
+                self.files[kind] = [parse_problem_file(self.base_path, os.fspath(fpath))
+                    for fpath in files[kind]]
 
         self.source = source
         self.source_url = source_url
+
+
+def parse_problem_repository(parent_directory: PathString) -> List[ParsedProblem]:
+    """
+    Gets all the problems from a problem repository
+    """
+    parent_directory  = Path(parent_directory)
+
+    problems = []
+
+    for child in parent_directory.iterdir():
+        if not child.is_dir():
+            continue
+
+        try:
+            problem = parse_problem_directory(child)
+        except NotAProblemDirectoryError:
+            pass
+        else:
+            problems.append(problem)
+
+    return problems
 
 
 def parse_problem_directory(fs_path: Path) -> ParsedProblem:
@@ -120,6 +160,25 @@ def parse_config(problem_yml: Path) -> Dict[str, Any]:
     return config
 
 
+def parse_problem_file(problem_directory: PathString,
+                       relative_filepath: str) -> ParsedFile:
+    """
+    problem_directory: base path to problem directory (on disk)
+    relative_filepath: path to the problem file (as a str), relative to `probdir_path`. This is the path
+        set by trainer in problem.yml
+    """
+    with open(Path(problem_directory) / relative_filepath) as f:
+        return ParsedFile(content=f.read(), relative_path=relative_filepath)
+
+
+def parse_description_file(description_file: Path, default: str) -> str:
+    if not description_file.exists():
+        return default
+
+    with open(description_file) as f:
+        return f.read()
+
+
 def validate_config(config: Dict[Any, Any]):
     # TODO: investigate using cerberus or a more robust solution for testing.
     # for now, some cases are missed. like, type-validation for optionals
@@ -173,5 +232,10 @@ def validate_files_list(problem: ParsedProblem, key: str):
     files = problem.files[key]
 
     for f in files:
-        if not f.exists():
-            raise ReferencedFileDoesNotExistError(f"file {f} does not exist (referenced in files->{key})")
+        if not (problem.base_path / f.relative_path).exists():
+            raise FileDoesNotExistError(
+                f"file {f} does not exist (referenced in files->{key})")
+
+
+def get_default_description(title: str, blurb: str) -> str:
+    return f"# {title}\n\n{blurb}\n"
