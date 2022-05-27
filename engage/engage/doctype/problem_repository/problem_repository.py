@@ -41,7 +41,7 @@ class ProblemRepository(Document):
         clone_url = get_github_repo_url(self.github_repo_owner, self.github_repo_name, token=self.github_token)
         return shallow_clone(clone_url, to_path)
 
-    def sync_problems(self):
+    def update_problems(self):
         with tempfile.TemporaryDirectory() as tempdir:
             repo = self.clone(tempdir)
             commit_hash = get_commit_hash(repo)
@@ -100,6 +100,13 @@ class ProblemRepository(Document):
 
         problem.save()
         return problem
+
+
+@frappe.whitelist()
+def update_problems(problem_repository_name):
+    doc = frappe.get_doc("Problem Repository", problem_repository_name)
+    count = doc.update_problems()
+    frappe.response["count"] = count
 
 
 def is_github_username_valid(val):
