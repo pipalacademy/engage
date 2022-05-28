@@ -9,6 +9,7 @@
   "title",
   "github_repo_owner",
   "github_token",
+  "branch",
   "column_break_4",
   "commit_hash",
   "github_repo_name",
@@ -55,11 +56,16 @@
    "fieldname": "commit_hash",
    "fieldtype": "Data",
    "label": "Commit Hash of last update"
+  },
+  {
+   "fieldname": "branch",
+   "fieldtype": "Data",
+   "label": "Git Branch"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-05-28 02:02:40.089798",
+ "modified": "2022-05-28 20:08:07.096792",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Problem Repository",

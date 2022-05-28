@@ -63,7 +63,7 @@
   },
   {
    "fieldname": "blurb",
-   "fieldtype": "Data",
+   "fieldtype": "Small Text",
    "label": "Blurb"
   },
   {
@@ -96,7 +96,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-05-28 02:14:22.780455",
+ "modified": "2022-05-28 22:49:40.675159",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Practice Problem",

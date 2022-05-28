@@ -1,6 +1,7 @@
 # Copyright (c) 2022, Pipal Academy and contributors
 # For license information, please see license.txt
 
+import json
 import string
 import tempfile
 from pathlib import Path
@@ -11,7 +12,7 @@ import frappe
 from frappe.model.document import Document
 
 from .parser import parse_problem_repository
-from .util import get_commit_hash, get_github_repo_url, shallow_clone, flatten_to_tuples
+from .util import get_commit_hash, get_default_branch, get_github_repo_url, get_latest_commit, shallow_clone, flatten_to_tuples
 
 
 class ProblemRepository(Document):
@@ -25,6 +26,11 @@ class ProblemRepository(Document):
 
         if not is_github_repo_name_valid(self.github_repo_name):
             raise frappe.exceptions.ValidationError("Repo name is not valid")
+
+    def before_insert(self):
+        # set branch to default github branch
+        if not self.branch:
+            self.branch = get_default_branch(self.github_repo_owner, self.github_repo_name, self.github_token)
 
     def does_repo_exist(self):
         url = "https://api.github.com/repos/{self.github_repo_owner}/{self.github_repo_name}"
@@ -61,7 +67,6 @@ class ProblemRepository(Document):
         self.save()
 
         return counter
-
 
     def update_or_create_child_problem(self, parsed_problem, commit_hash):
         problem_id = f"{self.name}/{parsed_problem.slug}"
@@ -101,12 +106,38 @@ class ProblemRepository(Document):
         problem.save()
         return problem
 
+    @frappe.whitelist()
+    def is_update_available(self):
+        last_commit = get_latest_commit(
+                self.github_repo_owner,
+                self.github_repo_name,
+                self.branch,
+                token=self.github_token)
+        if last_commit != self.commit_hash:
+            return last_commit
+
 
 @frappe.whitelist()
 def update_problems(problem_repository_name):
     doc = frappe.get_doc("Problem Repository", problem_repository_name)
     count = doc.update_problems()
     frappe.response["count"] = count
+
+
+@frappe.whitelist()
+def update_problems_as_action(args):
+    problem_repository_name = json.loads(args)["problem_repository_name"]
+    return update_problems(problem_repository_name)
+
+
+@frappe.whitelist()
+def check_for_updates(problem_repository_name):
+    doc = frappe.get_doc("Problem Repository", problem_repository_name)
+    if (latest_commit := doc.is_update_available()):
+        frappe.response["available"] = True
+        frappe.response["latest_commit"] = latest_commit
+    else:
+        frappe.response["available"] = False
 
 
 def is_github_username_valid(val):
