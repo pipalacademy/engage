@@ -33,6 +33,9 @@ def get_context(context):
     for ps in problem_sets:
         ps.problems = [frappe.get_doc("Practice Problem", p.problem) for p in ps.problems]
 
+        for p in ps.problems:
+            p.code = p.code_files[0].content
+
     context.t = t
     context.title = t.title
     context.client = frappe.get_doc("Client", t.client)

@@ -96,7 +96,8 @@
 	 href="javascript:;"
 	 id="problem-{{ p.name }}"
 	 data-title='{{ p.title }}'
-	 data-description='{{ frappe.utils.md_to_html(p.description) | e }}'>
+	 data-description='{{ frappe.utils.md_to_html(p.description) | e }}'
+	 data-code='{{ p.code | e }}'>
 	<svg class="icon icon-sm">
 	  {% if not p.solution %}
 	  {% elif p.solution.test_outcome == "passed" %}
@@ -171,7 +172,8 @@ function showProblem(selector) {
     $("#problem-title").html(data.title);
     $("#problem-description").html(data.description);
     $("#problem-code").html("");
-    $("#problem-code").html(data.solution.code);
+    $("#problem-code").html(data.code);
+    // $("#problem-code").html(data.solution.code);
 }
 
 $(function() {

@@ -12,7 +12,7 @@ class PracticeProblem(Document):
             self.name = self.slug
 
     def get_problem_files_by_kind(self, kind):
-        return [f for f in self.problem_files if f.kind == kind]
+        return [f for f in self.files if f.kind == kind]
 
     @property
     def code_files(self):
