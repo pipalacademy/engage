@@ -29,12 +29,17 @@ def get_context(context):
     for trainer in trainers:
         trainer.full_name = frappe.get_cached_doc("User", trainer.user).full_name
 
+    problem_sets = [frappe.get_cached_doc("Problem Set", row.problem_set) for row in t.problem_sets]
+    for ps in problem_sets:
+        ps.problems = [frappe.get_doc("Practice Problem", p.problem) for p in ps.problems]
+
     context.t = t
     context.title = t.title
     context.client = frappe.get_doc("Client", t.client)
     context.participants = participants
     context.trainers = trainers
     context.num_participants = len(participants)
+    context.problem_sets = problem_sets
 
 
 def get_training(year, slug):

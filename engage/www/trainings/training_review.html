@@ -9,6 +9,10 @@
     background: #F8F9FA;
   }
 
+  h1 {
+    margin-top: 1.2rem;
+  }
+
   .training-header {
     margin-bottom: 20px;
     padding: 20px;
@@ -64,10 +68,64 @@
 </div>
 {% endmacro %}
 
+{% macro ProblemSet(pset) %}
+<div class="my-5">
+  <h3>{{ pset.title }}</h3>
+  <div>
+    {% for p in pset.problems %}
+    <button
+      type="button"
+      class="btn btn-problem btn-sm {{ 'btn-success' if p.solution else 'btn-light'}}"
+      data-target="#problem-{{p.name}}"
+      >
+      {{p.title}}
+    </button>
+      {% endfor %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro ProblemSets() %}
+<div class="row">
+  <div class="col-md-4">
+    <ul class="list-group">
+      {% for ps in problem_sets %}
+      <span class="list-group-item"><strong>{{ps.title}}</strong></span>
+      {% for p in ps.problems %}
+      <a class="list-group-item list-group-item-action problem-link"
+	 href="javascript:;"
+	 id="problem-{{ p.name }}"
+	 data-title='{{ p.title }}'
+	 data-description='{{ frappe.utils.md_to_html(p.description) | e }}'>
+	<svg class="icon icon-sm">
+	  {% if not p.solution %}
+	  {% elif p.solution.test_outcome == "passed" %}
+	  <use href="#icon-tick"></use>
+	  {% elif p.solution.test_outcome == "failed" %}
+	  <use href="#icon-close"></use>
+	  {% else %}
+	  {% endif %}
+	</svg>
+	{{p.title}}
+      </a>
+      {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="col-md-8 problem-page">
+    <h5 id="problem-title"></h5>
+    <div id="problem-description"></div>
+
+    <pre id="problem-code" style="background: #eeeedd; padding: 20px; border-radius: 10px;"></pre>
+  </div>
+</div>
+{% endmacro %}
+
 {% macro TrainingBody() %}
 <div class="row">
   <div class="col-md-9">
     <div class="training-body">
+      {{ ProblemSets() }}
     </div>
   </div>
   <div class="col-md-3">
@@ -100,4 +158,29 @@
   </div>
   {{ TrainingBody() }}
 </div>
+{% endblock %}
+
+{% block body_include %}
+
+{{ super() }}
+
+<script>
+function showProblem(selector) {
+    var data = $(selector).data();
+    console.log(data);
+    $("#problem-title").html(data.title);
+    $("#problem-description").html(data.description);
+    $("#problem-code").html("");
+    $("#problem-code").html(data.solution.code);
+}
+
+$(function() {
+   $(".problem-link").on('click', function() {
+      $(".problem-link").removeClass("active");
+      $(this).addClass("active");
+      showProblem(this);
+   });
+});
+</script>
+
 {% endblock %}

@@ -16,12 +16,14 @@
   "live_notes_url",
   "column_break_4",
   "jupyterhub_url",
-  "participants_section",
-  "participants",
-  "reviewers_section",
-  "reviewers",
   "trainers_section",
   "trainers",
+  "participants_section",
+  "participants",
+  "problem_sets_section",
+  "problem_sets",
+  "reviewers_section",
+  "reviewers",
   "begin_date",
   "end_date",
   "timing",
@@ -143,11 +145,22 @@
   {
    "fieldname": "section_break_20",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "problem_sets_section",
+   "fieldtype": "Section Break",
+   "label": "Problem Sets"
+  },
+  {
+   "fieldname": "problem_sets",
+   "fieldtype": "Table",
+   "label": "Problem Sets",
+   "options": "Problem Set Reference"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-05-24 00:36:30.812007",
+ "modified": "2022-05-29 00:21:49.516749",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Training",
