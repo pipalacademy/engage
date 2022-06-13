@@ -3,9 +3,8 @@
 {% block head_include %}
 
 <style>
-    .training-page {
-        padding: 20px 0px;
-        background: #F8F9FA;
+    body {
+	background: #F8F9FA;
     }
 
     .training-header {
@@ -130,21 +129,19 @@
 </div>
 {% endmacro %}
 
-<div class="section training-page">
-    <div class="container">
-        {{ render_breadcrumbs() }}
+<div class="training-page">
+    {{ render_breadcrumbs() }}
 
-        <div class="training-header">
-            <h2>{{t.title}}</h2>
-            <div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
-                frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
-            <div>{{client.title}}</div>
-        </div>
-        {% if participant %}
-        {{ TrainingBody() }}
-        {% else %}
-        <div class="alert alert-danger">You are not a participant of this training.</div>
-        {% endif %}
+    <div class="training-header">
+	<h2>{{t.title}}</h2>
+	<div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
+	    frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
+	<div>{{client.title}}</div>
     </div>
+    {% if participant %}
+    {{ TrainingBody() }}
+    {% else %}
+    <div class="alert alert-danger">You are not a participant of this training.</div>
+    {% endif %}
 </div>
 {% endblock %}
