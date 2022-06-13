@@ -1,0 +1,115 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-06-13 17:18:45.113424",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "author",
+  "problem_set",
+  "problem",
+  "training",
+  "latest_submission",
+  "code",
+  "test_outcome",
+  "test_result"
+ ],
+ "fields": [
+  {
+   "fieldname": "author",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Author",
+   "options": "User",
+   "search_index": 1
+  },
+  {
+   "fieldname": "problem_set",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Problem Set",
+   "options": "Problem Set",
+   "search_index": 1
+  },
+  {
+   "fieldname": "problem",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Problem",
+   "options": "Practice Problem",
+   "search_index": 1
+  },
+  {
+   "fieldname": "training",
+   "fieldtype": "Link",
+   "label": "Training",
+   "options": "Training",
+   "search_index": 1
+  },
+  {
+   "fieldname": "latest_submission",
+   "fieldtype": "Link",
+   "label": "Latest Submission",
+   "options": "Practice Problem Submission"
+  },
+  {
+   "fetch_from": "latest_submission.code",
+   "fieldname": "code",
+   "fieldtype": "Code",
+   "in_list_view": 1,
+   "label": "Code"
+  },
+  {
+   "fetch_from": "latest_submission.test_outcome",
+   "fieldname": "test_outcome",
+   "fieldtype": "Select",
+   "label": "Test Outcome",
+   "options": "\npassed\nfailed"
+  },
+  {
+   "fetch_from": "latest_submission.test_result",
+   "fieldname": "test_result",
+   "fieldtype": "Code",
+   "label": "Test Result"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-06-13 17:18:45.113424",
+ "modified_by": "Administrator",
+ "module": "Engage",
+ "name": "Practice Problem Latest Submission",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "select": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
