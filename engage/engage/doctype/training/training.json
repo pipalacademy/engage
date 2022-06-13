@@ -133,8 +133,7 @@
   {
    "fieldname": "timing",
    "fieldtype": "Data",
-   "label": "Timing",
-   "reqd": 1
+   "label": "Timing"
   },
   {
    "fieldname": "sidebar_sections",
@@ -160,7 +159,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-05-29 00:21:49.516749",
+ "modified": "2022-06-13 14:48:31.881716",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Training",
