@@ -1,0 +1,142 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-06-13 17:33:43.472017",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "problem_set",
+  "column_break_2",
+  "problem",
+  "column_break_4",
+  "user",
+  "section_break_5",
+  "code",
+  "correctness",
+  "column_break_7",
+  "comment",
+  "clarity",
+  "section_break_12",
+  "latest_submission",
+  "column_break_10",
+  "reviewed_submission",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "problem_set",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Problem Set",
+   "options": "Problem Set",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "problem",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Problem",
+   "options": "Practice Problem",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "User",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_5",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "code",
+   "fieldtype": "Code",
+   "label": "Code"
+  },
+  {
+   "fieldname": "correctness",
+   "fieldtype": "Rating",
+   "label": "Correctness"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "comment",
+   "fieldtype": "Markdown Editor",
+   "label": "Comment"
+  },
+  {
+   "fieldname": "clarity",
+   "fieldtype": "Rating",
+   "label": "Clarity"
+  },
+  {
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "latest_submission",
+   "fieldtype": "Link",
+   "label": "Latest Submission",
+   "options": "Practice Problem Submission"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reviewed_submission",
+   "fieldtype": "Link",
+   "label": "Reviewed Submission",
+   "options": "Practice Problem Submission"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Markdown Editor",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-06-13 17:33:43.472017",
+ "modified_by": "Administrator",
+ "module": "Engage",
+ "name": "Problem Review",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "select": 1,
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
