@@ -71,9 +71,9 @@ class ProblemRepository(Document):
     def update_or_create_child_problem(self, parsed_problem, commit_hash):
         problem_id = f"{self.name}/{parsed_problem.slug}"
 
-        try:
+        if frappe.db.exists("Practice Problem", problem_id):
             problem = frappe.get_doc("Practice Problem", problem_id)
-        except frappe.exceptions.DoesNotExistError:
+        else:
             problem = frappe.get_doc({
                 "doctype": "Practice Problem",
                 "slug": parsed_problem.slug,
