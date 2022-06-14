@@ -4,7 +4,8 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/trainings/">Trainings</a></li>
-    <li class="breadcrumb-item active" aria-current="page">{{ t.title }}</li>
+    <li class="breadcrumb-item"><a href="/trainings/{{ t.name }}/">{{ t.title }}</a></li>
+    <li class="breadcrumb-item active">Review</li>
   </ol>
 </nav>
 {% endmacro %}

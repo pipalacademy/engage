@@ -6,11 +6,6 @@
 	<div class="col-5 p-0">
 		<div class="h5"><a class="text-decoration-none" href="/trainings/{{ training.name }}">{{ training.title
 				}}</a>
-			{% if training.as_trainer %}
-			<a class="small text-decoration-none" href="/trainings/{{ training.name }}/review">
-				(review)
-			</a>
-			{% endif %}
 		</div>
 		<div class="text-muted">{{ client.title }}</div>
 	</div>
@@ -21,7 +16,7 @@
 		frappe.format_date(training.end_date)[:-6] }}
 	</div>
 	<div class="col-3 p-0 text-center">
-		<i class="fa-solid fa-clock"></i> {{ training.timing or "N/A"  }}
+		<i class="fa-solid fa-clock"></i> {{ training.timing or "N/A" }}
 	</div>
 	<div class="col-1 p-0 text-center">
 		<i class="fa-solid fa-user-graduate"></i> {{ training.participants|length }}

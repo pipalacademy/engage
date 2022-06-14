@@ -18,6 +18,9 @@ def get_context(context):
         context.template = "www/404.html"
         return
 
+    if training.has_user_as_trainer(frappe.session.user):
+        training.can_review = True
+
     client = frappe.get_doc("Client", training.client)
 
     participants = frappe.get_all("Training Participant", filters={"user": frappe.session.user, "parent": tname}, fields=["jh_username", "jh_password", "parent"])
