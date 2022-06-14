@@ -19,6 +19,11 @@ h1 {
     padding-bottom: 0px;
 }
 
+.problem-description h1, .problem-description h2, .problem-description h3, .problem-description h4, .problem-description h5, .problem-description h6 {
+    margin-top: 1.25rem !important;
+    margin-bottom: 1.25rem !important;
+}
+
 .card {
     margin: 20px 0px;
 }
