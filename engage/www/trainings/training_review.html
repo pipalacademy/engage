@@ -20,13 +20,13 @@
     border-radius: 8px;
   }
 
-  .training-header h2 {
+  .training-header .h2 {
     font-weight: 500;
     margin-bottom: 0px;
     padding-bottom: 0px;
   }
 
-  .sidebar .card {
+  .card {
     margin: 20px 0px;
   }
 
@@ -73,14 +73,11 @@
   <h3>{{ pset.title }}</h3>
   <div>
     {% for p in pset.problems %}
-    <button
-      type="button"
-      class="btn btn-problem btn-sm {{ 'btn-success' if p.solution else 'btn-light'}}"
-      data-target="#problem-{{p.name}}"
-      >
+    <button type="button" class="btn btn-problem btn-sm {{ 'btn-success' if p.solution else 'btn-light'}}"
+      data-target="#problem-{{p.name}}">
       {{p.title}}
     </button>
-      {% endfor %}
+    {% endfor %}
   </div>
 </div>
 {% endmacro %}
@@ -92,22 +89,19 @@
       {% for ps in problem_sets %}
       <span class="list-group-item"><strong>{{ps.title}}</strong></span>
       {% for p in ps.problems %}
-      <a class="list-group-item list-group-item-action problem-link"
-	 href="javascript:;"
-	 id="problem-{{ p.name }}"
-	 data-title='{{ p.title }}'
-	 data-description='{{ frappe.utils.md_to_html(p.description) | e }}'
-	 data-code='{{ p.code | e }}'>
-	<svg class="icon icon-sm">
-	  {% if not p.solution %}
-	  {% elif p.solution.test_outcome == "passed" %}
-	  <use href="#icon-tick"></use>
-	  {% elif p.solution.test_outcome == "failed" %}
-	  <use href="#icon-close"></use>
-	  {% else %}
-	  {% endif %}
-	</svg>
-	{{p.title}}
+      <a class="list-group-item list-group-item-action problem-link" href="javascript:;" id="problem-{{ p.name }}"
+        data-title='{{ p.title }}' data-description='{{ frappe.utils.md_to_html(p.description) | e }}'
+        data-code='{{ p.code | e }}'>
+        <svg class="icon icon-sm">
+          {% if not p.solution %}
+          {% elif p.solution.test_outcome == "passed" %}
+          <use href="#icon-tick"></use>
+          {% elif p.solution.test_outcome == "failed" %}
+          <use href="#icon-close"></use>
+          {% else %}
+          {% endif %}
+        </svg>
+        {{p.title}}
       </a>
       {% endfor %}
       {% endfor %}
@@ -140,7 +134,7 @@
   {{ render_breadcrumbs() }}
 
   <div class="training-header">
-    <h2>{{t.title}}</h2>
+    <div class="h2">{{t.title}}</div>
     <div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
       frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
     <div>
@@ -166,7 +160,7 @@
 {{ super() }}
 
 <script>
-function showProblem(selector) {
+  function showProblem(selector) {
     var data = $(selector).data();
     console.log(data);
     $("#problem-title").html(data.title);
@@ -174,15 +168,15 @@ function showProblem(selector) {
     $("#problem-code").html("");
     $("#problem-code").html(data.code);
     // $("#problem-code").html(data.solution.code);
-}
+  }
 
-$(function() {
-   $(".problem-link").on('click', function() {
+  $(function () {
+    $(".problem-link").on('click', function () {
       $(".problem-link").removeClass("active");
       $(this).addClass("active");
       showProblem(this);
-   });
-});
+    });
+  });
 </script>
 
 {% endblock %}
