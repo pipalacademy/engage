@@ -196,3 +196,7 @@ website_route_rules = [
     {"from_route": "/trainings/<int:year>/<training>/problems/<problem_set>/<problem>", "to_route": "trainings/problems/problem"},
     {"from_route": "/trainings/<int:year>/<training>/problems/<problem_set>/<problem_repository>/<problem>", "to_route": "trainings/problems/problem"}
 ]
+
+website_redirects = [
+    {"source": "/", "target": "/trainings/"}
+]
