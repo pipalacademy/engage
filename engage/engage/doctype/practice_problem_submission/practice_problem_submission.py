@@ -5,7 +5,10 @@ import frappe
 from frappe.model.document import Document
 
 class PracticeProblemSubmission(Document):
-    def after_save(self):
+    def before_save(self):
+        pass
+
+    def after_insert(self):
         q = {
             "training": self.training,
             "author": self.author,
