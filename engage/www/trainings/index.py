@@ -10,7 +10,8 @@ class Status:
 
 
 def get_context(context):
-    trainings = unique(get_trainings_by_trainer(frappe.session.user) + get_trainings_by_participant(frappe.session.user))
+    trainings = unique_trainings(get_trainings_by_trainer(frappe.session.user) + get_trainings_by_participant(frappe.session.user))
+    print(trainings)
     trainings.sort(key=lambda t: t.begin_date)
 
     trainings_by_status = split_trainings_by_status(trainings)
@@ -23,7 +24,7 @@ def get_trainings_by_trainer(trainer):
 
     training_names = frappe.get_all(
         "Training Trainer",
-        filters={"user": frappe.session.user, "parenttype": "Training"},
+        filters={"user": trainer, "parenttype": "Training"},
         pluck="parent")
 
     trainings = [frappe.get_doc("Training", training_name) for training_name in training_names]
@@ -36,7 +37,7 @@ def get_trainings_by_trainer(trainer):
 def get_trainings_by_participant(participant):
     training_names = frappe.get_all(
         "Training Participant",
-        filters={"user": frappe.session.user, "parenttype": "Training"},
+        filters={"user": participant, "parenttype": "Training"},
         pluck="parent")
 
     trainings = [frappe.get_doc("Training", training_name) for training_name in training_names]
@@ -53,5 +54,6 @@ def split_trainings_by_status(trainings):
     return result
 
 
-def unique(ls):
-    return list(set(ls))
+def unique_trainings(trainings):
+    # convert to dict with key we want to check uniqueness with, then back
+    return list({t.name: t for t in trainings}.values())
