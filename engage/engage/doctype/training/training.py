@@ -28,6 +28,10 @@ class Training(Document):
         return any(filter(lambda p: p.user == user, self.participants))
 
     def before_save(self):
+        self._add_trainers_as_participants()
+        self._set_slug_on_problem_sets()
+
+    def _add_trainers_as_participants(self):
         # add trainers as participants, so that they get JupyterHub credentials and
         # access to web pages that students can access
         for t in self.trainers:
@@ -36,6 +40,16 @@ class Training(Document):
                     "user": t.user,
                 })
 
+    def _set_slug_on_problem_sets(self):
+        """
+        Routing depends on the slugs set to problem set references. If it is not set,
+        the problems page won't be reached
+        """
+        for pset_ref in self.problem_sets:
+            if not pset_ref.slug:
+                pset_ref.slug = slugify(pset_ref.title)
+
 
 def slugify(s):
     return s.lower().replace(" ", "-")
+
