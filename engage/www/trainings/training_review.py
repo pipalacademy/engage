@@ -12,12 +12,10 @@ def get_context(context):
         context.template = NOT_FOUND_TEMPLATE
         return
 
-    t = get_training(year, slug)
-    if not t:
-        context.template = NOT_FOUND_TEMPLATE
-        return
+    username = frappe.form_dict.get("p")
 
-    if not t.has_user_as_trainer(frappe.session.user):
+    t = get_training(year, slug)
+    if not t or not t.has_user_as_trainer(frappe.session.user):
         context.template = NOT_FOUND_TEMPLATE
         return
 
@@ -30,11 +28,13 @@ def get_context(context):
         trainer.full_name = frappe.get_cached_doc("User", trainer.user).full_name
 
     problem_sets = [frappe.get_cached_doc("Problem Set", row.problem_set) for row in t.problem_sets]
-    for ps in problem_sets:
-        ps.problems = [frappe.get_doc("Practice Problem", p.problem) for p in ps.problems]
 
-        for p in ps.problems:
-            p.code = p.code_files[0].content
+    for pset in problem_sets:
+        pset.problems = [frappe.get_doc("Practice Problem", p.problem) for p in pset.problems]
+
+        for problem in pset.problems:
+            latest_submission = username and get_latest_submission(username, t.name, pset.name, problem.name)
+            problem.code = latest_submission and latest_submission.code or problem.code_files[0].content
 
     context.t = t
     context.title = t.title
@@ -59,3 +59,13 @@ def get_children(child_doctype, parent_name, parent_doctype=None, fields="*"):
         filters.update({"parenttype": parent_doctype})
 
     return frappe.get_all(child_doctype, filters=filters, fields=fields)
+
+
+def get_latest_submission(author, training, problem_set, problem):
+    doc_list = frappe.get_list("Practice Problem Latest Submission",
+            filters={"author": author, "training": training, "problem_set": problem_set, "problem": problem},
+            fields="*",
+            page_length=1)
+
+    latest = doc_list and doc_list[0] or None
+    return latest
