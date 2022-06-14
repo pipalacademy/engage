@@ -1,46 +1,5 @@
 {% extends "templates/custom_web.html" %}
 
-{% block head_include %}
-
-{{ super() }}
-
-<style>
-  body {
-    background: #F8F9FA;
-  }
-
-  h1 {
-    margin-top: 1.2rem;
-  }
-
-  .training-header {
-    margin-bottom: 20px;
-    padding: 20px;
-    background: #eee;
-    border-radius: 8px;
-  }
-
-  .training-header .h2 {
-    font-weight: 500;
-    margin-bottom: 0px;
-    padding-bottom: 0px;
-  }
-
-  .card {
-    margin: 20px 0px;
-  }
-
-  .training-body {
-    margin: 20px 0px;
-  }
-
-  .tick {
-    color: green;
-  }
-</style>
-
-{% endblock %}
-
 {% macro render_breadcrumbs() %}
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
@@ -153,30 +112,4 @@
   </div>
   {{ TrainingBody() }}
 </div>
-{% endblock %}
-
-{% block body_include %}
-
-{{ super() }}
-
-<script>
-  function showProblem(selector) {
-    var data = $(selector).data();
-    console.log(data);
-    $("#problem-title").html(data.title);
-    $("#problem-description").html(data.description);
-    $("#problem-code").html("");
-    $("#problem-code").html(data.code);
-    // $("#problem-code").html(data.solution.code);
-  }
-
-  $(function () {
-    $(".problem-link").on('click', function () {
-      $(".problem-link").removeClass("active");
-      $(this).addClass("active");
-      showProblem(this);
-    });
-  });
-</script>
-
 {% endblock %}

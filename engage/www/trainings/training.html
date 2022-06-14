@@ -1,43 +1,5 @@
 {% extends "templates/custom_web.html" %}
 
-{% block head_include %}
-
-<style>
-    body {
-        background: #F8F9FA;
-    }
-
-    .training-header {
-        margin-bottom: 20px;
-        padding: 20px;
-        background: #eee;
-        border-radius: 8px;
-    }
-
-    .training-header .h2 {
-        font-weight: 500;
-        margin-bottom: 0px;
-        padding-bottom: 0px;
-    }
-
-    .card {
-        margin: 20px 0px;
-    }
-
-    .training-body {
-        margin: 20px 0px;
-    }
-
-    .tick {
-        color: green;
-    }
-</style>
-
-{{ super() }}
-
-{% endblock %}
-
-{% block page_content %}
 {% macro render_breadcrumbs() %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -129,6 +91,7 @@
 </div>
 {% endmacro %}
 
+{% block page_content %}
 <div class="training-page">
     {{ render_breadcrumbs() }}
 
