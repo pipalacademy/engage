@@ -11,7 +11,6 @@ class Status:
 
 def get_context(context):
     trainings = unique_trainings(get_trainings_by_trainer(frappe.session.user) + get_trainings_by_participant(frappe.session.user))
-    print(trainings)
     trainings.sort(key=lambda t: t.begin_date)
 
     trainings_by_status = split_trainings_by_status(trainings)
