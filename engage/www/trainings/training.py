@@ -23,23 +23,43 @@ def get_context(context):
 
     client = frappe.get_doc("Client", training.client)
 
-    participants = frappe.get_all("Training Participant", filters={"user": frappe.session.user, "parent": tname}, fields=["jh_username", "jh_password", "parent"])
+    participants = frappe.get_all("Training Participant", filters={"parent": tname}, fields=["jh_username", "jh_password", "parent", "user"])
+
+    solved_by_user = {}
+    for p in participants:
+        solved_by_user[p["user"]] = {}
 
     rows = frappe.get_all(
-        "Practice Problem Submission", 
-        filters={"training": tname, "author": frappe.session.user}, 
-        fields="*", 
+        "Practice Problem Latest Submission", 
+        filters={"training": tname}, 
+        fields=["author", "problem"], 
         page_length=1000)
-    
-    submissions = {row.problem: row for row in rows}
+
+    for row in rows:
+        solved_by_user[row["author"]][row["problem"]] = row
+
+    count_solved_by_user = [{
+            "count": len(submissions),
+            "full_name": frappe.get_cached_doc("User", user).full_name,
+            "active": user == frappe.session.user
+        }
+        for user, submissions in solved_by_user.items()
+    ]
+
+    count_solved_by_user.sort(key=lambda k: k["count"], reverse=True)
+
+    try:
+        user_participant = next(p for p in participants if p.user == frappe.session.user)
+    except StopIteration:
+        user_participant = None
 
     context.t = training
     context.client = client
-    context.participant = participants and participants[0] or None
+    context.participant = user_participant
 
-    context.title = t.title
-    context.submissions = submissions
-
+    context.title = training.title
+    context.submissions = solved_by_user.get(frappe.session.user, {})
+    context.count_solved_by_user = count_solved_by_user
 
 def get_training(id):
     try:

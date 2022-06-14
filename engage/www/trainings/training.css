@@ -26,3 +26,18 @@ body {
 .tick {
     color: green;
 }
+
+.crown-icon {
+    color: #ffbb48;
+}
+
+.leaderboard_participant-name {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.leaderboard_participant-name:hover {
+    text-overflow: unset;
+    white-space: normal;
+}

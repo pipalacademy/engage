@@ -3,8 +3,8 @@
 {% macro render_breadcrumbs() %}
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/">Trainings</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ t.title }}</li>
+	<li class="breadcrumb-item"><a href="/">Trainings</a></li>
+	<li class="breadcrumb-item active" aria-current="page">{{ t.title }}</li>
     </ol>
 </nav>
 {% endmacro %}
@@ -12,31 +12,54 @@
 {% macro Sidebar() %}
 <div class="sidebar">
     <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Training Notes</h5>
-            <a href="{{ t.live_notes_url }}" class="btn btn-secondary" target="_blank">Open Training Notes</a>
-        </div>
+	<div class="card-body">
+	    <h5 class="card-title">Training Notes</h5>
+	    <a href="{{ t.live_notes_url }}" class="btn btn-secondary" target="_blank">Open Training Notes</a>
+	</div>
     </div>
 
     <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Jupyter Lab</h5>
+	<div class="card-body">
+	    <h5 class="card-title">Jupyter Lab</h5>
 
-            <p>Your credentials to access Jupyter Lab:</p>
-            <p>
-                Username: {{participant.jh_username}}<br>
-                Password: {{participant.jh_password}}
-            </p>
+	    <p>Your credentials to access Jupyter Lab:</p>
+	    <p>
+	    Username: {{participant.jh_username}}<br>
+	    Password: {{participant.jh_password}}
+	    </p>
 
-            <a href="{{ t.jupyterhub_url }}" class="btn btn-secondary" target="_blank">Launch Jupyter Lab</a>
-        </div>
+	    <a href="{{ t.jupyterhub_url }}" class="btn btn-secondary" target="_blank">Launch Jupyter Lab</a>
+	</div>
     </div>
+
+    <div class="card">
+	<div class="card-body">
+	    <h5 class="card-title">Leaderboard</h5>
+	</div>
+
+	<ul class="list-group list-group-flush">
+	  {% for count_solved in count_solved_by_user %}
+	  <div class="list-group-item list-group-item-action {{'active' if count_solved.active}}">
+	      <div class="row px-0 mx-0 ">
+		  <div class="col-2 p-0 text-left">
+		      {% if loop.first %}
+		      <span class="crown-icon"><i class="fa-solid fa-crown"></i></span>
+		      {% endif %}
+		  </div>
+		  <div class="col-8 p-0 leaderboard_participant-name">{{ count_solved.full_name }}</div>
+		  <div class="col-2 p-0 text-right">{{ count_solved.count }}</div>
+	      </div>
+	  </div>
+	  {% endfor %}
+	</ul>
+    </div>
+
     {% for s in t.sidebar_sections %}
     <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">{{ s.title }}</h5>
-            {{ frappe.utils.md_to_html(s.body) }}
-        </div>
+	<div class="card-body">
+	    <h5 class="card-title">{{ s.title }}</h5>
+	    {{ frappe.utils.md_to_html(s.body) }}
+	</div>
     </div>
     {% endfor %}
 </div>
@@ -46,19 +69,19 @@
 {% set doc = frappe.get_doc("Problem Set", pset.problem_set) %}
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">{{ pset.title }}</h5>
+	<h5 class="card-title">{{ pset.title }}</h5>
 
-        <div>{{doc.problems | length}} problems</div>
+	<div>{{doc.problems | length}} problems</div>
     </div>
 
     <ul class="list-group list-group-flush">
-        {% for p in doc.problems %}
-        <li class="list-group-item"><a
-                href="/trainings/{{t.name}}/problems/{{pset.slug}}/{{p.problem}}">{{p.problem_title}}</a>
-            {% if p.problem in submissions %} - submitted
-            {% endif %}
-        </li>
-        {% endfor %}
+	{% for p in doc.problems %}
+	<li class="list-group-item"><a
+	    href="/trainings/{{t.name}}/problems/{{pset.slug}}/{{p.problem}}">{{p.problem_title}}</a>
+	    {% if p.problem in submissions %} - submitted
+	    {% endif %}
+	</li>
+	{% endfor %}
     </ul>
 </div>
 {% endmacro %}
@@ -69,7 +92,7 @@
 <div class="row">
     {% for pset in t.problem_sets %}
     <div class="col-md-4">
-        {{ ProblemSet(pset) }}
+	{{ ProblemSet(pset) }}
     </div>
     {% endfor %}
 </div>
@@ -81,12 +104,12 @@
 {% macro TrainingBody() %}
 <div class="row">
     <div class="col-md-9">
-        <div class="training-body">
-            {{ ProblemSets() }}
-        </div>
+	<div class="training-body">
+	    {{ ProblemSets() }}
+	</div>
     </div>
     <div class="col-md-3">
-        {{ Sidebar() }}
+	{{ Sidebar() }}
     </div>
 </div>
 {% endmacro %}
@@ -96,20 +119,20 @@
     {{ render_breadcrumbs() }}
 
     <div class="training-header">
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="h2">{{t.title}}</div>
-            {% if t.can_review %}
-            <div class="">
-                <a class="text-decoration-none" href="/trainings/{{t.name}}/review">
-                    <i class="fa-regular fa-eye"></i> Review
-                </a>
-            </div>
-            {% endif %}
-            </a>
-        </div>
-        <div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
-            frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
-        <div>{{client.title}}</div>
+	<div class="d-flex justify-content-between align-items-center">
+	    <div class="h2">{{t.title}}</div>
+	    {% if t.can_review %}
+	    <div class="">
+		<a class="text-decoration-none" href="/trainings/{{t.name}}/review">
+		    <i class="fa-regular fa-eye"></i> Review
+		</a>
+	    </div>
+	    {% endif %}
+	    </a>
+	</div>
+	<div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
+	    frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
+	<div>{{client.title}}</div>
     </div>
     {% if participant %}
     {{ TrainingBody() }}
