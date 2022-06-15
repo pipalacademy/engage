@@ -119,20 +119,20 @@
     {{ render_breadcrumbs() }}
 
     <div class="training-header">
+	<div class="h2">{{t.title}}</div>
+	<div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
+	    frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
 	<div class="d-flex justify-content-between align-items-center">
-	    <div class="h2">{{t.title}}</div>
+	    <div>{{client.title}}</div>
+
 	    {% if t.can_review %}
-	    <div class="">
+	    <div>
 		<a class="text-decoration-none" href="/trainings/{{t.name}}/review">
 		    <i class="fa-regular fa-eye"></i> Review
 		</a>
 	    </div>
 	    {% endif %}
-	    </a>
 	</div>
-	<div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
-	    frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
-	<div>{{client.title}}</div>
     </div>
     {% if participant %}
     {{ TrainingBody() }}
