@@ -30,10 +30,15 @@ def get_context(context):
         solved_by_user[sub["author"]][sub["problem"]] = sub
 
     participants = t.participants
-    for p in participants:
+    for (i, p) in enumerate(participants):
         p.full_name = frappe.get_cached_doc("User", p.user).full_name
         p.num_solved = len(solved_by_user.get(p.user, {}))
         p.active = (p.user == username)
+
+        if p.active:
+            context.prev_participant = participants[i - 1] if i >= 1 else None
+            context.next_participant = participants[i + 1] if i < (
+                len(participants) - 1) else None
 
     participants.sort(key=lambda p: p.num_solved, reverse=True)
 
@@ -61,6 +66,10 @@ def get_context(context):
             else:
                 problem.code = get_starter_code(problem)
 
+    first_participant = participants and participants[0] or None
+    first_problem = problem_sets and problem_sets[0] and problem_sets[
+        0].problems and problem_sets[0].problems[0].name or None
+
     context.t = t
     context.title = t.title
     context.client = frappe.get_doc("Client", t.client)
@@ -68,6 +77,9 @@ def get_context(context):
     context.trainers = trainers
     context.num_participants = len(participants)
     context.problem_sets = problem_sets
+    context.get_participant_review_link = lambda p: p and f"/trainings/{t.name}/review?p={p.user}"
+    context.first_participant = first_participant
+    context.first_problem = first_problem
 
 
 def get_training(year, slug):

@@ -10,6 +10,20 @@
 </nav>
 {% endmacro %}
 
+{% macro NavigationButtons(previousLink, middleText, nextLink) %}
+<ul class="pagination">
+    <li class="page-item {{ previousLink if previousLink else "disabled" }}">
+	<a id="prev-link" class="page-link" href="{{ previousLink if previousLink else "#" }}" tabindex="-1"><i class="fa-solid fa-arrow-left"></i></a>
+    </li>
+    <li class="page-item active">
+	<a class="page-link">{{ middleText }}</a>
+    </li>
+    <li class="page-item {{ nextLink if nextLink else "disabled" }}">
+	<a id="next-link" class="page-link" href="{{ nextLink if nextLink else "#" }}"><i class="fa-solid fa-arrow-right"></i></a>
+    </li>
+</ul>
+{% endmacro %}
+
 {% macro Sidebar() %}
 <div class="sidebar">
   <div class="card">
@@ -56,8 +70,12 @@
       <span class="list-group-item"><strong>{{ps.title}}</strong></span>
       {% for p in ps.problems %}
       <a class="list-group-item list-group-item-action problem-link" href="javascript:;" id="problem-{{ p.name }}"
-											 data-title='{{ p.title }}' data-description='{{ frappe.utils.md_to_html(p.description) | e }}'
-											 data-code='{{ p.code | e }}'>
+											 data-title='{{ p.title }}'
+											 data-description='{{ frappe.utils.md_to_html(p.description) | e }}'
+											 data-code='{{ p.code | e }}'
+											 data-next="{{ loop.nextitem.name if loop.nextitem else '' }}"
+											 data-prev="{{ loop.previtem.name if loop.previtem else '' }}"
+											 data-problem-name="{{ p.name }}">
 	<svg class="icon icon-sm">
 	  {% if not p.solution %}
 	  {% elif p.solution.test_outcome == "passed" %}
@@ -73,11 +91,26 @@
       {% endfor %}
     </ul>
   </div>
+
   <div class="col-md-8 problem-page">
     <h5 id="problem-title"></h5>
     <div id="problem-description" class="problem-description"></div>
 
     <pre id="problem-code" style="background: #eeeedd; padding: 20px; border-radius: 10px;"></pre>
+
+    <div class="d-flex justify-content-between">
+	<nav id="nav-participant" class="my-2">
+	    {% if not (prev_participant or next_participant) %}
+	    {% set next_participant = first_participant %}
+	    {% endif %}
+
+	    {{ NavigationButtons(get_participant_review_link(prev_participant), "Participant", get_participant_review_link(next_participant)) }}
+	</nav>
+
+	<nav id="nav-problem" class="my-2" data-first-problem="{{ first_problem }}">
+	</nav>
+    </div>
+
   </div>
 </div>
 {% endmacro %}
