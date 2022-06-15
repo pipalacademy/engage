@@ -57,7 +57,9 @@
       {% for p in ps.problems %}
       <a class="list-group-item list-group-item-action problem-link" href="javascript:;" id="problem-{{ p.name }}"
 											 data-title='{{ p.title }}' data-description='{{ frappe.utils.md_to_html(p.description) | e }}'
-											 data-code='{{ p.code | e }}'>
+											 data-code='{{ p.code | e }}'
+											 data-latest-submission-review='{{ p.latest_submission_review | e }}'
+											 data-submission-names='{{ p.submission_names | tojson }}'>
 	<svg class="icon icon-sm">
 	  {% if not p.solution %}
 	  {% elif p.solution.test_outcome == "passed" %}
@@ -73,12 +75,17 @@
       {% endfor %}
     </ul>
   </div>
+
   <div class="col-md-8 problem-page">
     <h5 id="problem-title"></h5>
     <div id="problem-description" class="problem-description"></div>
-
     <pre id="problem-code" style="background: #eeeedd; padding: 20px; border-radius: 10px;"></pre>
+
+    <a name="comments"></a>
+    <div id="problem-review-section">
+    </div>
   </div>
+
 </div>
 {% endmacro %}
 
