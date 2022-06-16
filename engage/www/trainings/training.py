@@ -27,6 +27,7 @@ def get_context(context):
     client = frappe.get_doc("Client", training.client)
 
     participants = frappe.get_all("Training Participant", filters={"parent": tname}, fields=["jh_username", "jh_password", "parent", "user"])
+    trainers = frappe.get_all("Training Trainer", filters={"parent": tname}, pluck="user")
 
     solved_by_user = {}
     for p in participants:
@@ -47,6 +48,7 @@ def get_context(context):
             "active": user == frappe.session.user
         }
         for user, submissions in solved_by_user.items()
+        if user not in trainers
     ]
 
     count_solved_by_user.sort(key=lambda k: k["count"], reverse=True)
