@@ -9,6 +9,8 @@
   "problem_set",
   "title",
   "status",
+  "publish_time",
+  "deadline",
   "slug"
  ],
  "fields": [
@@ -32,19 +34,29 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Hidden\nActive\nLocked"
+   "options": "Pending\nPublished\nClosed"
   },
   {
    "fieldname": "slug",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Slug"
+  },
+  {
+   "fieldname": "publish_time",
+   "fieldtype": "Datetime",
+   "label": "Publish Time"
+  },
+  {
+   "fieldname": "deadline",
+   "fieldtype": "Datetime",
+   "label": "Deadline"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-06-14 15:42:41.378067",
+ "modified": "2022-06-16 21:00:07.265247",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Problem Set Reference",
