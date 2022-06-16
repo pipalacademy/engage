@@ -32,6 +32,7 @@ def get_context(context):
     context.problem = problem
     context.psets = psets
     context.d = frappe.form_dict
+    context.latest_submission = solution
     context.data = {
         "problem_set": psets[pset_name].problem_set, 
         "problem": problem.as_json(), 

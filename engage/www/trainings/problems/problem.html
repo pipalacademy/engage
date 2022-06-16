@@ -55,6 +55,14 @@
     {{ Breadcrumbs() }}
     {{ render_problem(problem) }}
 
+    {% if latest_submission %}
+    {% set doctype, docname = 'Practice Problem Latest Submission', latest_submission.name %}
+    {% set title = 'Review Comments' %}
+    {% set cta_title = 'New Comment' %}
+    {% set single_thread = True %}
+    {% include "frappe/templates/discussions/discussions_section.html" %}
+    {% endif %}
+
     <div id="data" 
 	 data-problem-set='{{data.problem_set}}'
 	 data-training='{{data.training}}'

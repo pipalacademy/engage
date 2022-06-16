@@ -176,7 +176,6 @@ $(function() {
                 frappe.msgprint("Successfully submitted solution for problem " + problem);     
                 submissions[problem] = {problem: problem, code: code};
                 updateSubmissionStatus(problem);
-
             }
         });
     })
