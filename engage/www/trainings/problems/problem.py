@@ -28,7 +28,7 @@ def get_context(context):
     context.t = t
     context.problem_set = psets[pset_name]
     context.problem_set_title = problem_set_title
-    context.can_submit = psets[pset_name].status != "Locked"
+    context.can_submit = psets[pset_name].status != "Closed"
     context.problem = problem
     context.psets = psets
     context.d = frappe.form_dict

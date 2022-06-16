@@ -56,6 +56,22 @@ def get_context(context):
     except StopIteration:
         user_participant = None
 
+    nowtime = frappe.utils.now_datetime()
+    modified = False
+
+    for pset in training.problem_sets:
+        if pset.status == "Pending" and time_is_between(nowtime, pset.publish_time, pset.deadline):
+            pset.status = "Published"
+            modified = True
+
+        elif pset.status in {"Published", "Pending"} and nowtime >= pset.deadline:
+            pset.status = "Closed"
+            modified = True
+
+    if modified:
+        training.save(ignore_permissions=True)
+        frappe.db.commit()
+
     context.t = training
     context.client = client
     context.participant = user_participant
@@ -69,3 +85,7 @@ def get_training(id):
         return frappe.get_doc("Training", id)
     except frappe.exceptions.DoesNotExistError:
         return
+
+
+def time_is_between(val, lesser, greater):
+    return lesser <= val and val <= greater

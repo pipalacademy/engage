@@ -39,15 +39,6 @@
 	<pre class="output m-1"></pre>
     </div>
 
-    {% set reviews = frappe.get_all("Problem Review", filters={"problem": name, "user": frappe.session.user}, fields=['comment', 'correctness', 'clarity']) %}
-    {% set review = reviews and reviews[0] %}
-    {% if review.comment %}
-    <div class="comment-wrapper p-5" style="background: #efe7bc;">
-	<h4>Review</h4>
-	<p class="comment">{{frappe.utils.md_to_html(review.comment)}}</p>
-    </div>
-    {% else %}
-    {% endif %}
 </div>
 {% endmacro %}
 

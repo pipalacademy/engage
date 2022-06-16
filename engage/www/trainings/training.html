@@ -67,9 +67,19 @@
 
 {% macro ProblemSet(pset) %}
 {% set doc = frappe.get_doc("Problem Set", pset.problem_set) %}
+{% if pset.status in ['Closed', 'Published'] %}
 <div class="card">
     <div class="card-body">
-	<h5 class="card-title">{{ pset.title }}</h5>
+	<h5 class="card-title">
+	  {{ pset.title }}
+
+	  {% if pset.status == 'Closed' %}
+	  <span class="indicator-pill red filterable ellipsis" data-filter="seen,=,0" title="Document is in draft state">
+	      <span class="ellipsis"> Closed</span>
+	  </span>
+	  {% endif %}
+
+	</h5>
 
 	<div>{{doc.problems | length}} problems</div>
     </div>
@@ -84,6 +94,7 @@
 	{% endfor %}
     </ul>
 </div>
+{% endif %}
 {% endmacro %}
 
 {% macro ProblemSets() %}
