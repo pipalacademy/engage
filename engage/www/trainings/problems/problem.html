@@ -12,7 +12,7 @@
 {% endmacro %}
 
 {% macro render_problem(problem) %}
-<h2>{{problem.title}}</h2>
+<div class="h2">{{problem.title}}</div>
 <div class="problem-description">{{frappe.utils.md_to_html(problem.description) }}</div>
 
 {% if not can_submit %}
