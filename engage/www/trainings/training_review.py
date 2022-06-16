@@ -82,6 +82,7 @@ def get_context(context):
     context.num_participants = len(participants)
     context.problem_sets = problem_sets
     context.get_participant_review_link = lambda p: p and f"/trainings/{t.name}/review?p={p.user}"
+    context.get_participant_full_name = lambda p, limit: p and truncate(p.full_name, limit) or ""
     context.first_participant = first_participant
     context.first_problem = first_problem
 
@@ -121,3 +122,9 @@ def get_latest_submission(author, training, problem_set, problem):
 
 def get_starter_code(problem):
     return problem.code_files[0].content
+
+
+def truncate(text, limit):
+    if len(text) > limit:
+        return text[:limit-3] + "..."
+    return text
