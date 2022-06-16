@@ -1,6 +1,9 @@
 import frappe
 
+from engage.utils import require_login
 
+
+@require_login
 def get_context(context):
     training_name = f"{frappe.form_dict.year}/{frappe.form_dict.training}"
     pset_name = frappe.form_dict.problem_set

@@ -1,8 +1,12 @@
 import frappe
 
+from engage.utils import require_login
+
+
 NOT_FOUND_TEMPLATE = "www/404.html"
 
 
+@require_login
 def get_context(context):
     try:
         year = frappe.form_dict["year"]

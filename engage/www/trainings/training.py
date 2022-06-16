@@ -1,6 +1,9 @@
 import frappe
 
+from engage.utils import require_login
 
+
+@require_login
 def get_context(context):
     context.no_cache = 1
 
