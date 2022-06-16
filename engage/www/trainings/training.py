@@ -60,11 +60,11 @@ def get_context(context):
     modified = False
 
     for pset in training.problem_sets:
-        if pset.status == "Pending" and time_is_between(nowtime, pset.publish_time, pset.deadline):
+        if pset.publish_time and pset.status == "Pending" and nowtime >= pset.publish_time:
             pset.status = "Published"
             modified = True
 
-        elif pset.status in {"Published", "Pending"} and nowtime >= pset.deadline:
+        if pset.deadline and pset.status in {"Published", "Pending"} and nowtime >= pset.deadline:
             pset.status = "Closed"
             modified = True
 
