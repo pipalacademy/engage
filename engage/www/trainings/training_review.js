@@ -56,6 +56,10 @@ function loadProblemFromURL() {
 function updateParticipantNav(problemName) {
     ($("#nav-participant").find("#prev-link")[0] || {}).hash = problemName;
     ($("#nav-participant").find("#next-link")[0] || {}).hash = problemName;
+
+    $(".participant-review-link").each(function() {
+	this.hash = problemName;
+    });
 }
 
 function updateProblemNav(prev, next) {

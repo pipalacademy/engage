@@ -36,7 +36,7 @@
 
     <ul class="list-group list-group-flush">
       {% for p in participants %}
-      <a class="list-group-item list-group-item-action {{'active' if p.active}}"
+      <a class="list-group-item list-group-item-action participant-review-link {{'active' if p.active}}"
 	 href="/trainings/{{t.name}}/review?p={{ p.user }}">
 	{{p.full_name}} - {{p.num_solved}}
       </a>
