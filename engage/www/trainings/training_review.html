@@ -73,6 +73,8 @@
 											 data-title='{{ p.title }}'
 											 data-description='{{ frappe.utils.md_to_html(p.description) | e }}'
 											 data-code='{{ p.code | e }}'
+											 data-latest-submission-review='{{ p.latest_submission_review | e }}'
+
 											 data-next="{{ loop.nextitem.name if loop.nextitem else '' }}"
 											 data-next-title="{{ loop.nextitem.title if loop.nextitem else '' }}"
 											 data-prev="{{ loop.previtem.name if loop.previtem else '' }}"
@@ -111,6 +113,9 @@
 
     <nav id="nav-problem" class="my-2" data-first-problem="{{ first_problem }}">
     </nav>
+
+    <div id="problem-review-section">
+    </div>
   </div>
 
 </div>

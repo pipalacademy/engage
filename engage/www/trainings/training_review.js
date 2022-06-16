@@ -1,16 +1,20 @@
 var firstProblem;
+var activeProblem = null;
 
 function showProblem(selector) {
     var data = $(selector).data();
-    console.log(data);
     $("#problem-title").html(data.title);
     $("#problem-description").html(data.description);
     $("#problem-code").html("");
     $("#problem-code").html(data.code || "<em>Not solved</em>");
-    // $("#problem-code").html(data.solution.code);
 
     updateParticipantNav(data.problemName);
     updateProblemNav(data.prev, data.prevTitle, data.next, data.nextTitle);
+
+    $("#problem-review-section").html(data.latestSubmissionReview);
+    // this is needed to trigger the javascript in discussions template 
+    frappe.trigger_ready();
+
 }
 
 function getProblemLink(problemName) {

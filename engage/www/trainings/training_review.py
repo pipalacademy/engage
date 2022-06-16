@@ -25,7 +25,7 @@ def get_context(context):
     latest_submissions = frappe.get_list(
         "Practice Problem Latest Submission",
         filters={"training": t.name},
-        fields=["author", "problem", "code"],
+        fields=["name", "author", "problem", "code", "latest_submission"],
         page_length=10000,
     )
     solved_by_user = {}
@@ -64,11 +64,20 @@ def get_context(context):
 
         for problem in pset.problems:
             if username:
-                problem.code = solved_by_user.get(username,
-                                                  {}).get(problem.name,
-                                                          {}).get("code", "")
+                submission = solved_by_user.get(username,
+                                                {}).get(problem.name, {})
+                problem.code = submission.get("code", "")
+                problem.latest_submission_review = frappe.render_template(
+                    "frappe/templates/discussions/discussions_section.html", {
+                        "doctype": "Practice Problem Latest Submission",
+                        "docname": submission["name"],
+                        "title": "Review Comments",
+                        "cta_title": "New Comment",
+                        "single_thread": True,
+                    }) if "name" in submission else ""
             else:
                 problem.code = get_starter_code(problem)
+                problem.latest_submission_review = ""
 
     first_participant = participants and participants[0] or None
     first_problem = problem_sets and problem_sets[0] and problem_sets[
