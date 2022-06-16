@@ -10,7 +10,7 @@ class Status:
 
 
 def get_context(context):
-    if frappe.session.user == "Guest":
+    if not frappe.session.user or frappe.session.user == "Guest":
         context.template = "www/redirect_to_login.html"
         return
 
