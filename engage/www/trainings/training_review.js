@@ -6,7 +6,7 @@ function showProblem(selector) {
     $("#problem-title").html(data.title);
     $("#problem-description").html(data.description);
     $("#problem-code").html("");
-    $("#problem-code").html(data.code || "<em>Not solved</em>");
+    $("#problem-code").html(data.code !== null ? JSON.parse(data.code) : "<em>Not solved</em>");
 
     updateParticipantNav(data.problemName);
     updateProblemNav(data.prev, data.prevTitle, data.next, data.nextTitle);

@@ -66,7 +66,7 @@ def get_context(context):
             if username:
                 submission = solved_by_user.get(username,
                                                 {}).get(problem.name, {})
-                problem.code = submission.get("code", "")
+                problem.code = submission.get("code")
                 problem.latest_submission_review = frappe.render_template(
                     "frappe/templates/discussions/discussions_section.html", {
                         "doctype": "Practice Problem Latest Submission",

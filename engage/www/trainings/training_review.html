@@ -72,7 +72,7 @@
       <a class="list-group-item list-group-item-action problem-link" href="javascript:;" id="problem-{{ p.name }}"
 											 data-title='{{ p.title }}'
 											 data-description='{{ frappe.utils.md_to_html(p.description) | e }}'
-											 data-code='{{ p.code | e }}'
+											 data-code='{{ p.code | tojson | e }}'
 											 data-latest-submission-review='{{ p.latest_submission_review | e }}'
 
 											 data-next="{{ loop.nextitem.name if loop.nextitem else '' }}"
