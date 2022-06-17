@@ -63,6 +63,17 @@ class LiveCodeEditor {
       this.writeOutput(msg.output);
     })
   }
+  runTests() {
+    this.reset();
+    frappe.call('engage.livecode.run_tests', {
+      problem: this.problem,
+      code: this.getCode(),
+    })
+    .then(r => {
+      var msg = r.message;
+      this.showTestResult(msg);
+    })
+  }
   triggerEvent(name) {
       var events = this.options.events;
       if (events && events[name]) {
@@ -91,6 +102,10 @@ class LiveCodeEditor {
 
       this.codemirror = CodeMirror.fromTextArea(this.elementCode, options)
     }
+
+    $(this.parent).find(".run-tests").click(() => {
+      this.runTests();
+    });
   }
 
   getCode() {
@@ -116,5 +131,21 @@ class LiveCodeEditor {
     if (this.elementOutput) {
       this.elementOutput.innerHTML += html;
     }
+  }
+
+  showTestResult(d) {
+    var output = this.elementOutput;
+    function print(text) {
+        $(output).append(text + "\n");
+    }
+
+    print(`Test Status: ${d.outcome} (${d.stats.passed} passed and ${d.stats.failed} failed)`)
+    d.testcases.forEach((t, i) => {
+        print(`\n${i+1}. ${t.name} ... ${t.outcome}`);
+        if (t.outcome == "failed") {
+            print("")
+            print(t.error_detail.replaceAll(/^/mg, "    "));
+        }
+    })
   }
 }
