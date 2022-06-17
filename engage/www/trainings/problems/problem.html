@@ -21,10 +21,8 @@
 </div>
 {% endif %}
 
-<div class="code-editor" 
-     data-problem="{{problem.name}}" 
-     data-setup-code='{{problem.setup_code or "" | tojson}}' 
-     data-tests='{{problem.test_files[0].content | tojson}}'>
+<div class="code-editor"
+     data-problem="{{problem.name}}">
     <div class="heading">
 	<input type="text" class="arguments" placeholder="arguments">
 	<button class="btn btn-secondary btn-sm run">Run</button>

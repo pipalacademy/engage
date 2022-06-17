@@ -28,102 +28,17 @@ $(function() {
   function getTestFiles(problem) {
     return problem.files.filter(f => f.kind == "test");
   }
-  
+
   $(".code-editor").each(function(index, e) {
-    var codeFiles = getCodeFiles(data.problem);
-    var dataFiles = getDataFiles(data.problem);
-    var testFiles = getTestFiles(data.problem);
-
-    var setupCode = (codeFiles && codeFiles[0].content) || "";
-
-    var files = codeFiles.concat(dataFiles).map(f => {
-      return {
-	"filename": f.relative_path,
-	"contents": f.contents,
-      }
-    });
-
     var editor = new LiveCodeEditor(e, {
-      base_url: "https://livecode.pipal.in",
       runtime: "python",
       codemirror: true,
-      files: files,
-      env: {
-        "FALCON_SOURCE_FILE": codeFiles[0].relative_path,
-      },
-      events: {
-        beforeRun: function() {
-          var args = $(e).find(".arguments").val().trim().split(/\s+/);
-          if (args[0] === "") {
-              args = [];
-          }
-          editor.command = args;
-        //   console.log("arguments", arguments, editor.command);
-        }
-      }
+      problem: data.problem
     });
+
     var problem = $(e).data("problem");
     editors[problem] = editor;
-    
-    $(e).find(".run-tests").click(async () => {
-        var data_ = $(e).data();
 
-        var problem = data_.problem;
-        var code = editor.getCode();
-        var setupCode = JSON.parse(data_.setupCode || '""');
-
-        var tests = JSON.parse(data_.tests);
-        var output = editors[problem].elementOutput;
-        
-        //var url = "https://falcon.pipal.in/exec";
-        // var url = "http://localhost:8010/exec";
-        var url = "https://falcon.mon.school/exec";
-        
-        var data = {
-            "runtime": "python",
-            "code": code,
-            "files": [
-                {"filename": "test_main.py", "contents": tests},
-                {"filename": "_init.py", "contents": setupCode}
-            ],
-            "env": {
-                "FALCON_MODE": "test"
-            }
-        }
-        $(output).html("");
-        
-        var result = await fetch(url, {
-          method: "POST",
-          mode: "cors",
-          cache: "no-cache",
-          headers: {
-            "Content-Type": "application/json"    
-          },
-          body: JSON.stringify(data)
-        });
-
-        if (problem == "List files in a zip file") {
-            console.log("zip file");
-            var text = await result.text();
-            console.log("text:", text);
-            return;
-        }
-        else {
-
-            var d;
-            try {
-                d = await result.json();
-            } 
-            catch (e) {
-                console.log("ERROR:", e)
-            }
-        }
-
-        showTestResult(output, d);        
-        // $(output).html(JSON.stringify(d));
-    });    
-    
-  
     // args: output element, data
     function showTestResult(output, d) {
         if (!d) {
