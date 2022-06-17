@@ -44,8 +44,7 @@ $(function() {
     });
 
     var editor = new LiveCodeEditor(e, {
-    //   base_url: "https://falcon.pipal.in",
-      base_url: "https://falcon.mon.school",
+      base_url: "https://livecode.pipal.in",
       runtime: "python",
       codemirror: true,
       files: files,
