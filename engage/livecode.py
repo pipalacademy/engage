@@ -12,7 +12,7 @@ def get_livecode_url():
     return "https://livecode.pipal.in"
 
 @frappe.whitelist(allow_guest=True)
-def execute(problem, code):
+def execute(problem, code, args=""):
     """Runs the code for given problem.
 
     The response format will be like:
@@ -25,6 +25,7 @@ def execute(problem, code):
         {"message":{"ok":true,"output":"hello\n"}}
     """
     runner = ProblemRunner(problem)
+    runner.set_args(args)
     return runner.execute(code)
 
 @frappe.whitelist(allow_guest=True)
@@ -55,12 +56,17 @@ class ProblemRunner:
     def __init__(self, problem_name):
         self.problem = frappe.get_doc("Practice Problem", problem_name)
         self.source_file = self.problem.code_files[0].relative_path
+        self.args = ""
+
+    def set_args(self, args):
+        self.args = args
 
     def prepare_headers(self, mode):
         source_file = self.source_file
         return {
             "x-falcon-mode": mode,
-            "x-falcon-env": f"FALCON_SOURCE_FILE={source_file}"
+            "x-falcon-env": f"FALCON_SOURCE_FILE={source_file}",
+            "x-falcon-args": self.args
         }
 
     def prepare_files(self, code, mode):

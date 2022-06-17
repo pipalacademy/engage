@@ -30,8 +30,6 @@ class LiveCodeEditor {
     this.options = options;
     this.parent = element;
 
-    console.log("LiveCodeEditor", this.options);
-
     this.base_url = options.base_url;
     this.runtime = options.runtime;
 
@@ -42,6 +40,8 @@ class LiveCodeEditor {
     this.elementRun = this.parent.querySelector(".run");
     this.elementClear = this.parent.querySelector(".clear");
     this.elementReset = this.parent.querySelector(".reset");
+    this.elementArguments = this.parent.querySelector(".arguments");
+
     this.codemirror = null;
     this.setupActions()
   }
@@ -52,10 +52,11 @@ class LiveCodeEditor {
     this.triggerEvent("beforeRun");
     this.reset();
 
-    console.log("run", this.problem, this.getCode());
+    var args = $(this.elementArguments).val().trim();
     frappe.call('engage.livecode.execute', {
       problem: this.problem,
-      code: this.getCode()
+      code: this.getCode(),
+      args: args
     })
     .then(r => {
       var msg = r.message;
