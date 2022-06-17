@@ -64,8 +64,14 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2022-05-28 20:08:07.096792",
+ "links": [
+  {
+   "group": "Problems",
+   "link_doctype": "Practice Problem",
+   "link_fieldname": "problem_repository"
+  }
+ ],
+ "modified": "2022-06-17 10:46:55.835313",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Problem Repository",
