@@ -67,7 +67,6 @@
 
 {% macro ProblemSet(pset) %}
 {% set doc = frappe.get_doc("Problem Set", pset.problem_set) %}
-{% if pset.status in ['Closed', 'Published'] %}
 <div class="card">
 	<div class="card-body">
 		<h5 class="card-title">
@@ -95,14 +94,13 @@
 		{% endfor %}
 	</ul>
 </div>
-{% endif %}
 {% endmacro %}
 
 {% macro ProblemSets() %}
 <div class="h3">Problem Sets</div>
-{% if t.problem_sets %}
+{% if problem_sets %}
 <div class="row">
-	{% for pset in t.problem_sets %}
+	{% for pset in problem_sets %}
 	<div class="col-md-4">
 		{{ ProblemSet(pset) }}
 	</div>

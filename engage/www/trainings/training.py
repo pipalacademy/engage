@@ -64,9 +64,15 @@ def get_context(context):
         training.save(ignore_permissions=True)
         frappe.db.commit()
 
+    problem_sets = [
+        pset for pset in training.problem_sets
+        if pset.status in {"Published", "Closed"}
+    ]
+
     context.t = training
     context.client = client
     context.participant = user_participant
+    context.problem_sets = problem_sets
 
     context.title = training.title
     context.submissions = solved_by_user.get(frappe.session.user, {})
