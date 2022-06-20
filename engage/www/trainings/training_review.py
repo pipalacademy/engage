@@ -2,7 +2,6 @@ import frappe
 
 from engage.utils import require_login
 
-
 NOT_FOUND_TEMPLATE = "www/404.html"
 
 
@@ -51,9 +50,13 @@ def get_context(context):
         trainer.full_name = frappe.get_cached_doc("User",
                                                   trainer.user).full_name
 
+    if t.refresh_problem_sets():
+        t.save(ignore_permissions=True)
+        frappe.db.commit()
+
     problem_sets = [
         frappe.get_cached_doc("Problem Set", row.problem_set)
-        for row in t.problem_sets
+        for row in t.problem_sets if row.status in {"Published", "Closed"}
     ]
 
     for pset in problem_sets:
@@ -91,7 +94,8 @@ def get_context(context):
     context.num_participants = len(participants)
     context.problem_sets = problem_sets
     context.get_participant_review_link = lambda p: p and f"/trainings/{t.name}/review?p={p.user}"
-    context.get_participant_full_name = lambda p, limit: p and truncate(p.full_name, limit) or ""
+    context.get_participant_full_name = lambda p, limit: p and truncate(
+        p.full_name, limit) or ""
     context.first_participant = first_participant
     context.first_problem = first_problem
 
@@ -135,5 +139,5 @@ def get_starter_code(problem):
 
 def truncate(text, limit):
     if len(text) > limit:
-        return text[:limit-3] + "..."
+        return text[:limit - 3] + "..."
     return text

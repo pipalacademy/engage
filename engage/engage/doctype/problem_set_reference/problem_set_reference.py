@@ -1,8 +1,28 @@
 # Copyright (c) 2022, Pipal Academy and contributors
 # For license information, please see license.txt
 
-# import frappe
+import frappe
 from frappe.model.document import Document
 
+
 class ProblemSetReference(Document):
-	pass
+
+    def refresh_status(self):
+        """
+        Refreshes status depending on the publish_time and deadline.
+        Returns True if the status was changed
+        """
+        nowtime = frappe.utils.now_datetime()
+        modified = False
+
+        if (self.publish_time and self.status == "Pending"
+                and nowtime >= self.publish_time):
+            self.status = "Published"
+            modified = True
+
+        if (self.deadline and self.status in {"Published", "Pending"}
+                and nowtime >= self.deadline):
+            self.status = "Closed"
+            modified = True
+
+        return modified

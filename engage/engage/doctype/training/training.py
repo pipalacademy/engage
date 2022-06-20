@@ -4,7 +4,9 @@
 # import frappe
 from frappe.model.document import Document
 
+
 class Training(Document):
+
     def autoname(self):
         if not self.slug:
             self.slug = slugify(self.title) + "-" + self.client
@@ -26,6 +28,17 @@ class Training(Document):
             user = user.name
 
         return any(filter(lambda p: p.user == user, self.participants))
+
+    def refresh_problem_sets(self):
+        """
+        Refreshes status of problem sets.
+        Returns True if any of the problem sets was changed
+        """
+        modified = False
+        for pset in self.problem_sets:
+            modified = modified or pset.refresh_status()
+
+        return modified
 
     def before_save(self):
         self._add_trainers_as_participants()
@@ -52,4 +65,3 @@ class Training(Document):
 
 def slugify(s):
     return s.lower().replace(" ", "-")
-
