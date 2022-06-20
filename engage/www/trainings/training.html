@@ -2,66 +2,66 @@
 
 {% macro render_breadcrumbs() %}
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-	<li class="breadcrumb-item"><a href="/">Trainings</a></li>
-	<li class="breadcrumb-item active" aria-current="page">{{ t.title }}</li>
-    </ol>
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item"><a href="/">Trainings</a></li>
+		<li class="breadcrumb-item active" aria-current="page">{{ t.title }}</li>
+	</ol>
 </nav>
 {% endmacro %}
 
 {% macro Sidebar() %}
 <div class="sidebar">
-    <div class="card">
-	<div class="card-body">
-	    <h5 class="card-title">Training Notes</h5>
-	    <a href="{{ t.live_notes_url }}" class="btn btn-secondary" target="_blank">Open Training Notes</a>
-	</div>
-    </div>
-
-    <div class="card">
-	<div class="card-body">
-	    <h5 class="card-title">Jupyter Lab</h5>
-
-	    <p>Your credentials to access Jupyter Lab:</p>
-	    <p>
-	    Username: {{participant.jh_username}}<br>
-	    Password: {{participant.jh_password}}
-	    </p>
-
-	    <a href="{{ t.jupyterhub_url }}" class="btn btn-secondary" target="_blank">Launch Jupyter Lab</a>
-	</div>
-    </div>
-
-    <div class="card">
-	<div class="card-body">
-	    <h5 class="card-title">Leaderboard</h5>
+	<div class="card">
+		<div class="card-body">
+			<h5 class="card-title">Training Notes</h5>
+			<a href="{{ t.live_notes_url }}" class="btn btn-secondary" target="_blank">Open Training Notes</a>
+		</div>
 	</div>
 
-	<ul class="list-group list-group-flush">
-	  {% for count_solved in count_solved_by_user %}
-	  <div class="list-group-item list-group-item-action {{'active' if count_solved.active}}">
-	      <div class="row px-0 mx-0 ">
-		  <div class="col-2 p-0 text-left">
-		      {% if loop.first %}
-		      <span class="crown-icon"><i class="fa-solid fa-crown"></i></span>
-		      {% endif %}
-		  </div>
-		  <div class="col-8 p-0 leaderboard_participant-name">{{ count_solved.full_name }}</div>
-		  <div class="col-2 p-0 text-right">{{ count_solved.count }}</div>
-	      </div>
-	  </div>
-	  {% endfor %}
-	</ul>
-    </div>
+	<div class="card">
+		<div class="card-body">
+			<h5 class="card-title">Jupyter Lab</h5>
 
-    {% for s in t.sidebar_sections %}
-    <div class="card">
-	<div class="card-body">
-	    <h5 class="card-title">{{ s.title }}</h5>
-	    {{ frappe.utils.md_to_html(s.body) }}
+			<p>Your credentials to access Jupyter Lab:</p>
+			<p>
+				Username: {{participant.jh_username}}<br>
+				Password: {{participant.jh_password}}
+			</p>
+
+			<a href="{{ t.jupyterhub_url }}" class="btn btn-secondary" target="_blank">Launch Jupyter Lab</a>
+		</div>
 	</div>
-    </div>
-    {% endfor %}
+
+	<div class="card">
+		<div class="card-body">
+			<h5 class="card-title">Leaderboard</h5>
+		</div>
+
+		<ul class="list-group list-group-flush">
+			{% for count_solved in count_solved_by_user %}
+			<div class="list-group-item list-group-item-action {{'active' if count_solved.active}}">
+				<div class="row px-0 mx-0 ">
+					<div class="col-2 p-0 text-left">
+						{% if loop.first %}
+						<span class="crown-icon"><i class="fa-solid fa-crown"></i></span>
+						{% endif %}
+					</div>
+					<div class="col-8 p-0 leaderboard_participant-name">{{ count_solved.full_name }}</div>
+					<div class="col-2 p-0 text-right">{{ count_solved.count }}</div>
+				</div>
+			</div>
+			{% endfor %}
+		</ul>
+	</div>
+
+	{% for s in t.sidebar_sections %}
+	<div class="card">
+		<div class="card-body">
+			<h5 class="card-title">{{ s.title }}</h5>
+			{{ frappe.utils.md_to_html(s.body) }}
+		</div>
+	</div>
+	{% endfor %}
 </div>
 {% endmacro %}
 
@@ -69,30 +69,31 @@
 {% set doc = frappe.get_doc("Problem Set", pset.problem_set) %}
 {% if pset.status in ['Closed', 'Published'] %}
 <div class="card">
-    <div class="card-body">
-	<h5 class="card-title">
-	  {{ pset.title }}
+	<div class="card-body">
+		<h5 class="card-title">
+			{{ pset.title }}
 
-	  {% if pset.status == 'Closed' %}
-	  <span class="indicator-pill red filterable ellipsis" data-filter="seen,=,0" title="Document is in draft state">
-	      <span class="ellipsis"> Closed</span>
-	  </span>
-	  {% endif %}
+			{% if pset.status == 'Closed' %}
+			<span class="indicator-pill red filterable ellipsis" data-filter="seen,=,0"
+				title="Document is in draft state">
+				<span class="ellipsis"> Closed</span>
+			</span>
+			{% endif %}
 
-	</h5>
+		</h5>
 
-	<div>{{doc.problems | length}} problems</div>
-    </div>
+		<div>{{doc.problems | length}} problems</div>
+	</div>
 
-    <ul class="list-group list-group-flush">
-	{% for p in doc.problems %}
-	<li class="list-group-item"><a
-	    href="/trainings/{{t.name}}/problems/{{pset.slug}}/{{p.problem}}">{{p.problem_title}}</a>
-	    {% if p.problem in submissions %} - submitted
-	    {% endif %}
-	</li>
-	{% endfor %}
-    </ul>
+	<ul class="list-group list-group-flush">
+		{% for p in doc.problems %}
+		<li class="list-group-item"><a
+				href="/trainings/{{t.name}}/problems/{{pset.slug}}/{{p.problem}}">{{p.problem_title}}</a>
+			{% if p.problem in submissions %} - submitted
+			{% endif %}
+		</li>
+		{% endfor %}
+	</ul>
 </div>
 {% endif %}
 {% endmacro %}
@@ -101,11 +102,11 @@
 <div class="h3">Problem Sets</div>
 {% if t.problem_sets %}
 <div class="row">
-    {% for pset in t.problem_sets %}
-    <div class="col-md-4">
-	{{ ProblemSet(pset) }}
-    </div>
-    {% endfor %}
+	{% for pset in t.problem_sets %}
+	<div class="col-md-4">
+		{{ ProblemSet(pset) }}
+	</div>
+	{% endfor %}
 </div>
 {% else %}
 <em>No problem sets have been assigned to you so far. Please check again later.</em>
@@ -114,41 +115,41 @@
 
 {% macro TrainingBody() %}
 <div class="row">
-    <div class="col-md-9">
-	<div class="training-body">
-	    {{ ProblemSets() }}
+	<div class="col-md-9">
+		<div class="training-body">
+			{{ ProblemSets() }}
+		</div>
 	</div>
-    </div>
-    <div class="col-md-3">
-	{{ Sidebar() }}
-    </div>
+	<div class="col-md-3">
+		{{ Sidebar() }}
+	</div>
 </div>
 {% endmacro %}
 
 {% block page_content %}
 <div class="training-page">
-    {{ render_breadcrumbs() }}
+	{{ render_breadcrumbs() }}
 
-    <div class="training-header">
-	<div class="h2">{{t.title}}</div>
-	<div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
-	    frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
-	<div class="d-flex justify-content-between align-items-center">
-	    <div>{{client.title}}</div>
+	<div class="training-header">
+		<div class="h2">{{t.title}}</div>
+		<div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
+			frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
+		<div class="d-flex justify-content-between align-items-center">
+			<div>{{client.title}}</div>
 
-	    {% if t.can_review %}
-	    <div>
-		<a class="text-decoration-none" href="/trainings/{{t.name}}/review">
-		    <i class="fa-regular fa-eye"></i> Review
-		</a>
-	    </div>
-	    {% endif %}
+			{% if t.can_review %}
+			<div>
+				<a class="text-decoration-none" href="/trainings/{{t.name}}/review">
+					<i class="fa-regular fa-eye"></i> Review
+				</a>
+			</div>
+			{% endif %}
+		</div>
 	</div>
-    </div>
-    {% if participant %}
-    {{ TrainingBody() }}
-    {% else %}
-    <div class="alert alert-danger">You are not a participant of this training.</div>
-    {% endif %}
+	{% if participant %}
+	{{ TrainingBody() }}
+	{% else %}
+	<div class="alert alert-danger">You are not a participant of this training.</div>
+	{% endif %}
 </div>
 {% endblock %}

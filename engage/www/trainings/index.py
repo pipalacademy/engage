@@ -13,7 +13,9 @@ class Status:
 
 @require_login
 def get_context(context):
-    trainings = unique_trainings(get_trainings_by_trainer(frappe.session.user) + get_trainings_by_participant(frappe.session.user))
+    trainings = unique_trainings(
+        get_trainings_by_trainer(frappe.session.user) +
+        get_trainings_by_participant(frappe.session.user))
     trainings.sort(key=lambda t: t.begin_date)
 
     trainings_by_status = split_trainings_by_status(trainings)
@@ -24,12 +26,17 @@ def get_context(context):
 def get_trainings_by_trainer(trainer):
     """Get trainings by trainer's user ID (i.e. email)"""
 
-    training_names = frappe.get_all(
-        "Training Trainer",
-        filters={"user": trainer, "parenttype": "Training"},
-        pluck="parent")
+    training_names = frappe.get_all("Training Trainer",
+                                    filters={
+                                        "user": trainer,
+                                        "parenttype": "Training"
+                                    },
+                                    pluck="parent")
 
-    trainings = [frappe.get_doc("Training", training_name) for training_name in training_names]
+    trainings = [
+        frappe.get_doc("Training", training_name)
+        for training_name in training_names
+    ]
     for t in trainings:
         t.as_trainer = True
 
@@ -37,12 +44,17 @@ def get_trainings_by_trainer(trainer):
 
 
 def get_trainings_by_participant(participant):
-    training_names = frappe.get_all(
-        "Training Participant",
-        filters={"user": participant, "parenttype": "Training"},
-        pluck="parent")
+    training_names = frappe.get_all("Training Participant",
+                                    filters={
+                                        "user": participant,
+                                        "parenttype": "Training"
+                                    },
+                                    pluck="parent")
 
-    trainings = [frappe.get_doc("Training", training_name) for training_name in training_names]
+    trainings = [
+        frappe.get_doc("Training", training_name)
+        for training_name in training_names
+    ]
 
     return trainings
 
