@@ -30,9 +30,6 @@ def get_context(context):
         "Training Participant",
         filters={"parent": tname},
         fields=["jh_username", "jh_password", "parent", "user"])
-    trainers = frappe.get_all("Training Trainer",
-                              filters={"parent": tname},
-                              pluck="user")
 
     solved_by_user = {}
     for p in participants:
@@ -45,14 +42,6 @@ def get_context(context):
 
     for row in rows:
         solved_by_user[row["author"]][row["problem"]] = row
-
-    count_solved_by_user = [{
-        "count": len(submissions),
-        "full_name": frappe.get_cached_doc("User", user).full_name,
-        "active": user == frappe.session.user
-    } for user, submissions in solved_by_user.items() if user not in trainers]
-
-    count_solved_by_user.sort(key=lambda k: k["count"], reverse=True)
 
     try:
         user_participant = next(p for p in participants
@@ -76,7 +65,6 @@ def get_context(context):
 
     context.title = training.title
     context.submissions = solved_by_user.get(frappe.session.user, {})
-    context.count_solved_by_user = count_solved_by_user
 
 
 def get_training(id):
