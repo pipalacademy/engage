@@ -86,23 +86,24 @@ function truncate(text, limit) {
     return text;
 }
 
-$(function () {
-    firstProblem = $("#nav-problem").data().firstProblem;
-    loadProblemFromURL();
-
-    $(".problem-link").on('click', function () {
-        document.location = getProblemLink(this.id.slice("problem-".length));
-
-        beforeShowProblem(this);
-        showProblem(this);
-
-        return false;
-    });
-
-    $("#nav-problem").on('click', ".problem-nav-link", function () {
-        document.location = this.href;
-        loadProblemFromURL();
-
-        return false;
-    });
-});
+// $(function () {
+//     firstProblem = $("#nav-problem").data().firstProblem;
+//     loadProblemFromURL();
+// 
+//     $(".problem-link").on('click', function () {
+//         document.location = getProblemLink(this.id.slice("problem-".length));
+// 
+//         beforeShowProblem(this);
+//         showProblem(this);
+// 
+//         return false;
+//     });
+// 
+//     $("#nav-problem").on('click', ".problem-nav-link", function () {
+//         document.location = this.href;
+//         loadProblemFromURL();
+// 
+//         return false;
+//     });
+// });
+// 

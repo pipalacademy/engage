@@ -15,14 +15,18 @@ class ProblemSetReference(Document):
         nowtime = frappe.utils.now_datetime()
         modified = False
 
-        if (self.publish_time and self.status == "Pending"
+        if (self.publish_time and not self.is_published
                 and nowtime >= self.publish_time):
             self.status = "Published"
             modified = True
 
-        if (self.deadline and self.status in {"Published", "Pending"}
+        if (self.deadline and self.is_published
                 and nowtime >= self.deadline):
             self.status = "Closed"
             modified = True
 
         return modified
+
+    @property
+    def is_published(self):
+        return self.status in {"Published", "Closed"}

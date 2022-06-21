@@ -4,7 +4,7 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a href="/trainings/">Trainings</a></li>
-    <li class="breadcrumb-item"><a href="/trainings/{{ t.name }}/">{{ t.title }}</a></li>
+    <li class="breadcrumb-item"><a href="/trainings/{{ training.name }}/">{{ training.title }}</a></li>
     <li class="breadcrumb-item active">Review</li>
   </ol>
 </nav>
@@ -28,20 +28,23 @@
 
 {% macro Sidebar() %}
 <div class="sidebar">
-  <div class="card">
+  <div class="card mt-0">
     <div class="d-flex justify-content-between card-body">
       <div class="h5 card-title">Participants</div>
-      <div>
-        <a class="text-decoration-none" href="/trainings/{{ t.name }}/review"><i
-            class="fa-solid fa-arrows-rotate"></i></a>
-      </div>
     </div>
 
     <ul class="list-group list-group-flush">
-      {% for p in participants %}
-      <a class="list-group-item list-group-item-action participant-review-link {{'active' if p.active}}"
-        href="/trainings/{{t.name}}/review?p={{ p.user }}">
-        {{p.full_name}} - {{p.num_solved}}
+      <li class="list-group-item d-flex justify-content-between">
+        <span><strong>Name</strong></span>
+        <span><strong>Solved</strong></span>
+      </li>
+      {% for p in training.participants %}
+      <a class="list-group-item list-group-item-action participant-review-link {{ 'active' if p.active }}"
+        href="/trainings/{{training.name}}/review?{{ dictupdate(q, updates={'participant': p.user}) | urlencode }}">
+        <div class="d-flex justify-content-between">
+          <span>{{ p.full_name }}</span>
+          <span>{{ p.num_solved }}</span>
+        </div>
       </a>
       {% endfor %}
     </ul>
@@ -65,22 +68,17 @@
 </div>
 {% endmacro %}
 
-{% macro ProblemSets() %}
-<div class="row">
-  <div class="col-md-4">
-    <ul class="list-group">
-      {% for ps in problem_sets %}
-      <span class="list-group-item"><strong>{{ps.title}}</strong></span>
-      {% for p in ps.problems %}
-      <a class="list-group-item list-group-item-action problem-link" href="javascript:;" id="problem-{{ p.name }}"
-        data-title='{{ p.title }}' data-description='{{ frappe.utils.md_to_html(p.description) | e }}'
-        data-code='{{ p.code | tojson | e }}' data-latest-submission-review='{{ p.latest_submission_review | e }}'
-        data-next="{{ loop.nextitem.name if loop.nextitem else '' }}"
-        data-next-title="{{ loop.nextitem.title if loop.nextitem else '' }}"
-        data-prev="{{ loop.previtem.name if loop.previtem else '' }}"
-        data-prev-title="{{ loop.previtem.title if loop.previtem else '' }}" data-problem-name="{{ p.name }}">
+{% macro LeftSidebar() %}
+<ul class="list-group">
+  {% for ps in problem_sets %}
+  <span class="list-group-item"><strong>{{ps.title}}</strong></span>
+  {% for problem_ref in ps.problems %}
+  <a class="list-group-item list-group-item-action problem-link {{ 'active' if problem_ref.problem == problem.name }}"
+    href="/trainings/{{ training.name }}/review?{{ dictupdate(q, {'problem': problem_ref.problem})|urlencode() }}">
+    <div class="d-flex justify-content-between">
+      <span>
         <svg class="icon icon-sm">
-          {% if not p.solution %}
+          {% if not problem_ref.solution %}
           {% elif p.solution.test_outcome == "passed" %}
           <use href="#icon-tick"></use>
           {% elif p.solution.test_outcome == "failed" %}
@@ -88,46 +86,67 @@
           {% else %}
           {% endif %}
         </svg>
-        {{p.title}}
-      </a>
-      {% endfor %}
-      {% endfor %}
-    </ul>
-  </div>
-
-  <div class="col-md-8 problem-page">
-    <nav id="nav-participant" class="mb-6 w-100">
-      {% if not (prev_participant or next_participant) %}
-      {% set next_participant = first_participant %}
+        <span>{{problem_ref.problem_title}}</span>
+      </span>
+      {% if problem_ref.problem in user_submissions %}
+      <span class="align-items-bottom">
+        <i class="fa-solid fa-circle-check"></i>
+      </span>
       {% endif %}
-
-      {% set name_length = 24 %}
-      {{ NavigationButtons(get_participant_review_link(prev_participant), get_participant_full_name(prev_participant,
-      name_length), "Participant", get_participant_review_link(next_participant),
-      get_participant_full_name(next_participant, name_length)) }}
-    </nav>
-
-    <h5 id="problem-title"></h5>
-    <div id="problem-description" class="problem-description"></div>
-
-    <pre id="problem-code"
-      style="background: #eeeedd; padding: 20px; border-radius: 10px;"><em class="m-0 p-0">Select a problem to see its code.</em></pre>
-
-    <nav id="nav-problem" class="my-2" data-first-problem="{{ first_problem }}">
-    </nav>
-
-    <div id="problem-review-section">
     </div>
-  </div>
+  </a>
+  {% endfor %}
+  {% endfor %}
+</ul>
+{% endmacro %}
 
+{% macro Problem(problem) %}
+{% set submission = user_submissions.get(problem.name) %}
+<div class="problem-page">
+  {#<nav id="nav-participant" class="mb-6 w-100">
+    {% if not (prev_participant or next_participant) %}
+    {% set next_participant = first_participant %}
+    {% endif %}
+
+    {% set name_length = 24 %}
+    {{ NavigationButtons(get_participant_review_link(prev_participant), get_participant_full_name(prev_participant,
+    name_length), "Participant", get_participant_review_link(next_participant),
+    get_participant_full_name(next_participant, name_length)) }}
+  </nav>#}
+
+  <div class="h5" id="problem-title">{{ problem.title }}</div>
+  <div id="problem-description" class="problem-description">{{ frappe.utils.md_to_html(problem.description) }}</div>
+
+  <pre id="problem-code" style="background: #eeeedd; padding: 20px; border-radius: 10px;">
+    {%- if submission is none -%}
+    <em>Not submitted</em>
+    {%- else -%}
+    {{ submission.code | e }}
+    {%- endif -%}
+  </pre>
+
+  {% if submission.name %}
+  <div id="problem-review-section">
+    {% set doctype = "Practice Problem Latest Submission" %}
+    {% set docname = submission.name %}
+    {% set title = "Review Comments" %}
+    {% set cta_title = "New Comment" %}
+    {% set single_thread = True %}
+    {% include "frappe/templates/discussions/discussions_section.html" %}
+  </div>
+  {% endif %}
 </div>
 {% endmacro %}
 
 {% macro TrainingBody() %}
 <div class="row">
-  <div class="col-md-9">
-    <div class="training-body">
-      {{ ProblemSets() }}
+  <div class="col-md-3">
+    {{ LeftSidebar() }}
+  </div>
+
+  <div class="col-md-6">
+    <div class="training-body mt-0">
+      {{ Problem(problem) }}
     </div>
   </div>
   <div class="col-md-3">
@@ -136,28 +155,30 @@
 </div>
 {% endmacro %}
 
+{% macro EmptyTrainingBody(need) %}
+<em>Please add {{ need }} to the training</em>
+{% endmacro %}
+
 {% block page_content %}
 <div class="training-page">
   {{ render_breadcrumbs() }}
 
   <div class="training-header">
-    <div class="h2">{{t.title}}</div>
-    <div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
-      frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
+    <div class="h2">{{training.title}}</div>
+    <div class="training-dates">{{frappe.utils.format_date(training.begin_date, "MMM dd")}} - {{
+      frappe.utils.format_date(training.end_date, "MMM dd") }}, {{training.end_date.year}}</div>
     <div>
+      {% set client = frappe.get_doc("Client", training.client) %}
       <div>{{client.title}}</div>
     </div>
-    {% if trainers|length > 1 %}
-    {% set other_trainers = trainers|selectattr("user", "!=", frappe.session.user) %}
-    {# other_trainers = (t for t in trainers if t.user != frappe.session.user) #}
-    <div>
-      With
-      {% for trainer in other_trainers %}
-      {{trainer.full_name}}{% if not loop.last %},{% endif %}
-      {% endfor %}
-    </div>
-    {% endif %}
   </div>
+
+  {% if not participant %}
+  {{ EmptyTrainingBody("participants") }}
+  {% elif not problem %}
+  {{ EmptyTrainingBody("problems") }}
+  {% else %}
   {{ TrainingBody() }}
+  {% endif %}
 </div>
 {% endblock %}
