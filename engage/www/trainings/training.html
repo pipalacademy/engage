@@ -131,6 +131,7 @@
 	{{ render_breadcrumbs() }}
 
 	<div class="training-header">
+		{% set client = frappe.get_doc("Client", t.client) %}
 		<div class="h2">{{t.title}}</div>
 		<div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
 			frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>

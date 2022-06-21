@@ -21,9 +21,15 @@ def get_context(context):
         context.template = "www/404.html"
         return
 
-    member = get_member(training, frappe.session.user)
-    if member.is_trainer:
+    context.t = training
+    context.title = training.title
+
+    context.participant = member = get_member(training, frappe.session.user)
+    if member and member.is_trainer:
         training.can_review = True
+
+    if not member:
+        return
 
     user_submissions_list = frappe.get_all(
         "Practice Problem Latest Submission",
@@ -43,12 +49,7 @@ def get_context(context):
         pset for pset in training.problem_sets if pset.is_published
     ]
 
-    context.t = training
-    context.client = frappe.get_doc("Client", training.client)
-    context.participant = member
     context.problem_sets = problem_sets
-
-    context.title = training.title
     context.submissions = user_submissions
 
 
