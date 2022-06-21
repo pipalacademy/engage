@@ -19,8 +19,7 @@
 		<i class="fa-solid fa-clock"></i> {{ training.timing or "N/A" }}
 	</div>
 	<div class="col-1 p-0 text-center">
-		<!-- TODO kaustubh. hack fix. change when trainer/participant role is fixed -->
-		<i class="fa-solid fa-user-graduate"></i> {{ training.participants|length - training.trainers|length }}
+		<i class="fa-solid fa-user-graduate"></i> {{ training.participants|length }}
 	</div>
 </div>
 {%- endmacro %}

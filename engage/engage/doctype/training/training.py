@@ -41,7 +41,7 @@ class Training(Document):
         return modified
 
     def before_save(self):
-        self._add_trainers_as_participants()
+        # self._add_trainers_as_participants()
         self._set_slug_on_problem_sets()
 
     def _add_trainers_as_participants(self):

@@ -21,50 +21,35 @@ def get_context(context):
         context.template = "www/404.html"
         return
 
-    if training.has_user_as_trainer(frappe.session.user):
+    member = get_member(training, frappe.session.user)
+    if member.is_trainer:
         training.can_review = True
 
-    client = frappe.get_doc("Client", training.client)
-
-    participants = frappe.get_all(
-        "Training Participant",
-        filters={"parent": tname},
-        fields=["jh_username", "jh_password", "parent", "user"])
-
-    solved_by_user = {}
-    for p in participants:
-        solved_by_user[p["user"]] = {}
-
-    rows = frappe.get_all("Practice Problem Latest Submission",
-                          filters={"training": tname},
-                          fields=["author", "problem"],
-                          page_length=1000)
-
-    for row in rows:
-        solved_by_user[row["author"]][row["problem"]] = row
-
-    try:
-        user_participant = next(p for p in participants
-                                if p.user == frappe.session.user)
-    except StopIteration:
-        user_participant = None
+    user_submissions_list = frappe.get_all(
+        "Practice Problem Latest Submission",
+        filters={
+            "training": tname,
+            "author": member.user
+        },
+        fields=["problem"],
+        page_length=1000)
+    user_submissions = {sub["problem"]: sub for sub in user_submissions_list}
 
     if training.refresh_problem_sets():
         training.save(ignore_permissions=True)
         frappe.db.commit()
 
     problem_sets = [
-        pset for pset in training.problem_sets
-        if pset.status in {"Published", "Closed"}
+        pset for pset in training.problem_sets if pset.is_published
     ]
 
     context.t = training
-    context.client = client
-    context.participant = user_participant
+    context.client = frappe.get_doc("Client", training.client)
+    context.participant = member
     context.problem_sets = problem_sets
 
     context.title = training.title
-    context.submissions = solved_by_user.get(frappe.session.user, {})
+    context.submissions = user_submissions
 
 
 def get_training(id):
@@ -76,3 +61,19 @@ def get_training(id):
 
 def time_is_between(val, lesser, greater):
     return lesser <= val and val <= greater
+
+
+def get_member(training, username):
+    for p in training.participants:
+        if p.user == username:
+            p.is_trainer = training.has_user_as_trainer(p.user)
+            return p
+
+    for t in training.trainers:
+        if t.user == username:
+            t.is_trainer = True
+            t.jh_username = getattr(t, "jh_username", None)
+            t.jh_password = getattr(t, "jh_password", None)
+            return t
+
+    return
