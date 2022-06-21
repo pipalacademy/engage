@@ -31,8 +31,9 @@ def get_context(context):
     ]
 
     participant_name = frappe.form_dict.get("participant")
-    context.participant = participant = get_participant_from(
+    participant, prev_participant, next_participant = get_participant_and_prevnext(
         training.participants, participant_name)
+    context.participant, context.prev_participant, context.next_participant = participant, prev_participant, next_participant
 
     problem_name = frappe.form_dict.get("problem")
     problem, prev_problem, next_problem = get_problem_and_prevnext(
@@ -117,14 +118,17 @@ def get_first_truthy(itr, key=None):
     return next_or_none(item for item in itr if key(item))
 
 
-def get_participant_from(participants, participant_name):
-    if participant_name:
-        participant = get_first_truthy(
-            participants, key=lambda p: p.user == participant_name)
-    else:
-        participant = get_first_truthy(participants)
+def get_participant_and_prevnext(participants, participant_name):
+    prev = None
 
-    return participant
+    participants_iter = iter(participants)
+    for participant in participants_iter:
+        if participant.user == participant_name:
+            return participant, prev, next_or_none(participants_iter)
+        prev = participant
+    else:
+        iterator = iter(participants)
+        return next_or_none(iterator), None, next_or_none(iterator)
 
 
 def get_problem_and_prevnext(problem_sets, problem_name):

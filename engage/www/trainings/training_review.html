@@ -10,48 +10,36 @@
 </nav>
 {% endmacro %}
 
-{% macro NavigationButtons(previousLink, previousText, middleText, nextLink, nextText) %}
-<ul class="pagination pagination-sm justify-content-center">
-  <li class="page-item {{ previousLink if previousLink else " disabled" }} w-100">
-    <a id="prev-link" class="page-link" href="{{ previousLink if previousLink else " #" }}" tabindex="-1"><i
-        class="fa-solid fa-arrow-left"></i> {{ previousText }}</a>
-  </li>
-  <li class="page-item active">
-    <a class="page-link">{{ middleText }}</a>
-  </li>
-  <li class="page-item {{ nextLink if nextLink else " disabled" }} w-100 text-right">
-    <a id="next-link" class="page-link" href="{{ nextLink if nextLink else " #" }}">{{ nextText }}<i
-        class="fa-solid fa-arrow-right"></i></a>
-  </li>
-</ul>
-{% endmacro %}
-
 {% macro Sidebar() %}
-<div class="sidebar">
-  <div class="card mt-0">
-    <div class="d-flex justify-content-between card-body">
-      <div class="h5 card-title">Participants</div>
+<ul class="list-group">
+
+  <li class="list-group-item p-0">
+    <div class="row m-0 p-0">
+      <a {{ hrefify(get_review_link(training.name, problem=q['problem'], participant=prev_participant.user)) if
+        prev_participant }} class="col-6 text-decoration-none text-center border-right mx-0 py-1 pl-2">Previous</a>
+      <a {{ hrefify(get_review_link(training.name, problem=q['problem'], participant=next_participant.user)) if
+        next_participant }} class="col-6 text-decoration-none text-center border-left mx-0 py-1 pr-2">Next</a>
     </div>
+  </li>
 
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item d-flex justify-content-between">
-        <span><strong>Name</strong></span>
-        <span><strong>Solved</strong></span>
-      </li>
-      {% for p in training.participants %}
-      <a class="list-group-item list-group-item-action participant-review-link {{ 'active' if p.active }}"
-        href="{{ get_review_link(training.name, problem=q['problem'], participant=p.user) }}">
-        <div class="d-flex justify-content-between">
-          <span>{{ p.full_name }}</span>
-          <span>{{ p.num_solved }}</span>
-        </div>
-      </a>
-      {% endfor %}
-    </ul>
+  <li class="list-group-item d-flex justify-content-between card-body">
+    <div class="h5 card-title">Participants</div>
+  </li>
 
-  </div>
-
-</div>
+  <li class="list-group-item d-flex justify-content-between">
+    <span><strong>Name</strong></span>
+    <span><strong>Solved</strong></span>
+  </li>
+  {% for p in training.participants %}
+  <a class="list-group-item list-group-item-action {{ 'active' if p.active }}"
+    href="{{ get_review_link(training.name, problem=q['problem'], participant=p.user) }}">
+    <div class="d-flex justify-content-between">
+      <span>{{ p.full_name }}</span>
+      <span>{{ p.num_solved }}</span>
+    </div>
+  </a>
+  {% endfor %}
+</ul>
 {% endmacro %}
 
 {% macro ProblemSet(pset) %}
@@ -77,11 +65,9 @@ href="{{ url }}"
   <li class="list-group-item p-0">
     <div class="row m-0 p-0">
       <a {{ hrefify(get_review_link(training.name, problem=prev_problem.problem, participant=participant.user)) if
-        prev_problem }}
-        class="col-6 text-center border-right mx-0 py-1 pl-2 {{ ' disabled' if prev_problem is none }}">Previous</a>
+        prev_problem }} class="col-6 text-decoration-none text-center border-right mx-0 py-1 pl-2">Previous</a>
       <a {{ hrefify(get_review_link(training.name, problem=next_problem.problem, participant=participant.user)) if
-        next_problem }}
-        class="col-6 text-center border-left mx-0 py-1 pr-2 {{ 'disabled' if next_problem is none }}">Next</a>
+        next_problem }} class="col-6 text-decoration-none text-center border-left mx-0 py-1 pr-2">Next</a>
     </div>
   </li>
 
@@ -119,17 +105,6 @@ href="{{ url }}"
 {% macro Problem(problem) %}
 {% set submission = user_submissions.get(problem.name) %}
 <div class="problem-page">
-  {#<nav id="nav-participant" class="mb-6 w-100">
-    {% if not (prev_participant or next_participant) %}
-    {% set next_participant = first_participant %}
-    {% endif %}
-
-    {% set name_length = 24 %}
-    {{ NavigationButtons(get_participant_review_link(prev_participant), get_participant_full_name(prev_participant,
-    name_length), "Participant", get_participant_review_link(next_participant),
-    get_participant_full_name(next_participant, name_length)) }}
-  </nav>#}
-
   <div class="h5" id="problem-title">{{ problem.title }}</div>
   <div id="problem-description" class="problem-description">{{ frappe.utils.md_to_html(problem.description) }}</div>
 
@@ -140,18 +115,25 @@ href="{{ url }}"
     {{ submission.code | e }}
     {%- endif -%}
   </pre>
-
-  {% if submission.name %}
-  <div id="problem-review-section">
-    {% set doctype = "Practice Problem Latest Submission" %}
-    {% set docname = submission.name %}
-    {% set title = "Review Comments" %}
-    {% set cta_title = "New Comment" %}
-    {% set single_thread = True %}
-    {% include "frappe/templates/discussions/discussions_section.html" %}
-  </div>
-  {% endif %}
 </div>
+
+<div>
+  {{ Discussions(problem) }}
+</div>
+{% endmacro %}
+
+{% macro Discussions(problem) %}
+{% set submission = user_submissions.get(problem.name) %}
+{% if submission.name %}
+<div id="problem-review-section">
+  {% set doctype = "Practice Problem Latest Submission" %}
+  {% set docname = submission.name %}
+  {% set title = "Review Comments" %}
+  {% set cta_title = "New Comment" %}
+  {% set single_thread = True %}
+  {% include "frappe/templates/discussions/discussions_section.html" %}
+</div>
+{% endif %}
 {% endmacro %}
 
 {% macro TrainingBody() %}
@@ -165,6 +147,7 @@ href="{{ url }}"
       {{ Problem(problem) }}
     </div>
   </div>
+
   <div class="col-md-3">
     {{ Sidebar() }}
   </div>
