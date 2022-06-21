@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 import frappe
 
 from engage.utils import require_login
@@ -14,7 +16,7 @@ def get_context(context):
         context.template = NOT_FOUND_TEMPLATE
         return
 
-    training = get_training(year, slug)
+    context.training = training = get_training(year, slug)
     if not (training and training.has_user_as_trainer(frappe.session.user)):
         context.template = NOT_FOUND_TEMPLATE
         return
@@ -23,16 +25,22 @@ def get_context(context):
         training.save(ignore_permissions=True)
         frappe.db.commit()
 
-    published_problem_sets = [
+    context.problem_sets = published_problem_sets = [
         frappe.get_doc("Problem Set", ps.problem_set)
         for ps in training.problem_sets if ps.is_published
     ]
 
     participant_name = frappe.form_dict.get("participant")
-    participant = get_participant_from(training.participants, participant_name)
+    context.participant = participant = get_participant_from(
+        training.participants, participant_name)
 
     problem_name = frappe.form_dict.get("problem")
-    problem = get_problem(published_problem_sets, problem_name)
+    problem, prev_problem, next_problem = get_problem_and_prevnext(
+        published_problem_sets, problem_name)
+    context.problem, context.prev_problem, context.next_problem = problem, prev_problem, next_problem
+
+    if not problem or not participant:
+        return
 
     submissions = get_latest_submissions_for_training(training.name)
 
@@ -41,20 +49,11 @@ def get_context(context):
         p.active = p.name == participant.name
         p.num_solved = len(submissions.get(p.user, []))
 
-    context.training = training
-    context.q = remove_none({
-        "participant": participant_name,
-        "problem": problem_name
-    })
-    context.dictupdate = dictupdate
-    context.problem_sets = published_problem_sets
-    context.problem = problem
-    context.participant = participant
+    context.q = {"participant": participant_name, "problem": problem_name}
+    context.get_review_link = get_review_link
     context.user_submissions = submissions.get(participant.user, {})
     context.submission = submissions.get(participant.user,
                                          {}).get(problem.name)
-    # context.client = frappe.get_doc("Client", training.client)
-    # context.q = {"participant": participant_name, "problem": problem_name}
 
 
 def get_training(year, slug):
@@ -115,10 +114,7 @@ def truncate(text, limit):
 def get_first_truthy(itr, key=None):
     key = key or (lambda x: x)
 
-    try:
-        return next(item for item in itr if key(item))
-    except StopIteration:
-        None
+    return next_or_none(item for item in itr if key(item))
 
 
 def get_participant_from(participants, participant_name):
@@ -131,23 +127,44 @@ def get_participant_from(participants, participant_name):
     return participant
 
 
-def get_problem(problem_sets, problem_name):
-    if problem_name:
-        problem = frappe.get_doc("Practice Problem", problem_name)
+def get_problem_and_prevnext(problem_sets, problem_name):
+    prev = None
+
+    probs_iter = flatten_to_problems(problem_sets)
+    for problem_ref in probs_iter:
+        if problem_ref.problem == problem_name:
+            problem = frappe.get_doc("Practice Problem", problem_name)
+            return problem, prev, next_or_none(probs_iter)
+        prev = problem_ref
     else:
-        first_pset = get_first_truthy(problem_sets, key=lambda ps: ps.problems)
-        problem_name = first_pset and first_pset.problems[0].problem
-        problem = problem_name and frappe.get_doc("Practice Problem",
-                                                  problem_name)
-
-    return problem
-
-
-def remove_none(dict_):
-    return {k: v for k, v in dict_.items() if v is not None}
+        iterator = flatten_to_problems(problem_sets)
+        problem_ref = next_or_none(iterator)
+        problem = problem_ref and frappe.get_doc("Practice Problem",
+                                                 problem_ref.problem)
+        return problem, None, next_or_none(iterator)
 
 
-def dictupdate(dict_, updates):
-    ret = dict_.copy()
-    ret.update(updates)
-    return ret
+def get_review_link(training_name, problem=None, participant=None):
+    qs = {}
+
+    if problem:
+        qs.update(problem=problem)
+
+    if participant:
+        qs.update(participant=participant)
+
+    to_append = f"?{urlencode(qs)}" if qs else ""
+
+    return f"/trainings/{training_name}/review{to_append}"
+
+
+def flatten_to_problems(problem_sets):
+    for pset in problem_sets:
+        yield from pset.problems
+
+
+def next_or_none(iterator):
+    try:
+        return next(iterator)
+    except StopIteration:
+        return
