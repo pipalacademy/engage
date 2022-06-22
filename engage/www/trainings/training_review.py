@@ -30,6 +30,12 @@ def get_context(context):
         for ps in training.problem_sets if ps.is_published
     ]
 
+    submissions = get_latest_submissions_for_training(training.name)
+    for p in training.participants:
+        p.num_solved = len(submissions.get(p.user, []))
+
+    training.participants.sort(key=lambda p: p.num_solved, reverse=True)
+
     participant_name = frappe.form_dict.get("participant")
     participant, prev_participant, next_participant = get_participant_and_prevnext(
         training.participants, participant_name)
@@ -43,12 +49,9 @@ def get_context(context):
     if not problem or not participant:
         return
 
-    submissions = get_latest_submissions_for_training(training.name)
-
     for p in training.participants:
         p.full_name = frappe.get_cached_doc("User", p.user).full_name
         p.active = p.name == participant.name
-        p.num_solved = len(submissions.get(p.user, []))
 
     context.q = {"participant": participant_name, "problem": problem_name}
     context.get_review_link = get_review_link
