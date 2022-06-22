@@ -9,7 +9,8 @@ import frappe
 import requests
 
 def get_livecode_url():
-    return "https://livecode.pipal.in"
+    engage_settings = frappe.get_doc("Engage Settings")
+    return engage_settings.livecode_url
 
 @frappe.whitelist(allow_guest=True)
 def execute(problem, code, args=""):
