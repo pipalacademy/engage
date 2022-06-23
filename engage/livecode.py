@@ -10,6 +10,7 @@ import requests
 
 def get_livecode_url():
     engage_settings = frappe.get_doc("Engage Settings")
+    assert engage_settings.livecode_url, "Livecode URL is not set"
     return engage_settings.livecode_url
 
 @frappe.whitelist(allow_guest=True)
