@@ -20,7 +20,7 @@ class ProblemSetReference(Document):
             self.status = "Published"
             modified = True
 
-        if (self.deadline and self.is_published
+        if (self.deadline and not self.is_closed
                 and nowtime >= self.deadline):
             self.status = "Closed"
             modified = True
@@ -30,3 +30,7 @@ class ProblemSetReference(Document):
     @property
     def is_published(self):
         return self.status in {"Published", "Closed"}
+
+    @property
+    def is_closed(self):
+        return self.status == "Closed"
