@@ -2,21 +2,13 @@ from urllib.parse import urlencode
 
 import frappe
 
-from engage.utils import require_login
-
-NOT_FOUND_TEMPLATE = "www/404.html"
+from engage.utils import require_login, with_training
 
 
 @require_login
-def get_context(context):
-    try:
-        year = frappe.form_dict["year"]
-        slug = frappe.form_dict["slug"]
-    except KeyError:
-        context.template = NOT_FOUND_TEMPLATE
-        return
-
-    context.training = training = get_training(year, slug)
+@with_training
+def get_context(context, training):
+    context.training = training
     if not (training and training.has_user_as_trainer(frappe.session.user)):
         context.template = NOT_FOUND_TEMPLATE
         return
@@ -58,14 +50,6 @@ def get_context(context):
     context.user_submissions = submissions.get(participant.user, {})
     context.submission = submissions.get(participant.user,
                                          {}).get(problem.name)
-
-
-def get_training(year, slug):
-    tname = f"{year}/{slug}"
-    try:
-        return frappe.get_doc("Training", tname)
-    except frappe.exceptions.DoesNotExistError:
-        return
 
 
 def get_children(child_doctype, parent_name, parent_doctype=None, fields="*"):

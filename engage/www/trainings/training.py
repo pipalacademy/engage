@@ -1,26 +1,11 @@
 import frappe
 
-from engage.utils import require_login
+from engage.utils import require_login, with_training
 
 
 @require_login
-def get_context(context):
-    context.no_cache = 1
-
-    try:
-        year = frappe.form_dict["year"]
-        slug = frappe.form_dict["slug"]
-    except KeyError:
-        context.template = "www/404.html"
-        return
-    else:
-        tname = f"{year}/{slug}"
-
-    training = get_training(tname)
-    if not training:
-        context.template = "www/404.html"
-        return
-
+@with_training
+def get_context(context, training):
     context.t = training
     context.title = training.title
 
@@ -34,7 +19,7 @@ def get_context(context):
     user_submissions_list = frappe.get_all(
         "Practice Problem Latest Submission",
         filters={
-            "training": tname,
+            "training": training.name,
             "author": member.user
         },
         fields=["problem"],
@@ -51,13 +36,6 @@ def get_context(context):
 
     context.problem_sets = problem_sets
     context.submissions = user_submissions
-
-
-def get_training(id):
-    try:
-        return frappe.get_doc("Training", id)
-    except frappe.exceptions.DoesNotExistError:
-        return
 
 
 def time_is_between(val, lesser, greater):
