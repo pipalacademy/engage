@@ -2,16 +2,14 @@ from urllib.parse import urlencode
 
 import frappe
 
-from engage.utils import require_login, with_training
+from engage.utils import require_login, require_trainer_role, with_training
 
 
 @require_login
 @with_training
+@require_trainer_role
 def get_context(context, training):
     context.training = training
-    if not (training and training.has_user_as_trainer(frappe.session.user)):
-        context.template = NOT_FOUND_TEMPLATE
-        return
 
     if training.refresh_problem_sets():
         training.save(ignore_permissions=True)
