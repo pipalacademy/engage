@@ -1,8 +1,24 @@
 # Copyright (c) 2022, Pipal Academy and contributors
 # For license information, please see license.txt
 
-# import frappe
+import frappe
 from frappe.model.document import Document
+
+
+participant_invitation_message = """
+# Invitation to Join Training
+
+Hey {{ invitee.first_name }}, 
+**{{ inviter.first_name }}** has invited you to join the training **{{ training.title }}**.
+
+You may have already received an email asking you to set your password.
+Once done, you will be able to see the trainings you have been invited to.
+Alternatively, you can use [this link]({{ training_url }}) to get to the
+page for this training.
+
+Regards,
+Engage Team
+"""
 
 
 class Training(Document):
@@ -40,6 +56,33 @@ class Training(Document):
 
         return modified
 
+    def add_participant(self, user, send_invitation_mail=False):
+        """
+        Adds a user as a participant to the training
+        """
+        if user.name in self.get_participant_usernames():
+            return False
+
+        self.append("participants", {"user": user.name})
+
+        if send_invitation_mail:
+            frappe.sendmail(
+                recipients=[user.name],
+                subject=frappe._(f"[Engage] Invitation to join training"),
+                as_markdown=True,
+                message=participant_invitation_message,
+                args={
+                    "training": self,
+                    "invitee": user,
+                    "inviter": frappe.get_doc("User", frappe.session.user),
+                }
+            )
+
+        return True
+
+    def get_participant_usernames(self):
+        return [p.user for p in self.participants]
+
     def before_save(self):
         # self._add_trainers_as_participants()
         self._set_slug_on_problem_sets()
@@ -61,6 +104,10 @@ class Training(Document):
         for pset_ref in self.problem_sets:
             if not pset_ref.slug:
                 pset_ref.slug = slugify(pset_ref.title)
+
+    @property
+    def url(self):
+        return frappe.get_url(f"/trainings/{training.name}/")
 
 
 def slugify(s):

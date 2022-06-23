@@ -58,6 +58,28 @@ def problem_set_update_comments():
     frappe.response["message"] = "done"
 
 
+@frappe.whitelist()
+def invite_participants():
+    max_invites = 10
+    training = frappe.get_doc("Training", frappe.form_dict["training"])
+
+    def get_data_as_tuples():
+        emails = (frappe.form_dict.get(f"email-{i}") for i in range(max_invites))
+        names = (frappe.form_dict.get(f"first-name-{i}") for i in range(max_invites))
+        return [(email, first_name) for email, first_name in zip(emails, names) if email and first_name]
+
+    for email, first_name in get_data_as_tuples():
+        if not frappe.db.exists("User", email):
+            user = add_user(email, first_name)
+        else:
+            user = frappe.get_doc("User", email)
+
+        training.add_participant(user, send_invitation_mail=True)
+        training.save()
+
+    return
+
+
 def update_comment(problem_set, problem, user, comment, correctness=None, clarity=None):
     result = frappe.get_list("Problem Review", filters={
         "problem_set": problem_set,
@@ -79,3 +101,21 @@ def update_comment(problem_set, problem, user, comment, correctness=None, clarit
 def update_comments(problem_set, user, comments):
     for problem, comment in comments.items():
         update_comment(problem_set=problem_set, problem=problem, user=user, comment=comment)
+
+
+def add_user(email, first_name=None, last_name=None, send_welcome_mail=True):
+    user = frappe.new_doc("User")
+    user.update({
+        "name": email,
+        "email": email,
+        "enabled": 1,
+        "first_name": first_name or email,
+        "last_name": last_name,
+        "user_type": "Website User",
+        "send_welcome_mail": 1 if send_welcome_mail else 0,
+    })
+
+    # not with ignore_permissions, since trainers would be system users
+    user.insert()
+
+    return user

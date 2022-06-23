@@ -38,19 +38,19 @@
 	    </div>
 
 	    <div class="col-11 col-md pr-md-0 border-md-right mb-1">
-		<input type="email" class="form-control" placeholder="Email">
+		<input type="email" name="email-{{ loop.index0 }}" class="form-control" placeholder="Email">
 	    </div>
 
 	    <div class="col-1 d-md-none">
 	    </div>
 
 	    <div class="col-11 col-md pl-md-0 border-md-left mb-1">
-		<input type="text" class="form-control" placeholder="First Name">
+		<input type="text" name="first-name-{{ loop.index0 }}" class="form-control" placeholder="First Name">
 	    </div>
 	</div>
 	{% endfor %}
 
-	<button class="btn btn-primary" type="submit" id="submit-invites">
+	<button id="submit-invite" class="btn btn-primary" type="submit">
 	    Invite
 	</button>
     </form>
@@ -65,7 +65,7 @@
 
     {{ TrainingHeader(training) }}
 
-    {{ InviteForm() }}
+    {{ InviteForm(training) }}
 </div>
 
 {% endblock %}
