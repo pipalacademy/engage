@@ -1,0 +1,71 @@
+{% extends "templates/custom_web.html" %}
+
+{% macro render_breadcrumbs() %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/trainings/">Trainings</a></li>
+    <li class="breadcrumb-item"><a href="/trainings/{{ training.name }}/">{{ training.title }}</a></li>
+    <li class="breadcrumb-item active">Invite</li>
+  </ol>
+</nav>
+
+{% endmacro %}
+
+{% macro TrainingHeader(training) %}
+
+<div class="training-header">
+    <div class="h2">{{training.title}}</div>
+    <div class="training-dates">{{frappe.utils.format_date(training.begin_date, "MMM dd")}} - {{
+	frappe.utils.format_date(training.end_date, "MMM dd") }}, {{training.end_date.year}}</div>
+    <div>
+	{% set client = frappe.get_doc("Client", training.client) %}
+	<div>{{client.title}}</div>
+    </div>
+</div>
+
+{% endmacro %}
+
+{% macro InviteForm(training) %}
+
+<div class="invite-form">
+    <form id="invite-form" data-training="{{ training.name }}">
+	{% for i in range(10) %}
+	<div class="row my-2">
+
+	    <div class="col-1">
+		{{ loop.index }}.
+	    </div>
+
+	    <div class="col-11 col-md pr-md-0 border-md-right mb-1">
+		<input type="email" class="form-control" placeholder="Email">
+	    </div>
+
+	    <div class="col-1 d-md-none">
+	    </div>
+
+	    <div class="col-11 col-md pl-md-0 border-md-left mb-1">
+		<input type="text" class="form-control" placeholder="First Name">
+	    </div>
+	</div>
+	{% endfor %}
+
+	<button class="btn btn-primary" type="submit" id="submit-invites">
+	    Invite
+	</button>
+    </form>
+</div>
+
+{% endmacro %}
+
+{% block page_content %}
+
+<div class="training-page">
+    {{ render_breadcrumbs() }}
+
+    {{ TrainingHeader(training) }}
+
+    {{ InviteForm() }}
+</div>
+
+{% endblock %}
