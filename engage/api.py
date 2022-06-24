@@ -1,17 +1,20 @@
 import json
 import frappe
 
+
 @frappe.whitelist()
 def get_problem_set_submissions():
     problem_set = frappe.form_dict["problem_set"]
     user = frappe.form_dict.get("user") or frappe.session.user
-    result = frappe.db.get_list(
-        "Practice Problem Submission", 
-        filters={"problem_set": problem_set, "owner": user}, 
-        fields=["problem", "code", "creation"],
-        order_by="creation",
-        page_length=10000)
-        
+    result = frappe.db.get_list("Practice Problem Submission",
+                                filters={
+                                    "problem_set": problem_set,
+                                    "owner": user
+                                },
+                                fields=["problem", "code", "creation"],
+                                order_by="creation",
+                                page_length=10000)
+
     solutions = {row.problem: row for row in result}
 
     frappe.response["message"] = solutions
@@ -26,7 +29,8 @@ def submit_practice_problem():
     training = frappe.form_dict["training"]
 
     if author != frappe.session.user:
-        raise frappe.exceptions.ValidationError("author isn't the logged-in user")
+        raise frappe.exceptions.ValidationError(
+            "author isn't the logged-in user")
 
     doc = frappe.get_doc({
         "problem_set": problem_set,
@@ -48,13 +52,12 @@ def problem_set_update_comments():
     problems = json.loads(frappe.form_dict['problems'])
 
     for p in problems:
-        update_comment(
-            problem_set=problem_set, 
-            problem=p['problem'], 
-            user=user, 
-            comment=p['comment'], 
-            correctness=p['correctness'],
-            clarity=p['clarity'])
+        update_comment(problem_set=problem_set,
+                       problem=p['problem'],
+                       user=user,
+                       comment=p['comment'],
+                       correctness=p['correctness'],
+                       clarity=p['clarity'])
 
     frappe.response["message"] = "done"
 
@@ -79,12 +82,18 @@ def invite_participants():
     return
 
 
-def update_comment(problem_set, problem, user, comment, correctness=None, clarity=None):
-    result = frappe.get_list("Problem Review", filters={
-        "problem_set": problem_set,
-        "problem": problem,
-        "user": user
-    })
+def update_comment(problem_set,
+                   problem,
+                   user,
+                   comment,
+                   correctness=None,
+                   clarity=None):
+    result = frappe.get_list("Problem Review",
+                             filters={
+                                 "problem_set": problem_set,
+                                 "problem": problem,
+                                 "user": user
+                             })
     name = result and result[0] or None
     if not name:
         return False
@@ -99,7 +108,10 @@ def update_comment(problem_set, problem, user, comment, correctness=None, clarit
 
 def update_comments(problem_set, user, comments):
     for problem, comment in comments.items():
-        update_comment(problem_set=problem_set, problem=problem, user=user, comment=comment)
+        update_comment(problem_set=problem_set,
+                       problem=problem,
+                       user=user,
+                       comment=comment)
 
 
 def add_user(email, first_name=None, last_name=None, send_welcome_mail=True):
