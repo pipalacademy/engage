@@ -1,3 +1,4 @@
+import json
 import frappe
 
 @frappe.whitelist()
@@ -60,13 +61,11 @@ def problem_set_update_comments():
 
 @frappe.whitelist()
 def invite_participants():
-    max_invites = 10
     training = frappe.get_doc("Training", frappe.form_dict["training"])
 
     def get_data_as_tuples():
-        emails = (frappe.form_dict.get(f"email-{i}") for i in range(max_invites))
-        names = (frappe.form_dict.get(f"first-name-{i}") for i in range(max_invites))
-        return [(email, first_name) for email, first_name in zip(emails, names) if email and first_name]
+        return ((invite["email"], invite["first_name"])
+                for invite in frappe.form_dict["invites"])
 
     for email, first_name in get_data_as_tuples():
         if not frappe.db.exists("User", email):
