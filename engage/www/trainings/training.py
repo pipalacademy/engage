@@ -12,6 +12,7 @@ def get_context(context, training):
     context.participant = member = get_member(training, frappe.session.user)
     if member and member.is_trainer:
         training.can_review = True
+        training.can_invite = True
 
     if not member:
         return

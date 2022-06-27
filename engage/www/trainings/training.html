@@ -137,16 +137,26 @@
 		<div class="h2">{{t.title}}</div>
 		<div class="training-dates">{{frappe.utils.format_date(t.begin_date, "MMM dd")}} - {{
 			frappe.utils.format_date(t.end_date, "MMM dd") }}, {{t.end_date.year}}</div>
-		<div class="d-flex justify-content-between align-items-center">
+		<div class="d-flex justify-content-between">
 			<div>{{client.title}}</div>
 
-			{% if t.can_review %}
 			<div>
-				<a class="text-decoration-none" href="/trainings/{{t.name}}/review">
-					<i class="fa-regular fa-eye"></i> Review
+				{% if t.can_invite %}
+				<a class="text-decoration-none" href="/trainings/{{t.name}}/invite">
+					<i class="fa-solid fa-user-plus"></i> Invite
 				</a>
+				{% endif %}
+
+				{% if t.can_invite and t.can_review %}
+				|
+				{% endif %}
+
+				{% if t.can_review %}
+				<a class="text-decoration-none" href="/trainings/{{t.name}}/review">
+					<i class="fa-solid fa-eye"></i> Review
+				</a>
+				{% endif %}
 			</div>
-			{% endif %}
 		</div>
 	</div>
 	{% if participant %}
