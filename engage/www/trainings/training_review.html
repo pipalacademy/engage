@@ -77,8 +77,6 @@ href="{{ url }}"
   {% for problem_ref in ps.problems %}
   {% set solution = user_submissions[problem_ref.problem] %}
 
-  {{ solution }}
-
   <a class="list-group-item list-group-item-action problem-link {{ 'active' if problem_ref.problem == problem.name }}"
     href="{{ get_review_link(training.name, problem=problem_ref.problem, participant=participant.user) }}">
     <div class="d-flex justify-content-between">
