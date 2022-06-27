@@ -26,8 +26,7 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Slug",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   },
   {
    "fieldname": "title",
@@ -96,7 +95,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-06-13 12:28:29.420687",
+ "modified": "2022-06-27 15:18:41.159646",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Practice Problem",
