@@ -1,4 +1,4 @@
-import frappe
+# import frappe
 
 from engage.utils import require_login, require_trainer_role, with_training
 

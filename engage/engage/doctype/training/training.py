@@ -4,7 +4,6 @@
 import frappe
 from frappe.model.document import Document
 
-
 participant_invitation_message = """
 # Invitation to Join Training
 
@@ -17,7 +16,7 @@ Alternatively, you can use [this link]({{ training_url }}) to get to the
 page for this training.
 
 Regards,
-Engage Team
+Pipal Academy
 """
 
 
@@ -64,7 +63,6 @@ class Training(Document):
             return False
 
         self.append("participants", {"user": user.name})
-
         if send_invitation_mail:
             frappe.sendmail(
                 recipients=[user.name],
@@ -75,8 +73,8 @@ class Training(Document):
                     "training": self,
                     "invitee": user,
                     "inviter": frappe.get_doc("User", frappe.session.user),
-                }
-            )
+                    "training_url": self.url,
+                })
 
         return True
 
@@ -107,7 +105,7 @@ class Training(Document):
 
     @property
     def url(self):
-        return frappe.get_url(f"/trainings/{training.name}/")
+        return frappe.utils.get_url(f"/trainings/{self.name}/")
 
 
 def slugify(s):

@@ -67,8 +67,9 @@ def invite_participants():
     training = frappe.get_doc("Training", frappe.form_dict["training"])
 
     def get_data_as_tuples():
+        invites = json.loads(frappe.form_dict["invites"])
         return ((invite["email"], invite["first_name"])
-                for invite in frappe.form_dict["invites"])
+                for invite in invites)
 
     for email, first_name in get_data_as_tuples():
         if not frappe.db.exists("User", email):
