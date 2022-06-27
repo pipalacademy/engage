@@ -39,7 +39,7 @@ class ProblemRepository(Document):
     def does_repo_exist(self):
         url = "https://api.github.com/repos/{self.github_repo_owner}/{self.github_repo_name}"
 
-        r = requests.get(gh_api_url)
+        r = requests.get(url)
         return r.ok
 
     def clone(self, to_path):
