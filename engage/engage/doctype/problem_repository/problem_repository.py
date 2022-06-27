@@ -92,7 +92,7 @@ class ProblemRepository(Document):
 
         # empty problem.files to re-add the files
         for f in problem.files:
-            frappe.delete_doc("Problem File", f.name)
+            f.delete()
 
         problem.reload()
 
