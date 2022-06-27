@@ -114,7 +114,7 @@ class ProblemRunner:
         if res.status_code != 200:
             return {
                 "ok": False,
-                "error": f"Exection failed with status code {res.status_code}",
+                "error": f"Execution failed with status code {res.status_code}",
                 "message": res.text
             }
         else:

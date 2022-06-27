@@ -1,10 +1,7 @@
 import os
 import yaml
-from collections import namedtuple
 from pathlib import Path
 from typing import Any, Dict, List, NamedTuple, Optional
-
-import git
 
 from .custom_types import PathString
 
@@ -51,7 +48,8 @@ class ParsedProblem:
         self.slug = slug or self.base_path.name
         self.title = title
         self.blurb = blurb
-        self.description_file = self.base_path / (description_file or "description.md")
+        self.description_file = self.base_path / (description_file
+                                                  or "description.md")
 
         self.description = parse_description_file(
             self.description_file,
@@ -67,18 +65,21 @@ class ParsedProblem:
 
         for kind in self.files:
             if kind in files:
-                self.files[kind] = [parse_problem_file(self.base_path, os.fspath(fpath))
-                    for fpath in files[kind]]
+                self.files[kind] = [
+                    parse_problem_file(self.base_path, os.fspath(fpath))
+                    for fpath in files[kind]
+                ]
 
         self.source = source
         self.source_url = source_url
 
 
-def parse_problem_repository(parent_directory: PathString) -> List[ParsedProblem]:
+def parse_problem_repository(
+        parent_directory: PathString) -> List[ParsedProblem]:
     """
     Gets all the problems from a problem repository
     """
-    parent_directory  = Path(parent_directory)
+    parent_directory = Path(parent_directory)
 
     problems = []
 

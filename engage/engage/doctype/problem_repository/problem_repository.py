@@ -16,13 +16,15 @@ from .util import get_commit_hash, get_default_branch, get_github_repo_url, get_
 
 
 class ProblemRepository(Document):
+
     def autoname(self):
         # slugify title
         self.name = self.title.lower().replace(" ", "-")
 
     def validate(self):
         if not is_github_username_valid(self.github_repo_owner):
-            raise frappe.exceptions.ValidationError("Repo owner username is not valid")
+            raise frappe.exceptions.ValidationError(
+                "Repo owner username is not valid")
 
         if not is_github_repo_name_valid(self.github_repo_name):
             raise frappe.exceptions.ValidationError("Repo name is not valid")
@@ -30,7 +32,9 @@ class ProblemRepository(Document):
     def before_insert(self):
         # set branch to default github branch
         if not self.branch:
-            self.branch = get_default_branch(self.github_repo_owner, self.github_repo_name, self.github_token)
+            self.branch = get_default_branch(self.github_repo_owner,
+                                             self.github_repo_name,
+                                             self.github_token)
 
     def does_repo_exist(self):
         url = "https://api.github.com/repos/{self.github_repo_owner}/{self.github_repo_name}"
@@ -44,7 +48,9 @@ class ProblemRepository(Document):
         
         Note: Performs a shallow clone only
         """
-        clone_url = get_github_repo_url(self.github_repo_owner, self.github_repo_name, token=self.github_token)
+        clone_url = get_github_repo_url(self.github_repo_owner,
+                                        self.github_repo_name,
+                                        token=self.github_token)
         return shallow_clone(clone_url, to_path, branch=self.branch)
 
     def update_problems(self):
@@ -88,31 +94,30 @@ class ProblemRepository(Document):
         problem.source_url = parsed_problem.source_url
 
         problem.commit_hash = commit_hash
-        problem.save()
 
         # empty problem.files to re-add the files
         for f in problem.files:
             f.delete()
 
-        problem.reload()
+        problem.files = []
 
         for (kind, pfile) in flatten_to_tuples(parsed_problem.files):
-            problem.append("files", {
-                "kind": kind,
-                "relative_path": pfile.relative_path,
-                "content": pfile.content,
-            })
+            problem.append(
+                "files", {
+                    "kind": kind,
+                    "relative_path": pfile.relative_path,
+                    "content": pfile.content,
+                })
 
         problem.save()
         return problem
 
     @frappe.whitelist()
     def is_update_available(self):
-        last_commit = get_latest_commit(
-                self.github_repo_owner,
-                self.github_repo_name,
-                self.branch,
-                token=self.github_token)
+        last_commit = get_latest_commit(self.github_repo_owner,
+                                        self.github_repo_name,
+                                        self.branch,
+                                        token=self.github_token)
         if last_commit != self.commit_hash:
             return last_commit
 
