@@ -1,6 +1,8 @@
 import json
 import frappe
 
+from engage.livecode import run_tests
+
 
 @frappe.whitelist()
 def get_problem_set_submissions():
@@ -32,12 +34,18 @@ def submit_practice_problem():
         raise frappe.exceptions.ValidationError(
             "author isn't the logged-in user")
 
+    result = run_tests(problem, code)
+    test_outcome = result["ok"] and result["outcome"] or None
+    test_result = result["ok"] and json.dumps(result) or None
+
     doc = frappe.get_doc({
         "problem_set": problem_set,
         "problem": problem,
         "code": code,
         "author": author,
         "training": training,
+        "test_outcome": test_outcome,
+        "test_result": test_result,
         "doctype": "Practice Problem Submission"
     }).insert(ignore_permissions=True)
 
@@ -68,8 +76,7 @@ def invite_participants():
 
     def get_data_as_tuples():
         invites = json.loads(frappe.form_dict["invites"])
-        return ((invite["email"], invite["first_name"])
-                for invite in invites)
+        return ((invite["email"], invite["first_name"]) for invite in invites)
 
     for email, first_name in get_data_as_tuples():
         if not frappe.db.exists("User", email):

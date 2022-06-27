@@ -77,7 +77,7 @@ def get_latest_submission(author, problem, **kwargs):
 def get_latest_submissions_for_training(training_name):
     subs_list = frappe.get_list("Practice Problem Latest Submission",
                                 filters={"training": training_name},
-                                fields=["name", "author", "problem", "code"])
+                                fields=["name", "author", "problem", "code", "test_outcome", "test_result"])
 
     subs = {}
     for sub in subs_list:

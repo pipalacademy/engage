@@ -75,15 +75,19 @@ href="{{ url }}"
   <span class="list-group-item"><strong>{{ps.title}}</strong></span>
 
   {% for problem_ref in ps.problems %}
+  {% set solution = user_submissions[problem_ref.problem] %}
+
+  {{ solution }}
+
   <a class="list-group-item list-group-item-action problem-link {{ 'active' if problem_ref.problem == problem.name }}"
     href="{{ get_review_link(training.name, problem=problem_ref.problem, participant=participant.user) }}">
     <div class="d-flex justify-content-between">
       <span>
         <svg class="icon icon-sm">
-          {% if not problem_ref.solution %}
-          {% elif p.solution.test_outcome == "passed" %}
+          {% if not solution %}
+          {% elif solution.test_outcome == "passed" %}
           <use href="#icon-tick"></use>
-          {% elif p.solution.test_outcome == "failed" %}
+          {% elif solution.test_outcome == "failed" %}
           <use href="#icon-close"></use>
           {% else %}
           {% endif %}
