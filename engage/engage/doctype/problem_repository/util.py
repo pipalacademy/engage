@@ -16,8 +16,8 @@ def get_github_repo_url(owner: str, name: str, token: Optional[str] = None) -> s
     return f"https://{base_host}/{owner}/{name}"
 
 
-def shallow_clone(git_url: str, dir_path: PathString) -> git.Repo:
-    repo = git.Repo.clone_from(git_url, dir_path, depth=1)
+def shallow_clone(git_url: str, dir_path: PathString, branch: str) -> git.Repo:
+    repo = git.Repo.clone_from(git_url, dir_path, branch=branch, depth=1)
     return repo
 
 

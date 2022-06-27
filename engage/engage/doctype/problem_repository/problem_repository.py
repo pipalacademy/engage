@@ -45,7 +45,7 @@ class ProblemRepository(Document):
         Note: Performs a shallow clone only
         """
         clone_url = get_github_repo_url(self.github_repo_owner, self.github_repo_name, token=self.github_token)
-        return shallow_clone(clone_url, to_path)
+        return shallow_clone(clone_url, to_path, branch=self.branch)
 
     def update_problems(self):
         with tempfile.TemporaryDirectory() as tempdir:
