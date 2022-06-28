@@ -1,9 +1,11 @@
 # Copyright (c) 2022, Pipal Academy and contributors
 # For license information, please see license.txt
 
+import hashlib
 import json
 import string
 import tempfile
+import time
 from pathlib import Path
 
 import requests
@@ -54,23 +56,46 @@ class ProblemRepository(Document):
         return shallow_clone(clone_url, to_path, branch=self.branch)
 
     def update_problems(self):
+
+        start = time.perf_counter()
+        last_checkpoint = start
+
+        # TODO (kaustubh): remove these checkpoint changes once issue#29 is closed.
+        def checkpoint(name):
+            nonlocal last_checkpoint
+
+            now = time.perf_counter()
+            print(
+                f"[checkpoint] {name: <16} since last checkpoint: {round(now-last_checkpoint, 3)}s, since start: {round(now-start, 3)}s"
+            )
+            last_checkpoint = time.perf_counter()
+
+        checkpoint("start")
+
         with tempfile.TemporaryDirectory() as tempdir:
             repo = self.clone(tempdir)
             commit_hash = get_commit_hash(repo)
 
             problems_base_dir = Path(tempdir) / (self.parent_directory or "")
+            checkpoint("before_parse")
             problems = parse_problem_repository(problems_base_dir)
+            checkpoint("after_parse")
 
         # counter to confirm how many problems were written
         counter = 0
 
+        checkpoint("before_db")
         # create problems for the repository
         for parsed_problem in problems:
             self.update_or_create_child_problem(parsed_problem, commit_hash)
+            checkpoint("single_problem")
             counter += 1
+
+        checkpoint("after_db")
 
         self.commit_hash = commit_hash
         self.save()
+        checkpoint("all done")
 
         return counter
 
@@ -95,19 +120,24 @@ class ProblemRepository(Document):
 
         problem.commit_hash = commit_hash
 
-        # empty problem.files to re-add the files
-        for f in problem.files:
-            f.delete()
+        # if any file has changed, remove all files and re-add them
+        files_changed = have_files_changed(problem.files, parsed_problem.files)
+        if problem.name and files_changed:
+            frappe.db.delete("Problem File",
+                             filters={
+                                 "parenttype": "Practice Problem",
+                                 "parent": problem.name,
+                             })
+            problem.files = []
 
-        problem.files = []
-
-        for (kind, pfile) in flatten_to_tuples(parsed_problem.files):
-            problem.append(
-                "files", {
-                    "kind": kind,
-                    "relative_path": pfile.relative_path,
-                    "content": pfile.content,
-                })
+        if not problem.name or files_changed:
+            for (kind, pfile) in flatten_to_tuples(parsed_problem.files):
+                problem.append(
+                    "files", {
+                        "kind": kind,
+                        "relative_path": pfile.relative_path,
+                        "content": pfile.content,
+                    })
 
         problem.save()
         return problem
@@ -145,6 +175,19 @@ def check_for_updates(problem_repository_name):
         frappe.response["available"] = False
 
 
+def have_files_changed(old, parsed):
+    hashes_for_old = {
+        hash_together(f.kind, f.relative_path, f.content)
+        for f in old
+    }
+    hashes_for_parsed = {
+        hash_together(kind, f.relative_path, f.content)
+        for (kind, f) in flatten_to_tuples(parsed)
+    }
+
+    return hashes_for_old != hashes_for_parsed
+
+
 def is_github_username_valid(val):
     max_length = 39
     allowed_chars = string.ascii_letters + string.digits + "-"
@@ -179,3 +222,11 @@ def get_first_or_init(doctype, filters, defaults):
         doc = frappe.get_doc({"doctype": doctype, **defaults})
 
     return doc
+
+
+def hash_together(*args):
+    h = hashlib.blake2s()
+    for item in args:
+        h.update(item.encode())
+
+    return h.hexdigest()
