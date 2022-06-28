@@ -7,9 +7,6 @@
   --light: var(--light-slate);
 }
 
-body {
-}
-
 .text-muted {
   color: var(--muted-slate);
 }
@@ -32,4 +29,11 @@ body {
 
 .bg-light {
   background-color: var(--light) !important;
+}
+
+.reply-body blockquote {
+  margin: 0 0 1rem;
+  padding: 0 1em;
+  border-left: 0.25em solid var(--gray-300);
+  color: #74808B !important;
 }
