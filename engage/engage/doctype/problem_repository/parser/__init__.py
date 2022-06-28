@@ -39,6 +39,7 @@ class ParsedProblem:
                  blurb: str,
                  files: Dict[str, List[PathString]],
                  slug: Optional[str] = None,
+                 description: Optional[str] = None,
                  description_file: Optional[str] = None,
                  source: Optional[str] = None,
                  source_url: Optional[str] = None):
@@ -48,10 +49,10 @@ class ParsedProblem:
         self.slug = slug or self.base_path.name
         self.title = title
         self.blurb = blurb
+
         self.description_file = self.base_path / (description_file
                                                   or "description.md")
-
-        self.description = parse_description_file(
+        self.description = description or parse_description_file(
             self.description_file,
             default=get_default_description(self.title, self.blurb))
 
