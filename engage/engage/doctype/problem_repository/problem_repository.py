@@ -93,9 +93,19 @@ class ProblemRepository(Document):
         update_problem("source", parsed_problem.source)
         update_problem("source_url", parsed_problem.source_url)
 
+        old_files = [
+            serialize_file(f.kind, f.relative_path, f.content)
+            for f in problem.files
+        ]
+        new_files = [
+            serialize_file(kind, f.relative_path, f.content)
+            for (kind, f) in flatten_to_tuples(parsed_problem.files)
+        ]
+
         # if any file has changed, remove all files and re-add them
-        files_changed = have_files_changed(problem.files, parsed_problem.files)
-        if problem.name and files_changed:
+        files_changed = have_files_changed(old_files, new_files)
+
+        if not problem.is_new() and files_changed:
             frappe.db.delete("Problem File",
                              filters={
                                  "parenttype": "Practice Problem",
@@ -103,14 +113,9 @@ class ProblemRepository(Document):
                              })
             update_problem("files", [])
 
-        if not problem.name or files_changed:
-            for (kind, pfile) in flatten_to_tuples(parsed_problem.files):
-                problem.append(
-                    "files", {
-                        "kind": kind,
-                        "relative_path": pfile.relative_path,
-                        "content": pfile.content,
-                    })
+        if problem.is_new() or files_changed:
+            for pfile in new_files:
+                problem.append("files", pfile)
             has_changed = True
 
         if has_changed:
@@ -136,6 +141,7 @@ def update_problems(problem_repository_name):
     doc = frappe.get_doc("Problem Repository", problem_repository_name)
     count = doc.update_problems()
     frappe.response["count"] = count
+    return count
 
 
 @frappe.whitelist()
@@ -154,17 +160,13 @@ def check_for_updates(problem_repository_name):
         frappe.response["available"] = False
 
 
-def have_files_changed(old, parsed):
-    hashes_for_old = {
-        hash_together(f.kind, f.relative_path, f.content)
-        for f in old
-    }
-    hashes_for_parsed = {
-        hash_together(kind, f.relative_path, f.content)
-        for (kind, f) in flatten_to_tuples(parsed)
-    }
+def have_files_changed(old, new):
+    if len(old) != len(new): return True
 
-    return hashes_for_old != hashes_for_parsed
+    old_hashes = {hash_serialized_file(f) for f in old}
+    new_hashes = {hash_serialized_file(f) for f in new}
+
+    return old_hashes != new_hashes
 
 
 def is_github_username_valid(val):
@@ -222,3 +224,11 @@ def get_problem(repo_name, slug):
         "slug": slug,
         "problem_repository": repo_name,
     })
+
+
+def serialize_file(kind, relative_path, content):
+    return {"kind": kind, "relative_path": relative_path, "content": content}
+
+
+def hash_serialized_file(f):
+    return hash_together(f["kind"], f["relative_path"], f["content"])
