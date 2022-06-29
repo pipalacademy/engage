@@ -3,6 +3,7 @@
 
 import hashlib
 import json
+import os
 import string
 import tempfile
 import time
@@ -59,43 +60,64 @@ class ProblemRepository(Document):
 
         start = time.perf_counter()
         last_checkpoint = start
+        checkpoints = []
 
         # TODO (kaustubh): remove these checkpoint changes once issue#29 is closed.
         def checkpoint(name):
-            nonlocal last_checkpoint
+            nonlocal checkpoints, last_checkpoint
 
             now = time.perf_counter()
+            since_last_checkpoint = round(now - last_checkpoint, 3)
+            since_start = round(now - start, 3)
+
             print(
-                f"[checkpoint] {name: <16} since last checkpoint: {round(now-last_checkpoint, 3)}s, since start: {round(now-start, 3)}s"
+                f"[checkpoint] {name: <16} since last checkpoint: {since_last_checkpoint}s, since start: {since_start}s"
             )
+
+            checkpoints.append({
+                "name": name,
+                "time_taken": since_last_checkpoint,
+                "time_elapsed": since_start
+            })
             last_checkpoint = time.perf_counter()
+
+        def save_checkpoints(parent_dir):
+            if not parent_dir.exists():
+                print("parent dir doesn't exist. not saving checkpoints")
+                print(f"cwd: {os.getcwd()}")
+                return
+
+            filename = time.strftime("%c.json", time.gmtime())
+            filepath = parent_dir / filename
+
+            with open(filepath, "w") as fp:
+                json.dump(checkpoints, fp, indent=4)
 
         checkpoint("start")
 
         with tempfile.TemporaryDirectory() as tempdir:
             repo = self.clone(tempdir)
+            checkpoint("clone")
             commit_hash = get_commit_hash(repo)
+            checkpoint("commit_hash")
 
             problems_base_dir = Path(tempdir) / (self.parent_directory or "")
-            checkpoint("before_parse")
             problems = parse_problem_repository(problems_base_dir)
-            checkpoint("after_parse")
+            checkpoint("parse_repository")
 
         # counter to confirm how many problems were written
         counter = 0
 
-        checkpoint("before_db")
         # create problems for the repository
         for parsed_problem in problems:
             self.update_or_create_child_problem(parsed_problem, commit_hash)
-            checkpoint("single_problem")
             counter += 1
-
-        checkpoint("after_db")
+            checkpoint("save_problem_to_db")
 
         self.commit_hash = commit_hash
         self.save()
-        checkpoint("all done")
+        checkpoint("save")
+        save_checkpoints(Path("misc/update_problems_checkpoints"))
 
         return counter
 
