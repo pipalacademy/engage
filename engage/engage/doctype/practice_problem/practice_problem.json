@@ -10,7 +10,6 @@
   "title",
   "column_break_3",
   "problem_repository",
-  "commit_hash",
   "section_break_5",
   "blurb",
   "description",
@@ -84,17 +83,11 @@
    "fieldtype": "Table",
    "label": "Files",
    "options": "Problem File"
-  },
-  {
-   "description": "Commit Hash of Problem Repository when this problem was fetched",
-   "fieldname": "commit_hash",
-   "fieldtype": "Data",
-   "label": "Commit Hash"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-06-27 16:29:04.273309",
+ "modified": "2022-06-29 15:31:25.243073",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Practice Problem",

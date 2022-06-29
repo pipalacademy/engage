@@ -3,10 +3,8 @@
 
 import hashlib
 import json
-import os
 import string
 import tempfile
-import time
 from pathlib import Path
 
 import requests
@@ -57,90 +55,43 @@ class ProblemRepository(Document):
         return shallow_clone(clone_url, to_path, branch=self.branch)
 
     def update_problems(self):
-
-        start = time.perf_counter()
-        last_checkpoint = start
-        checkpoints = []
-
-        # TODO (kaustubh): remove these checkpoint changes once issue#29 is closed.
-        def checkpoint(name):
-            nonlocal checkpoints, last_checkpoint
-
-            now = time.perf_counter()
-            since_last_checkpoint = round(now - last_checkpoint, 3)
-            since_start = round(now - start, 3)
-
-            print(
-                f"[checkpoint] {name: <16} since last checkpoint: {since_last_checkpoint}s, since start: {since_start}s"
-            )
-
-            checkpoints.append({
-                "name": name,
-                "time_taken": since_last_checkpoint,
-                "time_elapsed": since_start
-            })
-            last_checkpoint = time.perf_counter()
-
-        def save_checkpoints(parent_dir):
-            if not parent_dir.exists():
-                print("parent dir doesn't exist. not saving checkpoints")
-                print(f"cwd: {os.getcwd()}")
-                return
-
-            filename = time.strftime("%c.json", time.gmtime())
-            filepath = parent_dir / filename
-
-            with open(filepath, "w") as fp:
-                json.dump(checkpoints, fp, indent=4)
-
-        checkpoint("start")
-
         with tempfile.TemporaryDirectory() as tempdir:
             repo = self.clone(tempdir)
-            checkpoint("clone")
             commit_hash = get_commit_hash(repo)
-            checkpoint("commit_hash")
 
             problems_base_dir = Path(tempdir) / (self.parent_directory or "")
             problems = parse_problem_repository(problems_base_dir)
-            checkpoint("parse_repository")
 
         # counter to confirm how many problems were written
         counter = 0
 
         # create problems for the repository
         for parsed_problem in problems:
-            self.update_or_create_child_problem(parsed_problem, commit_hash)
-            counter += 1
-            checkpoint("save_problem_to_db")
+            _, updated = self.update_or_create_child_problem(parsed_problem)
+            counter += updated
 
-        self.commit_hash = commit_hash
-        self.save()
-        checkpoint("save")
-        save_checkpoints(Path("misc/update_problems_checkpoints"))
+        if commit_hash != self.commit_hash:
+            self.commit_hash = commit_hash
+            self.save()
 
         return counter
 
-    def update_or_create_child_problem(self, parsed_problem, commit_hash):
-        problem_id = f"{self.name}/{parsed_problem.slug}"
+    def update_or_create_child_problem(self, parsed_problem):
+        problem = get_problem(self.name, parsed_problem.slug)
+        has_changed = problem.is_new() or False
 
-        if frappe.db.exists("Practice Problem", problem_id):
-            problem = frappe.get_doc("Practice Problem", problem_id)
-        else:
-            problem = frappe.get_doc({
-                "doctype": "Practice Problem",
-                "slug": parsed_problem.slug,
-                "problem_repository": self.name,
-            })
+        def update_problem(attr, new_value):
+            nonlocal has_changed
+            if getattr(problem, attr) != new_value:
+                setattr(problem, attr, new_value)
+                has_changed = True
 
-        problem.title = parsed_problem.title
-        problem.blurb = parsed_problem.blurb
-        problem.description = parsed_problem.description
+        update_problem("title", parsed_problem.title)
+        update_problem("blurb", parsed_problem.blurb)
+        update_problem("description", parsed_problem.description)
 
-        problem.source = parsed_problem.source
-        problem.source_url = parsed_problem.source_url
-
-        problem.commit_hash = commit_hash
+        update_problem("source", parsed_problem.source)
+        update_problem("source_url", parsed_problem.source_url)
 
         # if any file has changed, remove all files and re-add them
         files_changed = have_files_changed(problem.files, parsed_problem.files)
@@ -150,7 +101,7 @@ class ProblemRepository(Document):
                                  "parenttype": "Practice Problem",
                                  "parent": problem.name,
                              })
-            problem.files = []
+            update_problem("files", [])
 
         if not problem.name or files_changed:
             for (kind, pfile) in flatten_to_tuples(parsed_problem.files):
@@ -160,9 +111,15 @@ class ProblemRepository(Document):
                         "relative_path": pfile.relative_path,
                         "content": pfile.content,
                     })
+            has_changed = True
 
-        problem.save()
-        return problem
+        if has_changed:
+            problem.save()
+
+        return problem, has_changed
+
+    def is_new(self):
+        return not self.name
 
     @frappe.whitelist()
     def is_update_available(self):
@@ -252,3 +209,16 @@ def hash_together(*args):
         h.update(item.encode())
 
     return h.hexdigest()
+
+
+def get_problem(repo_name, slug):
+    problem_id = f"{repo_name}/{slug}"
+
+    if frappe.db.exists("Practice Problem", problem_id):
+        return frappe.get_doc("Practice Problem", problem_id)
+
+    return frappe.get_doc({
+        "doctype": "Practice Problem",
+        "slug": slug,
+        "problem_repository": repo_name,
+    })
