@@ -1,0 +1,25 @@
+{% extends "templates/custom_web.html" %}
+
+{% macro TitleBar(problem_set, problem) %}
+
+<div class="row pb-2 border-bottom">
+
+    <div class="col-3 text-left">
+        <i class="fa-solid fa-arrow-left"></i> Back to problem
+    </div>
+
+    <div class="col-6 text-center">
+        {{ problem_set.title }} / <strong>{{ problem.title }}</strong>
+    </div>
+
+    <div class="col-3"></div>
+
+</div>
+
+{% endmacro %}
+
+{% block page_content %}
+
+{{ TitleBar(problem_set, problem) }}
+
+{% endblock %}
