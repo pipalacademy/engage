@@ -1,15 +1,21 @@
 {% extends "templates/custom_web.html" %}
 
+{%- block navbar -%}{%- endblock -%}
+
 {% macro TitleBar(problem_set, problem) %}
 
-<div class="row pb-2 border-bottom">
+<div class="title-bar row p-2 border-bottom">
 
     <div class="col-1 col-md-3 text-left">
-        <i class="fa-solid fa-arrow-left"></i> <span class="d-none d-md-inline">Back to problem</span>
+        <a class="text-decoration-none" href="{{problem.url}}">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span class="d-none d-md-inline">Back to problem</span>
+        </a>
     </div>
 
     <div class="col-10 col-md-6 text-center">
-        <span class="d-none d-md-inline">{{ problem_set.title }} / </span><strong>{{ problem.title }}</strong>
+        <span class="d-none d-md-inline">{{ problem_set.title }} / </span>
+        <strong>{{ problem.title }}</strong>
     </div>
 
     <div class="col-1 col-md-3"></div>
@@ -18,8 +24,10 @@
 
 {% endmacro %}
 
-{% block page_content %}
+{% block content %}
 
-{{ TitleBar(problem_set, problem) }}
+<div class="content">
+    {{ TitleBar(problem_set, problem) }}
+</div>
 
 {% endblock %}

@@ -1,0 +1,11 @@
+.content {
+    color: var(--gray-700);
+}
+
+.title-bar a {
+    color: inherit;
+}
+
+.title-bar a:hover {
+    color: var(--gray-900);
+}

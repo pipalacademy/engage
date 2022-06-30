@@ -14,3 +14,9 @@ def get_context(context, training, problem):
     problem_set = next(pset for pset in training.problem_sets
                        if pset.slug == problem_set_name)
     context.problem_set = problem_set
+
+    problem.url = get_problem_url(training, problem_set, problem)
+
+
+def get_problem_url(training, pset_ref, problem):
+    return f"/trainings/{training.name}/problems/{pset_ref.slug}/{problem.name}"
