@@ -42,6 +42,28 @@ def with_training(fn):
     return fetch_training_or_404
 
 
+def with_problem(fn):
+    @wraps(fn)
+    def fetch_problem_or_404(context, *args, **kwargs):
+        try:
+            problem_name = frappe.form_dict["problem"]
+        except KeyError:
+            context.template = NotFoundTemplate
+            return
+
+        if "problem_repository" in frappe.form_dict:
+            problem_name = f"{frappe.form_dict.problem_repository}/{problem_name}"
+
+        problem = get_problem(problem_name)
+        if not problem:
+            context.template = NotFoundTemplate
+            return
+
+        return fn(context, *args, **kwargs, problem=problem)
+
+    return fetch_problem_or_404
+
+
 def require_trainer_role(fn):
     @wraps(fn)
     def check_role(context, *args, training, **kwargs):
@@ -60,3 +82,9 @@ def get_training(name):
     except frappe.exceptions.DoesNotExistError:
         return
 
+
+def get_problem(name):
+    try:
+        return frappe.get_doc("Practice Problem", name)
+    except frappe.exceptions.DoesNotExistError:
+        return

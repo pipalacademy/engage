@@ -1,42 +1,40 @@
 import frappe
 
-from engage.utils import require_login
+from engage.utils import require_login, with_problem, with_training
 
 
 @require_login
-def get_context(context):
-    training_name = f"{frappe.form_dict.year}/{frappe.form_dict.training}"
+@with_training
+@with_problem
+def get_context(context, training, problem):
     pset_name = frappe.form_dict.problem_set
-    problem_name = frappe.form_dict.problem
+    psets = {pset.slug: pset for pset in training.problem_sets}
+    pset_ref = psets[pset_name]
 
-    if "problem_repository" in frappe.form_dict:
-        problem_name = f"{frappe.form_dict.problem_repository}/{problem_name}"
-
-    t = frappe.get_doc("Training", training_name)
-    psets = {pset.slug: pset for pset in t.problem_sets}
-
-    problem_set_title = psets[pset_name].title
-
-    problem = frappe.get_doc("Practice Problem", problem_name)
-    doctype = "Practice Problem Latest Submission"
-
-    if frappe.db.exists(doctype, {"problem": problem_name, "author": frappe.session.user}):
-        solution = frappe.get_doc(doctype, {"problem": problem_name, "author": frappe.session.user})
+    submission_doctype = "Practice Problem Latest Submission"
+    if frappe.db.exists(submission_doctype, {
+            "problem": problem.name,
+            "author": frappe.session.user
+    }):
+        solution = frappe.get_doc(submission_doctype, {
+            "problem": problem.name,
+            "author": frappe.session.user
+        })
     else:
         solution = None
 
-    context.t = t
-    context.problem_set = psets[pset_name]
-    context.problem_set_title = problem_set_title
-    context.can_submit = psets[pset_name].status != "Closed"
+    context.t = training
+    context.problem_set = pset_ref
+    context.problem_set_title = pset_ref.title
+    context.can_submit = pset_ref.status != "Closed"
     context.problem = problem
     context.psets = psets
     context.d = frappe.form_dict
     context.latest_submission = solution
     context.data = {
-        "problem_set": psets[pset_name].problem_set,
+        "problem_set": pset_ref.problem_set,
         "problem": problem.name,
-        "training": training_name,
+        "training": training.name,
         "submission_json": solution and solution.test_result or "null"
     }
 

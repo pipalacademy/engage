@@ -156,7 +156,6 @@ web_include_js = "/assets/engage/js/engage.js"
 #
 # auto_cancel_exempted_doctypes = ["Auto Repeat"]
 
-
 # User Data Protection
 # --------------------
 
@@ -188,16 +187,32 @@ web_include_js = "/assets/engage/js/engage.js"
 # 	"engage.auth.validate"
 # ]
 
-
 # Website routes
-website_route_rules = [
-    {"from_route": "/trainings/<int:year>/<slug>", "to_route": "trainings/training"},
-    {"from_route": "/trainings/<int:year>/<slug>/review", "to_route": "trainings/training_review"},
-    {"from_route": "/trainings/<int:year>/<slug>/invite", "to_route": "trainings/invite"},
-    {"from_route": "/trainings/<int:year>/<training>/problems/<problem_set>/<problem>", "to_route": "trainings/problems/problem"},
-    {"from_route": "/trainings/<int:year>/<training>/problems/<problem_set>/<problem_repository>/<problem>", "to_route": "trainings/problems/problem"}
-]
+website_route_rules = [{
+    "from_route": "/trainings/<int:year>/<slug>",
+    "to_route": "trainings/training"
+}, {
+    "from_route": "/trainings/<int:year>/<slug>/review",
+    "to_route": "trainings/training_review"
+}, {
+    "from_route": "/trainings/<int:year>/<slug>/invite",
+    "to_route": "trainings/invite"
+}, {
+    "from_route":
+    "/trainings/<int:year>/<slug>/problems/<problem_set>/<problem>",
+    "to_route": "trainings/problems/problem"
+}, {
+    "from_route":
+    "/trainings/<int:year>/<slug>/problems/<problem_set>/<problem_repository>/<problem>",
+    "to_route": "trainings/problems/problem"
+}, {
+    "from_route":
+    "/trainings/<int:year>/<slug>/problems/<problem_set>/<problem>/code",
+    "to_route": "trainings/problems/code"
+}, {
+    "from_route":
+    "/trainings/<int:year>/<slug>/problems/<problem_set>/<problem_repository>/<problem>/code",
+    "to_route": "trainings/problems/code"
+}]
 
-website_redirects = [
-    {"source": "/", "target": "/trainings/"}
-]
+website_redirects = [{"source": "/", "target": "/trainings/"}]
