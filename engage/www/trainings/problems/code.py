@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import frappe
 
 from engage.utils import require_login, with_problem, with_training
@@ -20,3 +22,14 @@ def get_context(context, training, problem):
 
 def get_problem_url(training, pset_ref, problem):
     return f"/trainings/{training.name}/problems/{pset_ref.slug}/{problem.name}"
+
+
+def truncate_filepath(filepath):
+    path = Path(filepath)
+
+    parents = path.parent.parts
+    filename = path.name
+
+    truncated_parts = [*(part[0] for part in parents), filename]
+
+    return "/".join(truncated_parts)

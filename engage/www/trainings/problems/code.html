@@ -1,13 +1,18 @@
 {% extends "templates/custom_web.html" %}
 
+{% block head_include %}
+{{ super() }}
+<link rel="stylesheet" href="/assets/engage/codemirror/lib/codemirror.css" />
+{% endblock %}
+
 {%- block navbar -%}{%- endblock -%}
 
 {% macro TitleBar(problem_set, problem) %}
 
-<div class="title-bar row p-2 border-bottom">
+<div class="title-bar row p-4 border-bottom">
 
     <div class="col-1 col-md-3 text-left">
-        <a class="text-decoration-none" href="{{problem.url}}">
+        <a class="text-decoration-none custom-link" href="{{problem.url}}">
             <i class="fa-solid fa-arrow-left"></i>
             <span class="d-none d-md-inline">Back to problem</span>
         </a>
@@ -24,10 +29,46 @@
 
 {% endmacro %}
 
+{% macro Editor(problem) %}
+
+<div class="code-editor" data-problem="{{ problem.name }}">
+    <div class="tabs-bar">
+        <ul class="tabs-list">
+            {%- for code_file in problem.code_files -%}
+            <a class="tab-item text-decoration-none custom-link {{ 'active' if loop.first }}"
+                data-filepath="{{ code_file.relative_path }}" data-code="{{ code_file.content | tojson }}"
+                href="javascript:;">
+                {{ code_file.relative_path }}
+            </a>
+            {%- endfor -%}
+        </ul>
+    </div>
+</div>
+
+{% endmacro %}
+
 {% block content %}
 
 <div class="content">
     {{ TitleBar(problem_set, problem) }}
+
+    <div class="main-content">
+        {{ Editor(problem) }}
+    </div>
 </div>
+
+{% endblock %}
+
+{% block body_include %}
+{{ super() }}
+
+<script src="/assets/engage/codemirror/lib/codemirror.js"></script>
+<script src="/assets/engage/codemirror/mode/python/python.js"></script>
+<script src="/assets/engage/codemirror/keymap/sublime.js"></script>
+
+<script src="/assets/engage/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="/assets/engage/codemirror/addon/comment/comment.js"></script>
+
+<script type="text/javascript" src="/assets/engage/livecode.js"></script>
 
 {% endblock %}
