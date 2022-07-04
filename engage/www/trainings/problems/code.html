@@ -40,13 +40,9 @@
 </div>
 {%- endmacro -%}
 
-{%- macro Code(problem, submission, data) -%}
-{%- set file = problem.code_files[0] -%}
-{%- set code = submission and submission.code or file.content -%}
-<div class="code-editor" data-problem="{{ problem.name }}"
-    data-submission="{{ (submission and submission.test_result)|default(None|tojson)|e }}">
-    <textarea id="{{ file.relative_path }}" class="code overflow-auto" rows="50"
-        data-filepath="{{ file.relative_path }}">
+{%- macro Code(file, code) -%}
+<div id="{{ file.relative_path }}" class="code-editor" data-filepath="{{ file.relative_path }}">
+    <textarea class="code overflow-auto" rows="50">
         {{- code -}}
     </textarea>
 
@@ -69,13 +65,16 @@
 </div>
 {%- endmacro -%}
 
-{% macro Editor(problem, submission) -%}
+{% macro Editor(problem) -%}
 <div class="editor-env">
     <div class="row">
         <div class="col">
             {{ Tabs(problem.code_files) }}
 
-            {{ Code(problem, submission) }}
+            {% for file in problem.code_files %}
+            {% set submitted_code = submission and submission.files[file.relative_path] %}
+            {{ Code(file, submitted_code or file.content or "") }}
+            {% endfor %}
         </div>
         <div class="col-12 col-md-4">
             {{ SideBar() }}
@@ -90,12 +89,17 @@
 
 {% block content %}
 <div class="content">
-    {{ Data({"training": training.name, "problem-set": problem_set.problem_set, "problem": problem.name}) }}
+    {{ Data({
+    "training": training.name,
+    "problem-set": problem_set.problem_set,
+    "problem": problem.name,
+    "submission": (submission and submission.test_result)|default(None|tojson)|e,
+    "default-filepath": problem.code_files[0].relative_path }) }}
 
     {{ TitleBar(problem_set, problem) }}
 
     <div class="main-content">
-        {{ Editor(problem, submission) }}
+        {{ Editor(problem) }}
     </div>
 </div>
 {% endblock %}

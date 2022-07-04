@@ -19,7 +19,13 @@ def get_context(context, training, problem):
 
     problem.url = get_problem_url(training, problem_set, problem)
 
-    context.submission = get_submission(problem.name, frappe.session.user)
+    submission = get_submission(problem.name, frappe.session.user)
+    if submission:
+        # TODO: support multiple file submissions, then send all files
+        first_file = problem.code_files[0]
+        submission.files = {first_file.relative_path: submission.code}
+
+    context.submission = submission
 
 
 def get_problem_url(training, pset_ref, problem):

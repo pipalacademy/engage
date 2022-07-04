@@ -1,3 +1,6 @@
+const editors = {};
+const submissions = {};
+
 function truncateFilepath(filepath) {
     let parts = filepath.split("/");
 
@@ -21,8 +24,9 @@ function refreshTabs() {
     });
 }
 
-function setCode(code) {
-    console.log("code: ", code);
+function setCodeFile(filepath) {
+    $(".code-editor").hide();
+    $(`.code-editor[data-filepath="${filepath}"]`).show();
 }
 
 function setActiveTab(selector) {
@@ -36,16 +40,43 @@ function loadGlobalData() {
     return $("#data").data();
 }
 
+// args: output element, data
+function showTestResult(output, d) {
+    if (!d) {
+        return;
+    }
+
+    function clear() {
+        $(output).text("");
+    }
+
+    function print(text) {
+        $(output).append(text + "\n");
+    }
+
+    clear();
+
+    print(`Test Status: ${d.outcome} (${d.stats.passed} passed and ${d.stats.failed} failed)`)
+    d.testcases.forEach((t, i) => {
+        print(`\n${i + 1}. ${t.name} ... ${t.outcome}`);
+        if (t.outcome == "failed") {
+            print("")
+            print(t.error_detail.replaceAll(/^/mg, "    "));
+        }
+    })
+}
+
+
 $(function () {
     var globalData = loadGlobalData();
 
     refreshTabs();
+    setCodeFile(globalData.defaultFilepath);
 
     $(".tab-item").click(function (e) {
         let data = $(this).data();
-        let code = data.code;
 
-        setCode(code ? JSON.parse(code) : "");
+        setCodeFile(data.filepath);
         setActiveTab(this);
     });
 
@@ -57,34 +88,9 @@ $(function () {
             codemirror: true,
             problem: globalData.problem,
         });
+        editors[data.filepath] = editor;
 
-        // args: output element, data
-        function showTestResult(output, d) {
-            if (!d) {
-                return;
-            }
-
-            function clear() {
-                $(output).text("");
-            }
-
-            function print(text) {
-                $(output).append(text + "\n");
-            }
-
-            clear();
-
-            print(`Test Status: ${d.outcome} (${d.stats.passed} passed and ${d.stats.failed} failed)`)
-            d.testcases.forEach((t, i) => {
-                print(`\n${i + 1}. ${t.name} ... ${t.outcome}`);
-                if (t.outcome == "failed") {
-                    print("")
-                    print(t.error_detail.replaceAll(/^/mg, "    "));
-                }
-            })
-        }
-
-        var submitted_result = data.submission;
+        var submitted_result = globalData.submission;
         if (submitted_result && submitted_result != "null") {
             showTestResult(".output", submitted_result);
         }
