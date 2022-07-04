@@ -51,3 +51,12 @@
     background-color: var(--tab-active-bg-color);
     color: var(--tab-active-color);
 }
+
+.code {
+    width: 100%;
+}
+
+.CodeMirror {
+    border: 1px solid #f7f7f7;
+    height: 200px;
+}

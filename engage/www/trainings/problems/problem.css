@@ -8,7 +8,12 @@
     padding-bottom: 0px;
 }
 
-.problem-description h1, .problem-description h2, .problem-description h3, .problem-description h4, .problem-description h5, .problem-description h6 {
+.problem-description h1,
+.problem-description h2,
+.problem-description h3,
+.problem-description h4,
+.problem-description h5,
+.problem-description h6 {
     margin-top: 1.25rem !important;
     margin-bottom: 1.25rem !important;
 }
@@ -18,27 +23,32 @@
     margin: 0px;
     font-weight: bold;
 }
+
 .CodeMirror {
     border: 1px solid #f7f7f7;
     height: 200px;
 }
+
 .output {
     padding: 10px;
     padding-left: 25px;
     background: #f7f7f7;
 }
+
 .heading {
     background: #f7f7f7;
     padding: 5px;
 }
 
 @media (max-width: 576px) {
-    .problem-description h1, .problem-description h2, .problem-description h3, .problem-description h4, .problem-description h5, .problem-description h6 {
-	margin-top: 1.25rem !important;
-	margin-bottom: 0.75rem !important;
+
+    .problem-description h1,
+    .problem-description h2,
+    .problem-description h3,
+    .problem-description h4,
+    .problem-description h5,
+    .problem-description h6 {
+        margin-top: 1.25rem !important;
+        margin-bottom: 0.75rem !important;
     }
 }
-
-</style>
-
-<style>

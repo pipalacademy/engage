@@ -19,6 +19,8 @@ def get_context(context, training, problem):
 
     problem.url = get_problem_url(training, problem_set, problem)
 
+    context.submission = get_submission(problem.name, frappe.session.user)
+
 
 def get_problem_url(training, pset_ref, problem):
     return f"/trainings/{training.name}/problems/{pset_ref.slug}/{problem.name}"
@@ -33,3 +35,13 @@ def truncate_filepath(filepath):
     truncated_parts = [*(part[0] for part in parents), filename]
 
     return "/".join(truncated_parts)
+
+
+def get_submission(problem_name, user_name):
+    doctype = "Practice Problem Latest Submission"
+    filters = {"problem": problem_name, "author": user_name}
+
+    if frappe.db.exists(doctype, filters):
+        return frappe.get_last_doc(doctype, filters=filters)
+
+    return

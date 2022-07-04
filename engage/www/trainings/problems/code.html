@@ -8,7 +8,6 @@
 {%- block navbar -%}{%- endblock -%}
 
 {% macro TitleBar(problem_set, problem) %}
-
 <div class="title-bar row p-4 border-bottom">
 
     <div class="col-1 col-md-3 text-left">
@@ -26,37 +25,79 @@
     <div class="col-1 col-md-3"></div>
 
 </div>
-
 {% endmacro %}
 
-{% macro Editor(problem) %}
+{%- macro Tabs(files) -%}
+<div class="tabs-bar">
+    <ul class="tabs-list">
+        {%- for file in files -%}
+        <a class="tab-item text-decoration-none custom-link {{ 'active' if loop.first }}"
+            data-filepath="{{ file.relative_path }}" data-code="{{ file.content | tojson }}" href="javascript:;">
+            {{ file.relative_path }}
+        </a>
+        {%- endfor -%}
+    </ul>
+</div>
+{%- endmacro -%}
 
-<div class="code-editor" data-problem="{{ problem.name }}">
-    <div class="tabs-bar">
-        <ul class="tabs-list">
-            {%- for code_file in problem.code_files -%}
-            <a class="tab-item text-decoration-none custom-link {{ 'active' if loop.first }}"
-                data-filepath="{{ code_file.relative_path }}" data-code="{{ code_file.content | tojson }}"
-                href="javascript:;">
-                {{ code_file.relative_path }}
-            </a>
-            {%- endfor -%}
-        </ul>
+{%- macro Code(problem, submission, data) -%}
+{%- set file = problem.code_files[0] -%}
+{%- set code = submission and submission.code or file.content -%}
+<div class="code-editor" data-problem="{{ problem.name }}"
+    data-submission="{{ (submission and submission.test_result)|default(None|tojson)|e }}">
+    <textarea id="{{ file.relative_path }}" class="code overflow-auto" rows="50"
+        data-filepath="{{ file.relative_path }}">
+        {{- code -}}
+    </textarea>
+
+    <div class="buttons text-right">
+        <input type="text" class="arguments" placeholder="arguments">
+        <button class="btn btn-submit run">Run</button>
+        <button class="btn btn-submit run-tests">Run tests</button>
+        <button class="btn btn-submit submit">Submit</button>
+    </div>
+
+    <pre class="output m-1"></pre>
+</div>
+{%- endmacro -%}
+
+{%- macro SideBar() -%}
+<div id="sidebar" class="d-hidden">
+    <button class="btn btn-link">
+        Instructions
+    </button>
+</div>
+{%- endmacro -%}
+
+{% macro Editor(problem, submission) -%}
+<div class="editor-env">
+    <div class="row">
+        <div class="col">
+            {{ Tabs(problem.code_files) }}
+
+            {{ Code(problem, submission) }}
+        </div>
+        <div class="col-12 col-md-4">
+            {{ SideBar() }}
+        </div>
     </div>
 </div>
+{%- endmacro %}
 
-{% endmacro %}
+{%- macro Data(data_kv) -%}
+<div id="data" class="d-none" {%- for k, v in data_kv.items() %} data-{{ k }}="{{ v }}" {% endfor -%}></div>
+{%- endmacro -%}
 
 {% block content %}
-
 <div class="content">
+    {{ Data({"training": training.name, "problem-set": problem_set.problem_set, "problem": problem.name}) }}
+
     {{ TitleBar(problem_set, problem) }}
 
     <div class="main-content">
-        {{ Editor(problem) }}
+        {{ Editor(problem, submission) }}
     </div>
 </div>
-
 {% endblock %}
 
 {% block body_include %}
