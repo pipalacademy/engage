@@ -66,6 +66,45 @@ function showTestResult(output, d) {
     })
 }
 
+function updateSubmissionStatus() {
+    console.log("submitted");
+    // editors.forEach(editor => {
+    //     editor.parent.find(".submission-status").html("Submitted");
+    // });
+}
+
+function makeSubmission(editor, data) {
+    let problem = data.problem;
+    let training = data.training;
+    let problemSet = data.problemSet;
+    let author = data.author;
+
+    let code = editor.getCode();
+    let payload = {
+        problem_set: problemSet,
+        problem: problem,
+        code: code,
+        author: author,
+        training: training,
+    };
+
+    frappe.call({
+        method: "engage.api.submit_practice_problem",
+        args: payload,
+        btn: $(".submit"),
+        freeze: true,
+        freeze_message: "Submitting",
+        callback: function (r) {
+            let doc = r.message;
+            let submission = doc.test_result ? JSON.parse(doc.test_result) : {};
+            showTestResult(".output", submission);
+
+            frappe.msgprint("Successfully submitted solution for problem " + problem);
+            submissions[problem] = { problem: problem, code: code };
+            updateSubmissionStatus(problem);
+        }
+    });
+}
 
 $(function () {
     var globalData = loadGlobalData();
@@ -93,40 +132,15 @@ $(function () {
 
         editors[data.filepath] = editor;
 
-        var submitted_result = globalData.submission;
-        if (submitted_result && submitted_result != "null") {
-            showTestResult(".output", submitted_result);
+        let lastSubmission = globalData.submission;
+        if (lastSubmission && lastSubmission != "null") {
+            showTestResult(".output", lastSubmission);
         }
 
         $(el).find(".submit").click(function () {
-            var problem = globalData.problem;
-            var training = globalData.training;
-            var problem_set = globalData.problemSet;
-
-            var code = editor.getCode();
-
-            var payload = {
-                problem_set: problem_set,
-                problem: problem,
-                code: code,
-                author: frappe.session.user,
-                training: training,
-            };
-            frappe.call({
-                method: "engage.api.submit_practice_problem",
-                args: payload,
-                btn: $(".submit"),
-                freeze: true,
-                freeze_message: "Submitting",
-                callback: function (r) {
-                    var doc = r.message;
-                    var submission = doc.test_result ? JSON.parse(doc.test_result) : {};
-                    showTestResult(".output", submission);
-
-                    frappe.msgprint("Successfully submitted solution for problem " + problem);
-                    submissions[problem] = { problem: problem, code: code };
-                    updateSubmissionStatus(problem);
-                }
+            makeSubmission(editor, {
+                ...globalData,
+                author: frappe.session.user
             });
         })
     });
