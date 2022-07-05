@@ -93,7 +93,7 @@
     "training": training.name,
     "problem-set": problem_set.problem_set,
     "problem": problem.name,
-    "submission": (submission and submission.test_result)|default(None|tojson)|e,
+    "submission": (submission and submission.test_result or (none|tojson))|e,
     "default-filepath": problem.code_files[0].relative_path }) }}
 
     {{ TitleBar(problem_set, problem) }}
