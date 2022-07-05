@@ -88,6 +88,9 @@ $(function () {
             codemirror: true,
             problem: globalData.problem,
         });
+        let cm = editor.codemirror;
+        cm.setSize(null, "500");
+
         editors[data.filepath] = editor;
 
         var submitted_result = globalData.submission;
