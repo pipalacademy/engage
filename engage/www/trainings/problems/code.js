@@ -1,10 +1,10 @@
 const editors = {};
 const submissions = {};
 
+const globalData = {};
+
 const sidebarBtnClass = "btn-sidebar-header";
 const sidebarBtnSelector = `.${sidebarBtnClass}`;
-
-var globalData = {};
 
 function truncateFilepath(filepath) {
     let parts = filepath.split("/");
@@ -42,7 +42,8 @@ function setActiveTab(selector) {
 }
 
 function loadGlobalData() {
-    globalData = $("#data").data();
+    let data = $("#data").data();
+    $.extend(globalData, data);
 }
 
 function setSidebarContent(content) {
