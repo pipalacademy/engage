@@ -193,7 +193,7 @@ website_route_rules = [{
     "to_route": "trainings/training"
 }, {
     "from_route": "/trainings/<int:year>/<slug>/review",
-    "to_route": "trainings/training_review"
+    "to_route": "trainings/training_review_old"
 }, {
     "from_route": "/trainings/<int:year>/<slug>/invite",
     "to_route": "trainings/invite"
