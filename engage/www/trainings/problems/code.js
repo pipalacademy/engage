@@ -1,6 +1,11 @@
 const editors = {};
 const submissions = {};
 
+const sidebarBtnClass = "btn-sidebar-header";
+const sidebarBtnSelector = `.${sidebarBtnClass}`;
+
+var globalData = {};
+
 function truncateFilepath(filepath) {
     let parts = filepath.split("/");
 
@@ -37,7 +42,44 @@ function setActiveTab(selector) {
 }
 
 function loadGlobalData() {
-    return $("#data").data();
+    globalData = $("#data").data();
+}
+
+function setSidebarContent(content) {
+    $("#sidebar-content").html(content);
+}
+
+function onSidebarInstructions() {
+    setSidebarContent(globalData.problemDescription);
+}
+
+function onSidebarOutput() {
+    setSidebarContent("output here");
+}
+
+function onSidebarResults() {
+    setSidebarContent("results here");
+}
+
+function activateDefaultSidebarTab() {
+    let defaultSidebarTab = "#sidebar-tab-instructions";
+    activateSidebarTab(defaultSidebarTab);
+}
+
+function activateSidebarTab(el) {
+    let handlers = {
+        "sidebar-tab-instructions": onSidebarInstructions,
+        "sidebar-tab-output": onSidebarOutput,
+        "sidebar-tab-results": onSidebarResults,
+    };
+
+    let $el = $(el);
+    let handler = handlers[$el.attr("id")];
+
+    $(sidebarBtnSelector).removeClass("active");
+    $el.addClass("active");
+
+    handler();
 }
 
 // args: output element, data
@@ -107,16 +149,22 @@ function makeSubmission(editor, data) {
 }
 
 $(function () {
-    var globalData = loadGlobalData();
+    loadGlobalData();
 
     refreshTabs();
     setCodeFile(globalData.defaultFilepath);
+
+    activateDefaultSidebarTab();
 
     $(".tab-item").click(function (e) {
         let data = $(this).data();
 
         setCodeFile(data.filepath);
         setActiveTab(this);
+    });
+
+    $(sidebarBtnSelector).click(function () {
+        activateSidebarTab(this);
     });
 
     $(".code-editor").each(function (_i, el) {

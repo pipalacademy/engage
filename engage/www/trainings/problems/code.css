@@ -1,12 +1,17 @@
 :root {
     --content-color: var(--gray-800);
     --content-dark-color: var(--gray-900);
-    --border-color: var(--gray-200);
+    --border-color: #E2E6E9;
 
     --tab-color: var(--gray-700);
     --tab-bg-color: white;
     --tab-active-color: var(--gray-800);
     --tab-active-bg-color: var(--gray-100);
+
+    --btn-sidebar-color: var(--gray-700);
+    --btn-sidebar-bg-color: none;
+    --btn-sidebar-active-color: var(--gray-900);
+    --btn-sidebar-active-bg-color: var(--gray-200);
 }
 
 .content {
@@ -52,6 +57,48 @@
     color: var(--tab-active-color);
 }
 
+.sidebar {
+    overflow-x: auto;
+}
+
+.sidebar-header {
+    padding-bottom: 8px;
+    border-bottom: 0.5px solid var(--border-color);
+}
+
+.btn-sidebar-header {
+    padding: 0.25rem 0.45rem;
+    background-color: var(--btn-sidebar-bg-color);
+    color: var(--btn-sidebar-color);
+    font-weight: bold;
+    border: none;
+    box-shadow: none;
+}
+
+.btn-sidebar-header:focus,
+.btn-sdebar-header:active {
+    box-shadow: none;
+}
+
+.btn-sidebar-header.active {
+    background-color: var(--btn-sidebar-active-bg-color);
+    color: var(--btn-sidebar-active-color);
+}
+
+.sidebar-content h1,
+.sidebar-content h2,
+.sidebar-content h3,
+.sidebar-content h4,
+.sidebar-content h5,
+.sidebar-content h6 {
+    margin-top: 1.15rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.sidebar-content {
+    font-size: 0.9em;
+}
+
 .code {
     width: 100%;
 }
@@ -59,4 +106,10 @@
 .CodeMirror {
     border: 1px solid #f7f7f7;
     height: 200px;
+}
+
+.sidebar-content pre {
+    padding: 8px;
+    background-color: var(--gray-200);
+    border-radius: 10px;
 }

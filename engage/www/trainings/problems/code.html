@@ -8,7 +8,7 @@
 {%- block navbar -%}{%- endblock -%}
 
 {% macro TitleBar(problem_set, problem) %}
-<div class="title-bar row p-4 border-bottom">
+<div class="title-bar row p-4 border-bottom mx-0">
 
     <div class="col-1 col-md-3 text-left">
         <a class="text-decoration-none custom-link" href="{{problem.url}}">
@@ -57,18 +57,29 @@
 </div>
 {%- endmacro -%}
 
-{%- macro SideBar() -%}
-<div id="sidebar" class="d-hidden">
-    <button class="btn btn-link">
-        Instructions
-    </button>
+{%- macro SideBar(problem) -%}
+<div id="sidebar" class="sidebar">
+    <div class="sidebar-header d-flex justify-content-around">
+        <button class="btn btn-sidebar-header" id="sidebar-tab-instructions">
+            Instructions
+        </button>
+        <button class="btn btn-sidebar-header" id="sidebar-tab-output">
+            Output
+        </button>
+        <button class="btn btn-sidebar-header" id="sidebar-tab-results">
+            Results
+        </button>
+    </div>
+
+    <div id="sidebar-content" class="sidebar-content px-2">
+    </div>
 </div>
 {%- endmacro -%}
 
 {% macro Editor(problem) -%}
 <div class="editor-env">
-    <div class="row">
-        <div class="col">
+    <div class="row mx-0">
+        <div class="col mx-0 px-0">
             {{ Tabs(problem.code_files) }}
 
             {% for file in problem.code_files %}
@@ -76,8 +87,8 @@
             {{ Code(file, submitted_code or file.content or "") }}
             {% endfor %}
         </div>
-        <div class="col-12 col-md-4">
-            {{ SideBar() }}
+        <div class="col-12 col-md-4 mx-0 px-0 py-2">
+            {{ SideBar(problem) }}
         </div>
     </div>
 </div>
@@ -94,7 +105,8 @@
     "problem-set": problem_set.problem_set,
     "problem": problem.name,
     "submission": (submission and submission.test_result or (none|tojson))|e,
-    "default-filepath": problem.code_files[0].relative_path }) }}
+    "default-filepath": problem.code_files[0].relative_path,
+    "problem-description": frappe.utils.md_to_html(problem.description)|e }) }}
 
     {{ TitleBar(problem_set, problem) }}
 
