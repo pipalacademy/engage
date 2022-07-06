@@ -46,11 +46,13 @@
         {{- code -}}
     </textarea>
 
-    <div class="buttons text-right">
-        <input type="text" class="arguments" placeholder="arguments">
-        <button class="btn btn-submit run">Run</button>
-        <button class="btn btn-submit run-tests">Run tests</button>
-        <button class="btn btn-submit submit">Submit</button>
+    <div class="code-footer d-flex justify-content-between align-items-center">
+        <input type="text" class="arguments mx-2" placeholder="arguments">
+        <div class="buttons mx-2">
+            <button class="btn btn-submit m-1 run">Run</button>
+            <button class="btn btn-submit m-1 run-tests">Run tests</button>
+            <button class="btn btn-submit m-1 submit">Submit</button>
+        </div>
     </div>
 
     <pre class="output m-1"></pre>
@@ -79,7 +81,7 @@
 {% macro Editor(problem) -%}
 <div class="editor-env">
     <div class="row mx-0">
-        <div class="col mx-0 px-0">
+        <div class="col-12 col-md-8 mx-0 px-0">
             {{ Tabs(problem.code_files) }}
 
             {% for file in problem.code_files %}
@@ -87,7 +89,7 @@
             {{ Code(file, submitted_code or file.content or "") }}
             {% endfor %}
         </div>
-        <div class="col-12 col-md-4 mx-0 px-0 py-2">
+        <div class="col-12 col-md-4 mx-0 px-0">
             {{ SideBar(problem) }}
         </div>
     </div>

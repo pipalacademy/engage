@@ -58,11 +58,14 @@
 }
 
 .sidebar {
-    overflow-x: auto;
+    overflow: auto;
+    /* TODO: this works fine for now, but won't transfer well to smaller devices */
+    height: 562.5px;
+    border: 1px solid var(--border-color);
 }
 
 .sidebar-header {
-    padding-bottom: 8px;
+    padding: 8px 0;
     border-bottom: 0.5px solid var(--border-color);
 }
 
@@ -112,4 +115,17 @@
     padding: 8px;
     background-color: var(--gray-200);
     border-radius: 10px;
+}
+
+.code-footer {
+    border: 1px solid var(--border-color);
+}
+
+.code-footer .arguments {
+    border: 1px solid var(--border-color);
+}
+
+.code-footer .buttons .btn {
+    padding: 0.25rem 0.45rem;
+    color: var(--content-color);
 }
