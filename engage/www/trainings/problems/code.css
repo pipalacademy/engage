@@ -99,7 +99,14 @@
 }
 
 .sidebar-content {
+    padding-top: 8px;
     font-size: 0.9em;
+}
+
+.sidebar-content pre {
+    padding: 8px;
+    background-color: var(--gray-100);
+    border-radius: 5px;
 }
 
 .code {
@@ -109,12 +116,6 @@
 .CodeMirror {
     border: 1px solid #f7f7f7;
     height: 200px;
-}
-
-.sidebar-content pre {
-    padding: 8px;
-    background-color: var(--gray-200);
-    border-radius: 10px;
 }
 
 .code-footer {
