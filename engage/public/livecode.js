@@ -38,12 +38,12 @@ class WriterInterface {
   }
 }
 
-class DefaultWriterInterface extends WriterInterface {
-  constructor(options) {
+class DefaultWriter extends WriterInterface {
+  constructor(element) {
     super();
 
-    this.elementOutput = options.elementOutput;
-    this.elementResults = options.elementResults;
+    this.elementOutput = element.querySelector(".output");
+    this.elementResults = element.querySelector(".output");
   }
 
   beforeRun() {
@@ -127,10 +127,7 @@ class LiveCodeEditor {
     this.elementReset = options.elementReset || this.parent.querySelector(".reset");
     this.elementArguments = options.elementArguments || this.parent.querySelector(".arguments");
 
-    let defaultElementOutput = options.elementOutput || this.parent.querySelector(".output");
-    let defaultWriter = new DefaultWriterInterface({
-      elementOutput: defaultElementOutput, elementResults: defaultElementOutput
-    });
+    let defaultWriter = new DefaultWriter(this.parent);
     this.writer = options.writer || defaultWriter; // implements WriterInterface
 
     this.codemirror = null;

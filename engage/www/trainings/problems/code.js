@@ -6,6 +6,11 @@ const globalData = {};
 const sidebarBtnClass = "btn-sidebar-header";
 const sidebarBtnSelector = `.${sidebarBtnClass}`;
 
+const sidebarState = {
+    output: null,
+    results: null,
+};
+
 function truncateFilepath(filepath) {
     let parts = filepath.split("/");
 
@@ -55,19 +60,19 @@ function onSidebarInstructions() {
 }
 
 function onSidebarOutput() {
-    setSidebarContent("output here");
+    setSidebarContent(sidebarState.output);
 }
 
 function onSidebarResults() {
-    setSidebarContent("results here");
+    setSidebarContent(sidebarState.results);
 }
 
 function activateDefaultSidebarTab() {
     let defaultSidebarTab = "#sidebar-tab-instructions";
-    activateSidebarTab(defaultSidebarTab);
+    setSidebarTab(defaultSidebarTab);
 }
 
-function activateSidebarTab(el) {
+function setSidebarTab(el) {
     let handlers = {
         "sidebar-tab-instructions": onSidebarInstructions,
         "sidebar-tab-output": onSidebarOutput,
@@ -150,6 +155,81 @@ function makeSubmission(editor, data) {
 }
 
 $(function () {
+    class SidebarWriter extends WriterInterface {
+        constructor(options) {
+            super();
+
+            // selectors
+            this.outputTab = "#sidebar-tab-output";
+            this.resultsTab = "#sidebar-tab-results";
+
+            // data
+            this.state = sidebarState;
+            this.state.output = options.output || sidebarState.output || "";
+            this.state.results = options.results || sidebarState.results || "";
+        }
+
+        beforeRun() {
+            this.clear();
+            setSidebarTab(this.outputTab);
+            this.setLoading("Running code...");
+        }
+
+        afterRun(output) {
+            this.setOutput(output);
+        }
+
+        beforeRunTests() {
+            this.clear();
+            setSidebarTab(this.resultsTab);
+            this.setLoading("Running tests...");
+        }
+
+        afterRunTests(result) {
+            this.setResults(result);
+        }
+
+        // private helpers
+        clear() {
+            setSidebarContent("");
+        }
+
+        setOutput(output) {
+            if (output !== undefined) {
+                this.state.output = output;
+            }
+
+            // escaping HTML
+            let html = new Option(this.state.output).innerHTML;
+
+            setSidebarTab(this.outputTab);
+            setSidebarContent(html);
+        }
+
+        setResults(results) {
+            if (results !== undefined) {
+                this.state.results = results;
+            }
+
+            let html = this.parseResults(this.state.results);
+
+            setSidebarTab(this.resultsTab);
+            setSidebarContent(html);
+        }
+
+        setLoading(text) {
+            let inner = new Option(text).innerHTML;
+            let html = `<em>${inner}</em>`
+
+            setSidebarContent(html);
+        }
+
+        parseResults(results) {
+            // TODO: implement parseResults
+            return JSON.stringify(results);
+        }
+    }
+
     loadGlobalData();
 
     refreshTabs();
@@ -165,26 +245,27 @@ $(function () {
     });
 
     $(sidebarBtnSelector).click(function () {
-        activateSidebarTab(this);
+        setSidebarTab(this);
     });
 
     $(".code-editor").each(function (_i, el) {
         let data = $(el).data();
 
+        let writer = new SidebarWriter({
+            output: "<em>Run your code to see its output here.</em>",
+            results: globalData.submission || "",
+        });
+
         let editor = new LiveCodeEditor(el, {
             runtime: "python",
             codemirror: true,
             problem: globalData.problem,
+            writer: writer,
         });
         let cm = editor.codemirror;
         cm.setSize(null, "500");
 
         editors[data.filepath] = editor;
-
-        let lastSubmission = globalData.submission;
-        if (lastSubmission && lastSubmission != "null") {
-            showTestResult(".output", lastSubmission);
-        }
 
         $(el).find(".submit").click(function () {
             makeSubmission(editor, {
