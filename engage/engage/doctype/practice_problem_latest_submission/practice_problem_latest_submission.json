@@ -9,7 +9,9 @@
   "author",
   "author_full_name",
   "problem_set",
+  "problem_set_title",
   "problem",
+  "problem_title",
   "training",
   "latest_submission",
   "code",
@@ -89,11 +91,23 @@
    "fieldname": "author_full_name",
    "fieldtype": "Data",
    "label": "Author Full Name"
+  },
+  {
+   "fetch_from": "problem_set.title",
+   "fieldname": "problem_set_title",
+   "fieldtype": "Data",
+   "label": "Problem Set Title"
+  },
+  {
+   "fetch_from": "problem.title",
+   "fieldname": "problem_title",
+   "fieldtype": "Data",
+   "label": "Problem Title"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-07-07 20:11:13.179806",
+ "modified": "2022-07-07 21:40:26.950457",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Practice Problem Latest Submission",
