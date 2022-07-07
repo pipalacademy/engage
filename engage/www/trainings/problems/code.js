@@ -3,14 +3,6 @@ const submissions = {};
 
 const globalData = {};
 
-const sidebarBtnClass = "btn-sidebar-header";
-const sidebarBtnSelector = `.${sidebarBtnClass}`;
-
-const sidebarState = {
-    output: null,
-    results: null,
-};
-
 function truncateFilepath(filepath) {
     let parts = filepath.split("/");
 
@@ -46,46 +38,13 @@ function setActiveTab(selector) {
     refreshTabs();
 }
 
+function escapeHTML(text) {
+    return new Option(text).innerHTML;
+}
+
 function loadGlobalData() {
     let data = $("#data").data();
     $.extend(globalData, data);
-}
-
-function setSidebarContent(content) {
-    $("#sidebar-content").html(content);
-}
-
-function onSidebarInstructions() {
-    setSidebarContent(globalData.problemDescription);
-}
-
-function onSidebarOutput() {
-    setSidebarContent(sidebarState.output);
-}
-
-function onSidebarResults() {
-    setSidebarContent(sidebarState.results);
-}
-
-function activateDefaultSidebarTab() {
-    let defaultSidebarTab = "#sidebar-tab-instructions";
-    setSidebarTab(defaultSidebarTab);
-}
-
-function setSidebarTab(el) {
-    let handlers = {
-        "sidebar-tab-instructions": onSidebarInstructions,
-        "sidebar-tab-output": onSidebarOutput,
-        "sidebar-tab-results": onSidebarResults,
-    };
-
-    let $el = $(el);
-    let handler = handlers[$el.attr("id")];
-
-    $(sidebarBtnSelector).removeClass("active");
-    $el.addClass("active");
-
-    handler();
 }
 
 // args: output element, data
@@ -154,88 +113,163 @@ function makeSubmission(editor, data) {
     });
 }
 
-$(function () {
-    class SidebarWriter extends WriterInterface {
-        constructor(options) {
-            super();
+class SidebarWriter extends WriterInterface {
+    constructor(options) {
+        super();
 
-            // selectors
-            this.outputTab = "#sidebar-tab-output";
-            this.resultsTab = "#sidebar-tab-results";
+        // selectors
+        this.instructionsTab = "#sidebar-tab-instructions";
+        this.outputTab = "#sidebar-tab-output";
+        this.resultsTab = "#sidebar-tab-results";
 
-            // data
-            this.state = sidebarState;
-            this.state.output = options.output || sidebarState.output || "";
-            this.state.results = options.results || sidebarState.results || "";
-        }
+        // data
+        this.state = {
+            instructions: options.instructions || null,
+            output: options.output || null,
+            results: options.results || null
+        };
 
-        beforeRun() {
-            this.clear();
-            setSidebarTab(this.outputTab);
-            this.setLoading("Running code...");
-        }
+        this.instructionsEmptyState = options.instructionsEmptyState || "<em>This problem has no description. Contact your instructor/admin if you think this is a mistake.</em>";
+        this.outputEmptyState = options.outputEmptyState || "<em>Run your code to see its output here.</em>";
+        this.resultsEmptyState = options.resultsEmptyState || "<em>Run tests to see its result here.</em>";
 
-        afterRun(output) {
-            this.setOutput(output);
-        }
+        this.handlersByID = {
+            "sidebar-tab-instructions": this.onSidebarInstructions,
+            "sidebar-tab-output": this.onSidebarOutput,
+            "sidebar-tab-results": this.onSidebarResults,
+        };
 
-        beforeRunTests() {
-            this.clear();
-            setSidebarTab(this.resultsTab);
-            this.setLoading("Running tests...");
-        }
+        this.sidebarBtnClass = "btn-sidebar-header";
+        this.sidebarBtnSelector = `.${this.sidebarBtnClass}`;
 
-        afterRunTests(result) {
-            this.setResults(result);
-        }
-
-        // private helpers
-        clear() {
-            setSidebarContent("");
-        }
-
-        setOutput(output) {
-            if (output !== undefined) {
-                this.state.output = output;
-            }
-
-            // escaping HTML
-            let html = new Option(this.state.output).innerHTML;
-
-            setSidebarTab(this.outputTab);
-            setSidebarContent(html);
-        }
-
-        setResults(results) {
-            if (results !== undefined) {
-                this.state.results = results;
-            }
-
-            let html = this.parseResults(this.state.results);
-
-            setSidebarTab(this.resultsTab);
-            setSidebarContent(html);
-        }
-
-        setLoading(text) {
-            let inner = new Option(text).innerHTML;
-            let html = `<em>${inner}</em>`
-
-            setSidebarContent(html);
-        }
-
-        parseResults(results) {
-            // TODO: implement parseResults
-            return JSON.stringify(results);
-        }
+        this.init();
     }
 
+    beforeRun() {
+        this.clear();
+        this.activateTab(this.outputTab);
+        this.setLoading("Running code...");
+    }
+
+    afterRun(output) {
+        this.setOutput(output);
+    }
+
+    beforeRunTests() {
+        this.clear();
+        this.activateTab(this.resultsTab);
+        this.setLoading("Running tests...");
+    }
+
+    afterRunTests(result) {
+        this.setResults(result);
+    }
+
+    // initialise hooks / perform init actions
+    init() {
+        let sidebar = this;
+
+        $(this.sidebarBtnSelector).click(function () {
+            sidebar.activateTab(this);
+        });
+
+        this.activateDefaultTab();
+    }
+
+    // private helpers
+    clear() {
+        this.setSidebarContent("");
+    }
+
+    setOutput(output) {
+        if (output !== undefined) {
+            this.state.output = output;
+        }
+
+        let html = this.parseOutput(this.state.output);
+
+        this.setSidebarTab(this.outputTab);
+        this.setSidebarContent(html);
+    }
+
+    setResults(results) {
+        if (results !== undefined) {
+            this.state.results = results;
+        }
+
+        let html = this.parseResults(this.state.results);
+
+        this.setSidebarTab(this.resultsTab);
+        this.setSidebarContent(html);
+    }
+
+    setLoading(text) {
+        let inner = escapeHTML(text);
+        let html = `<em>${inner}</em>`
+
+        this.setSidebarContent(html);
+    }
+
+    parseOutput(output) {
+        let html = (output === null) ? this.outputEmptyState : escapeHTML(output);
+
+        return html;
+    }
+
+    parseResults(results) {
+        // TODO: implement parseResults
+        return (results === null) ? this.resultsEmptyState : JSON.stringify(results);
+    }
+
+    // other modification methods
+    setSidebarContent(content) {
+        $("#sidebar-content").html(content);
+    }
+
+    setSidebarTab(el) {
+        let $el = $(el);
+
+        // make tab active
+        $(this.sidebarBtnSelector).removeClass("active");
+        $el.addClass("active");
+    }
+
+    activateTab(el) {
+        // set content
+        let elementID = $(el).attr("id");
+        let handler = this.handlersByID[elementID].bind(this);
+        handler();
+    }
+
+    activateDefaultTab() {
+        let defaultSidebarTab = "#sidebar-tab-instructions";
+        this.activateTab(defaultSidebarTab);
+    }
+
+    onSidebarInstructions() {
+        this.setSidebarTab(this.instructionsTab);
+        this.setSidebarContent(this.state.instructions);
+    }
+
+    onSidebarOutput() {
+        this.setOutput(this.state.output);
+    }
+
+    onSidebarResults() {
+        this.setResults(this.state.results);
+    }
+}
+
+$(function () {
     loadGlobalData();
 
     refreshTabs();
     setCodeFile(globalData.defaultFilepath);
 
-    activateDefaultSidebarTab();
+    var sidebar = new SidebarWriter({
+        instructions: globalData.problemDescription || null,
+        results: globalData.submission || null,
+    });
 
     $(".tab-item").click(function (e) {
         let data = $(this).data();
@@ -244,23 +278,14 @@ $(function () {
         setActiveTab(this);
     });
 
-    $(sidebarBtnSelector).click(function () {
-        setSidebarTab(this);
-    });
-
     $(".code-editor").each(function (_i, el) {
         let data = $(el).data();
-
-        let writer = new SidebarWriter({
-            output: "<em>Run your code to see its output here.</em>",
-            results: globalData.submission || "",
-        });
 
         let editor = new LiveCodeEditor(el, {
             runtime: "python",
             codemirror: true,
             problem: globalData.problem,
-            writer: writer,
+            writer: sidebar,
         });
         let cm = editor.codemirror;
         cm.setSize(null, "500");

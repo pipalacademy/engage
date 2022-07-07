@@ -118,8 +118,7 @@
 </div>
 {% endblock %}
 
-{% block body_include %}
-{{ super() }}
+{%- block script %}
 
 <script src="/assets/engage/codemirror/lib/codemirror.js"></script>
 <script src="/assets/engage/codemirror/mode/python/python.js"></script>
@@ -130,4 +129,6 @@
 
 <script type="text/javascript" src="/assets/engage/livecode.js"></script>
 
-{% endblock %}
+{{ super() }}
+
+{%- endblock %}
