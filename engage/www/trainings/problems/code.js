@@ -165,6 +165,9 @@ class SidebarWriter extends WriterInterface {
         this.setResults(result);
     }
 
+    showTestResult(result) {
+    }
+
     // initialise hooks / perform init actions
     init() {
         let sidebar = this;
@@ -216,9 +219,28 @@ class SidebarWriter extends WriterInterface {
         return html;
     }
 
-    parseResults(results) {
+    parseResults(result) {
         // TODO: implement parseResults
-        return (results === null) ? this.resultsEmptyState : JSON.stringify(results);
+        if (result === null) {
+            return this.resultsEmptyState;
+        }
+
+        var html = "";
+
+        function print(text) {
+            html += text + "\n";
+        }
+
+        print(`Test Status: ${result.outcome} (${result.stats.passed} passed and ${result.stats.failed} failed)`)
+        result.testcases.forEach((t, i) => {
+            print(`\n${i + 1}. ${t.name} ... ${t.outcome}`);
+            if (t.outcome == "failed") {
+                print("")
+                print(t.error_detail.replaceAll(/^/mg, "    "));
+            }
+        })
+
+        return `<pre class="test-result">${html}</pre>`;
     }
 
     // other modification methods
