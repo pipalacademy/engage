@@ -1,5 +1,15 @@
 {% extends "templates/custom_web.html" %}
 
+{% macro Breadcrumbs(training) %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/trainings/">Trainings</a></li>
+        <li class="breadcrumb-item"><a href="/trainings/{{ training.name }}/">{{ training.title }}</a></li>
+        <li class="breadcrumb-item active">Submissions</li>
+    </ol>
+</nav>
+{% endmacro %}
+
 {% macro TrainingHeader(training) %}
 <div class="training-header">
     <div class="h2">{{training.title}}</div>
@@ -60,6 +70,8 @@ submission.submitted_at) %}
 {% endmacro %}
 
 {% block page_content %}
+{{ Breadcrumbs(training) }}
+
 {{ TrainingHeader(training) }}
 
 <div class="submissions">
