@@ -202,8 +202,8 @@ website_route_rules = [{
     "from_route": "/trainings/<int:year>/<slug>/review",
     "to_route": "trainings/training_review_old"
 }, {
-    "from_route": "/trainings/<int:year>/<slug>/review_new",
-    "to_route": "trainings/review"
+    "from_route": "/trainings/<int:year>/<slug>/submissions",
+    "to_route": "trainings/submissions"
 }, {
     "from_route": "/trainings/<int:year>/<slug>/invite",
     "to_route": "trainings/invite"
