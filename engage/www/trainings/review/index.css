@@ -51,3 +51,11 @@ h1 {
 .tests-failed-icon {
     color: var(--tests-failed-color);
 }
+
+.font-lg {
+    font-size: 1.5em;
+}
+
+.font-xl {
+    font-size: 2em;
+}

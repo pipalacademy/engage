@@ -43,6 +43,16 @@ submission.submitted_at) %}
 </div>
 {% endmacro %}
 
+{% macro SubmissionsEmptyState() %}
+<div class="col-12 w-100">
+    <div class="d-block text-center p-8 border rounded-lg">
+        <div class="font-xl"><i class="fa-solid fa-check"></i></div>
+        <div class="font-lg"><strong>You're all caught up</strong></div>
+        <div class="text-muted">You've reviewed all the submissions for now!</div>
+    </div>
+</div>
+{% endmacro %}
+
 {% block page_content %}
 {{ TrainingHeader(training) }}
 
@@ -52,6 +62,8 @@ submission.submitted_at) %}
     <div class="row">
         {% for submission in submissions %}
         <div class="col-12 col-md-6 col-xl-4">{{ SubmissionCard(submission) }}</div>
+        {% else %}
+        {{ SubmissionsEmptyState() }}
         {% endfor %}
     </div>
 </div>
