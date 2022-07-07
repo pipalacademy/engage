@@ -18,11 +18,11 @@
 submission.submitted_at) %}
 <div class="submission-card p-4 my-4">
     <div class="submission-card-header mb-4 d-flex justify-content-between">
-        <div class="">
+        <div>
             <div><strong>{{ author_name }}'s solution</strong></div>
             <div class="text-muted">to {{ submission.problem_title }} in {{ submission.problem_set_title }}</div>
         </div>
-        <div class="d-flex justify-content-center align-items-center">
+        <div>
             {% if submission.test_outcome == "passed" %}
             <i class="fa-solid fa-circle-check tests-passed-icon"></i>
             {% else %}
