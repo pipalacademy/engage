@@ -98,6 +98,14 @@
 <div id="data" class="d-none" {%- for k, v in data_kv.items() %} data-{{ k }}="{{ v }}" {% endfor -%}></div>
 {%- endmacro -%}
 
+{%- macro Comments(latest_submission) -%}
+{% set doctype, docname = 'Practice Problem Latest Submission', latest_submission.name %}
+{% set title = 'Review Comments' %}
+{% set cta_title = 'New Comment' %}
+{% set single_thread = True %}
+{% include "frappe/templates/discussions/discussions_section.html" %}
+{%- endmacro -%}
+
 {% block content %}
 <div class="content">
     {{ Data({
@@ -114,6 +122,10 @@
         {{ Editor(problem) }}
     </div>
 </div>
+
+{# <div classs="container">
+    {{ Comments(submission) }}
+</div>#}
 {% endblock %}
 
 {%- block script %}
