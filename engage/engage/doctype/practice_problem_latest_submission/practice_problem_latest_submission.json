@@ -14,6 +14,7 @@
   "problem_title",
   "training",
   "latest_submission",
+  "submitted_at",
   "code",
   "test_outcome",
   "test_result",
@@ -103,11 +104,16 @@
    "fieldname": "problem_title",
    "fieldtype": "Data",
    "label": "Problem Title"
+  },
+  {
+   "fieldname": "submitted_at",
+   "fieldtype": "Datetime",
+   "label": "Submitted At"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-07-07 21:40:26.950457",
+ "modified": "2022-07-07 21:54:47.133412",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Practice Problem Latest Submission",

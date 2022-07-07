@@ -14,6 +14,8 @@
 
 {% macro SubmissionCard(submission) %}
 {% set author_name = submission.author_full_name or submission.author %}
+{% set published_ago = submission.submitted_at and format_datetime_diff(frappe.utils.now_datetime() ,
+submission.submitted_at) %}
 <div class="submission-card p-4">
     <div class="submission-card-header mb-4 row">
         <div class="col-10">
@@ -26,12 +28,15 @@
         {{- submission.code -}}
         </pre>
     </div>
-    <div class="submission-card-footer"></div>
+    <div class="submission-card-footer">
+        {% if published_ago %}
+        Published {{ published_ago }} ago
+        {% endif %}
+    </div>
 </div>
 {% endmacro %}
 
 {% block page_content %}
-
 {{ TrainingHeader(training) }}
 
 <div class="submissions">
@@ -43,5 +48,4 @@
         {% endfor %}
     </div>
 </div>
-
 {% endblock %}

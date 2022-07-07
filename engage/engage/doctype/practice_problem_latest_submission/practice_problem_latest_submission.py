@@ -11,6 +11,7 @@ class PracticeProblemLatestSubmission(Document):
         old_doc = self.get_doc_before_save()
         if not old_doc or old_doc.latest_submission != self.latest_submission:
             self.for_review = True
+            self.submitted_at = frappe.utils.now()
 
     def after_review(self):
         self.for_review = 0
