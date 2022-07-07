@@ -104,6 +104,13 @@ web_include_js = "/assets/engage/js/engage.js"
 # ---------------
 # Hook on document methods and events
 
+doc_events = {
+    "Discussion Reply": {
+        "on_update":
+        "engage.engage.doctype.practice_problem_latest_submission.practice_problem_latest_submission.on_new_comment"
+    }
+}
+
 # doc_events = {
 # 	"*": {
 # 		"on_update": "method",
@@ -194,6 +201,9 @@ website_route_rules = [{
 }, {
     "from_route": "/trainings/<int:year>/<slug>/review",
     "to_route": "trainings/training_review_old"
+}, {
+    "from_route": "/trainings/<int:year>/<slug>/review_new",
+    "to_route": "trainings/review"
 }, {
     "from_route": "/trainings/<int:year>/<slug>/invite",
     "to_route": "trainings/invite"

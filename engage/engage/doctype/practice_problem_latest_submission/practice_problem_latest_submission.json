@@ -7,13 +7,15 @@
  "engine": "InnoDB",
  "field_order": [
   "author",
+  "author_full_name",
   "problem_set",
   "problem",
   "training",
   "latest_submission",
   "code",
   "test_outcome",
-  "test_result"
+  "test_result",
+  "for_review"
  ],
  "fields": [
   {
@@ -75,11 +77,23 @@
    "fieldname": "test_result",
    "fieldtype": "Code",
    "label": "Test Result"
+  },
+  {
+   "default": "0",
+   "fieldname": "for_review",
+   "fieldtype": "Check",
+   "label": "For Review"
+  },
+  {
+   "fetch_from": "author.full_name",
+   "fieldname": "author_full_name",
+   "fieldtype": "Data",
+   "label": "Author Full Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-06-13 17:18:45.113424",
+ "modified": "2022-07-07 20:11:13.179806",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Practice Problem Latest Submission",

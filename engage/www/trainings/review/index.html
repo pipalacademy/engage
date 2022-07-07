@@ -1,0 +1,47 @@
+{% extends "templates/custom_web.html" %}
+
+{% macro TrainingHeader(training) %}
+<div class="training-header">
+    <div class="h2">{{training.title}}</div>
+    <div class="training-dates">{{frappe.utils.format_date(training.begin_date, "MMM dd")}} - {{
+        frappe.utils.format_date(training.end_date, "MMM dd") }}, {{training.end_date.year}}</div>
+    <div>
+        {% set client = frappe.get_doc("Client", training.client) %}
+        <div>{{client.title}}</div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro SubmissionCard(submission) %}
+{% set author_name = submission.author_full_name or submission.author %}
+<div class="submission-card p-4">
+    <div class="submission-card-header mb-4 row">
+        <div class="col-10">
+            <div><strong>{{ author_name }}'s solution</strong></div>
+            <div class="text-muted">to {{ submission.problem }}</div>
+        </div>
+    </div>
+    <div class="submission-card-body">
+        <pre class="code w-100">
+        {{- submission.code -}}
+        </pre>
+    </div>
+    <div class="submission-card-footer"></div>
+</div>
+{% endmacro %}
+
+{% block page_content %}
+
+{{ TrainingHeader(training) }}
+
+<div class="submissions">
+    <div class="h1">Submissions</div>
+
+    <div class="row">
+        {% for submission in submissions %}
+        <div class="col-12 col-md-6 col-xl-4">{{ SubmissionCard(submission) }}</div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
