@@ -18,7 +18,8 @@
   "code",
   "test_outcome",
   "test_result",
-  "for_review"
+  "for_review",
+  "comment_count"
  ],
  "fields": [
   {
@@ -109,11 +110,16 @@
    "fieldname": "submitted_at",
    "fieldtype": "Datetime",
    "label": "Submitted At"
+  },
+  {
+   "fieldname": "comment_count",
+   "fieldtype": "Int",
+   "label": "Comment Count"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-07-07 21:54:47.133412",
+ "modified": "2022-07-07 23:50:14.673005",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Practice Problem Latest Submission",

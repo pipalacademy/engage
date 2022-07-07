@@ -22,7 +22,7 @@ submission.submitted_at) %}
             <div><strong>{{ author_name }}'s solution</strong></div>
             <div class="text-muted">to {{ submission.problem_title }} in {{ submission.problem_set_title }}</div>
         </div>
-        <div>
+        <div class="mt-1">
             {% if submission.test_outcome == "passed" %}
             <i class="fa-solid fa-circle-check tests-passed-icon"></i>
             {% else %}
@@ -35,10 +35,16 @@ submission.submitted_at) %}
         {{- submission.code -}}
         </pre>
     </div>
-    <div class="submission-card-footer">
-        {% if published_ago %}
-        Published {{ published_ago }} ago
-        {% endif %}
+    <div class="submission-card-footer d-flex justify-content-between align-items-center">
+        <div>
+            {% if published_ago %}
+            Published {{ published_ago }} ago
+            {% endif %}
+        </div>
+
+        <div class="d-flex align-items-center">
+            <i class="comment-count-icon mt-half mr-2 font-lg fa-regular fa-message"></i> {{ submission.comment_count }}
+        </div>
     </div>
 </div>
 {% endmacro %}
@@ -46,8 +52,8 @@ submission.submitted_at) %}
 {% macro SubmissionsEmptyState() %}
 <div class="col-12 w-100">
     <div class="d-block text-center p-8 border rounded-lg">
-        <div class="font-xl"><i class="fa-solid fa-check"></i></div>
-        <div class="font-lg"><strong>You're all caught up</strong></div>
+        <div class="font-xxl"><i class="fa-solid fa-check"></i></div>
+        <div class="font-xl"><strong>You're all caught up</strong></div>
         <div class="text-muted">You've reviewed all the submissions for now!</div>
     </div>
 </div>

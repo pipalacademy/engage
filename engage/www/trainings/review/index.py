@@ -18,6 +18,7 @@ def get_context(context, training):
                                              "problem_title",
                                              "submitted_at",
                                              "test_outcome",
+                                             "comment_count",
                                              "code",
                                          ],
                                          filters={"for_review": True})

@@ -13,10 +13,10 @@ class PracticeProblemLatestSubmission(Document):
             self.for_review = True
             self.submitted_at = frappe.utils.now()
 
-    def after_review(self):
+    def after_review(self, save=False):
         self.for_review = 0
-        self.save(ignore_permissions=True)
-        self.reload()
+        if save:
+            self.save(ignore_permissions=True)
 
 
 def on_new_comment(doc, event_name):
@@ -29,3 +29,7 @@ def on_new_comment(doc, event_name):
         if training.has_user_as_trainer(doc.owner):
             # reviewed by trainer
             submission.after_review()
+
+        submission.comment_count = frappe.db.count(
+            "Discussion Reply", filters={"topic": doc.topic})
+        submission.save(ignore_permissions=True)
