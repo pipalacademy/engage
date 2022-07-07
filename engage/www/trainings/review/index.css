@@ -1,6 +1,9 @@
 :root {
     --card-border-color: var(--gray-200);
     --card-background-color: white;
+
+    --tests-passed-color: var(--green-700);
+    --tests-failed-color: var(--red-700);
 }
 
 body {
@@ -29,6 +32,7 @@ h1 {
     border: 1px solid var(--card-border-color);
     padding: 8px;
     border-radius: 5px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 .submission-card .code {
@@ -38,4 +42,12 @@ h1 {
     border-radius: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.tests-passed-icon {
+    color: var(--tests-passed-color);
+}
+
+.tests-failed-icon {
+    color: var(--tests-failed-color);
 }

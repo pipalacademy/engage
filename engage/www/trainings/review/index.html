@@ -16,11 +16,18 @@
 {% set author_name = submission.author_full_name or submission.author %}
 {% set published_ago = submission.submitted_at and format_datetime_diff(frappe.utils.now_datetime() ,
 submission.submitted_at) %}
-<div class="submission-card p-4">
-    <div class="submission-card-header mb-4 row">
-        <div class="col-10">
+<div class="submission-card p-4 my-4">
+    <div class="submission-card-header mb-4 d-flex justify-content-between">
+        <div class="">
             <div><strong>{{ author_name }}'s solution</strong></div>
             <div class="text-muted">to {{ submission.problem_title }} in {{ submission.problem_set_title }}</div>
+        </div>
+        <div class="d-flex justify-content-center align-items-center">
+            {% if submission.test_outcome == "passed" %}
+            <i class="fa-solid fa-circle-check tests-passed-icon"></i>
+            {% else %}
+            <i class="fa-solid fa-circle-xmark tests-failed-icon"></i>
+            {% endif %}
         </div>
     </div>
     <div class="submission-card-body">
