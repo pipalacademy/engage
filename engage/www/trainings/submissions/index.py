@@ -21,7 +21,8 @@ def get_context(context, training):
                                              "comment_count",
                                              "code",
                                          ],
-                                         filters={"for_review": True})
+                                         filters={"for_review": True},
+                                         order_by="submitted_at asc")
     context.format_datetime_diff = format_datetime_diff
 
 
