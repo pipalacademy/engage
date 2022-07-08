@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 import frappe
 
 from engage.utils import format_datetime_diff, require_login, require_trainer_role, with_training
@@ -37,7 +39,9 @@ def get_context(context, training):
 
 
 def get_submission_url(submission):
-    return f"/trainings/{submission.training}/submissions/{submission.problem_set}/{submission.problem}?participant={submission.author}"
+    url = f"/trainings/{submission.training}/submissions/{submission.problem_set}/{submission.problem}"
+    qs = urlencode({"participant": submission.author})
+    return f"{url}?{qs}"
 
 
 def get_pagination_parameters_from_form_dict(d):
