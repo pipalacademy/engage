@@ -14,9 +14,11 @@ def get_context(context, training):
             "name",
             "author",
             "author_full_name",
+            "problem_set",
             "problem_set_title",
             "problem",
             "problem_title",
+            "training",
             "submitted_at",
             "modified",
             "test_outcome",
@@ -24,4 +26,10 @@ def get_context(context, training):
             "code",
         ],
         order_by="submitted_at desc, modified desc")
+
     context.format_datetime_diff = format_datetime_diff
+    context.get_submission_url = get_submission_url
+
+
+def get_submission_url(submission):
+    return f"/trainings/{submission.training}/submissions/{submission.problem_set}/{submission.problem}?participant={submission.author}"

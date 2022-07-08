@@ -27,37 +27,40 @@
 {% set submitted_at = submission.submitted_at or submission.modified %}
 {% set now_dt = frappe.utils.now_datetime() %}
 {% set published_ago = format_datetime_diff(now_dt - submitted_at) %}
-<div class="submission-card p-4 my-4">
-    <div class="submission-card-header mb-4 d-flex justify-content-between">
-        <div>
-            <div><strong>{{ author_name }}'s solution</strong></div>
-            <div class="text-muted">to {{ submission.problem_title }} in {{ submission.problem_set_title }}</div>
+<a class="text-decoration-none color-inherit" href="{{ get_submission_url(submission) }}">
+    <div class="submission-card p-4 my-4">
+        <div class="submission-card-header mb-4 d-flex justify-content-between">
+            <div>
+                <div><strong>{{ author_name }}'s solution</strong></div>
+                <div class="text-muted">to {{ submission.problem_title }} in {{ submission.problem_set_title }}</div>
+            </div>
+            <div class="mt-1">
+                {% if submission.test_outcome == "passed" %}
+                <i class="fa-solid fa-circle-check tests-passed-icon"></i>
+                {% else %}
+                <i class="fa-solid fa-circle-xmark tests-failed-icon"></i>
+                {% endif %}
+            </div>
         </div>
-        <div class="mt-1">
-            {% if submission.test_outcome == "passed" %}
-            <i class="fa-solid fa-circle-check tests-passed-icon"></i>
-            {% else %}
-            <i class="fa-solid fa-circle-xmark tests-failed-icon"></i>
-            {% endif %}
+        <div class="submission-card-body">
+            <pre><code>
+                {{- submission.code -}}
+            </code></pre>
         </div>
-    </div>
-    <div class="submission-card-body">
-        <pre><code>
-            {{- submission.code -}}
-        </code></pre>
-    </div>
-    <div class="submission-card-footer d-flex justify-content-between align-items-center">
-        <div>
-            {% if published_ago %}
-            Published {{ published_ago }} ago
-            {% endif %}
-        </div>
+        <div class="submission-card-footer d-flex justify-content-between align-items-center">
+            <div>
+                {% if published_ago %}
+                Published {{ published_ago }} ago
+                {% endif %}
+            </div>
 
-        <div class="d-flex align-items-center">
-            <i class="comment-count-icon mt-half mr-2 font-lg fa-regular fa-message"></i> {{ submission.comment_count }}
+            <div class="d-flex align-items-center">
+                <i class="comment-count-icon mt-half mr-2 font-lg fa-regular fa-message"></i> {{
+                submission.comment_count }}
+            </div>
         </div>
     </div>
-</div>
+</a>
 {% endmacro %}
 
 {% macro SubmissionsEmptyState() %}

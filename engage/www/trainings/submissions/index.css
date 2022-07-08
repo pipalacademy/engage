@@ -76,3 +76,11 @@ h1 {
 .font-xxl {
     font-size: 2em;
 }
+
+.color-inherit {
+    color: inherit;
+}
+
+.color-inherit:hover {
+    color: inherit;
+}
