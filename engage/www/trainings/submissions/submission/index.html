@@ -1,0 +1,71 @@
+{% extends "templates/custom_web.html" %}
+
+{% macro Breadcrumbs(training, submission) %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/trainings/">Trainings</a></li>
+        <li class="breadcrumb-item"><a href="/trainings/{{ training.name }}/">{{ training.title }}</a></li>
+        <li class="breadcrumb-item"><a href="/trainings/{{ training.name }}/submissions">Submissions</a></li>
+        <li class="breadcrumb-item">{{ submission.problem_set_title }}</li>
+        <li class="breadcrumb-item">{{
+            submission.problem_title }}</li>
+        <li class="breadcrumb-item active">{{ submission.author_full_name }}'s solution</li>
+    </ol>
+</nav>
+{% endmacro %}
+
+{% macro SubmissionHeader(submission) %}
+<div class="submission-header">
+    <div class="h2 font-weight-bold">{{ submission.author_full_name }}'s solution</div>
+    <div class="h5 font-weight-light">
+        <span class="text-muted">to</span>
+        <strong>{{ submission.problem_title }}</strong>
+        <span class="text-muted">in</span>
+        <strong>{{ submission.problem_set_title }}</strong>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro SubmissionTestStatus(test_outcome) %}
+<pre
+    class="{{ 'test-status-passed' if test_outcome == 'passed' else 'test-status-failed' }}"><i class="font-sm fa-solid fa-circle"></i> {{ test_outcome|capitalize }} </pre>
+{% endmacro %}
+
+{% macro SubmissionBody(submission) %}
+<div class="submission-body">
+    {% set submitted_at = submission.submitted_at or submission.modified %}
+    {% set submitted_ago = format_datetime_diff(
+    frappe.utils.now_datetime() - submitted_at,
+    years_suffix=" years",
+    months_suffix=" months",
+    days_suffix=" days",
+    hours_suffix=" hours",
+    minutes_suffix=" minutes",
+    seconds_suffix=" seconds") %}
+
+    <div class="submission-info">
+        <div class="submission-title h6">
+            Submission made {{ submitted_ago }} ago
+        </div>
+        <div class="submission-test-status">
+            {{- SubmissionTestStatus(submission.test_outcome) -}}
+        </div>
+    </div>
+
+    <pre class="code">
+        {{- submission.code -}}
+    </pre>
+</div>
+{% endmacro %}
+
+{% block page_content %}
+{{ Breadcrumbs(training, submission) }}
+
+<div class="my-2">
+    {{ SubmissionHeader(submission) }}
+</div>
+
+<div class="my-2">
+    {{ SubmissionBody(submission) }}
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+:root {
+    --card-border-color: var(--gray-300);
+    --card-background-color: white;
+
+    --tests-passed-color: var(--green-700);
+    --tests-failed-color: var(--red-700);
+}
+
+body {
+    background: #F8F9FA;
+}
+
+h1 {
+    margin-top: 1.2rem;
+}
+
+.submission-header {
+    margin: 20px 0 40px 0;
+    /*padding: 20px 0;*/
+    /*background: #eee;*/
+    border-radius: 8px;
+}
+
+.submission-body {
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.submission-body .code {
+    padding: 15px 0;
+    margin: 0;
+    line-height: 160%;
+}
+
+.submission-info {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--card-border-color);
+}
+
+.font-sm {
+    font-size: 0.8em;
+}
+
+.font-lg {
+    font-size: 1.2em;
+}
+
+.font-xl {
+    font-size: 1.5em;
+}
+
+.submission-info pre {
+    margin-bottom: 0 !important;
+}
+
+.submission-title {
+    margin-bottom: 0 !important;
+}
+
+.submission-test-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.test-status-passed {
+    color: var(--green-600);
+}
+
+.test-status-failed {
+    color: var(--red-500);
+}

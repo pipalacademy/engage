@@ -163,3 +163,33 @@ def get_submission(training_name, problem_set_name, problem_name, author_name):
                                    })
     except frappe.exceptions.DoesNotExistError:
         return
+
+
+def format_datetime_diff(diff,
+                         years_suffix="y",
+                         months_suffix="mo",
+                         days_suffix="d",
+                         hours_suffix="h",
+                         minutes_suffix="m",
+                         seconds_suffix="s"):
+    """
+    argument diff must be of type `datetime.timedelta`
+    """
+
+    years = diff.days // 360
+    months = (diff.days - years * 360) // 30
+    days = diff.days % 30
+
+    hours = diff.seconds // 3600
+    minutes = (diff.seconds - hours * 3600) // 60
+    seconds = diff.seconds % 60
+
+    significance_order = [(years, years_suffix), (months, months_suffix),
+                          (days, days_suffix), (hours, hours_suffix),
+                          (minutes, minutes_suffix), (seconds, seconds_suffix)]
+
+    most_significant_duration = next((str(count), unit)
+                                     for (count, unit) in significance_order
+                                     if count or unit == "s")
+
+    return "".join(most_significant_duration)

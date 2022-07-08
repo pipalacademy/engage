@@ -24,7 +24,7 @@
 
 {% macro SubmissionCard(submission) %}
 {% set author_name = submission.author_full_name or submission.author %}
-{% set published_ago = submission.submitted_at and format_datetime_diff(frappe.utils.now_datetime() ,
+{% set published_ago = submission.submitted_at and format_datetime_diff(frappe.utils.now_datetime() -
 submission.submitted_at) %}
 <div class="submission-card p-4 my-4">
     <div class="submission-card-header mb-4 d-flex justify-content-between">
