@@ -26,6 +26,15 @@
 </div>
 {% endmacro %}
 
+{% macro ReviewComments(submission) %}
+{% set doctype = "Practice Problem Latest Submission" %}
+{% set docname = submission.name %}
+{% set title = "Review Comments" %}
+{% set cta_title = "New Comment" %}
+{% set single_thread = True %}
+{% include "frappe/templates/discussions/discussions_section.html" %}
+{% endmacro %}
+
 {% macro SubmissionTestStatus(test_outcome) %}
 <pre
     class="{{ 'test-status-passed' if test_outcome == 'passed' else 'test-status-failed' }}"><i class="font-sm fa-solid fa-circle"></i> {{ test_outcome|capitalize }} </pre>
@@ -67,5 +76,9 @@
 
 <div class="my-2">
     {{ SubmissionBody(submission) }}
+</div>
+
+<div class="my-2">
+    {{ ReviewComments(submission) }}
 </div>
 {% endblock %}
