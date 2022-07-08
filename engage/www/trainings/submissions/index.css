@@ -35,12 +35,11 @@ h1 {
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
-.submission-card .code {
-    padding: 15px;
-    height: 225px;
-    border: 1px solid var(--card-border-color);
-    border-radius: 10px;
-    overflow: hidden;
+.submission-card code {
+    border-radius: 8px;
+    height: 239px;
+    line-height: 160% !important;
+    overflow: hidden !important;
     text-overflow: ellipsis;
 }
 
