@@ -22,6 +22,26 @@
 </div>
 {% endmacro %}
 
+{% macro Pagination(training_name, current_page, total_pages) %}
+
+{% set has_next = current_page < total_pages %}
+{% set has_prev = current_page > 1 %}
+
+{% set next_url = get_submissions_url(training_name, page=current_page+1) if has_next else none %}
+{% set prev_url = get_submissions_url(training_name, page=current_page-1) if has_prev else none %}
+
+<nav>
+    <ul class="pagination">
+        <li class="page-item {{ 'disabled' if not has_prev }}">
+            <a class="page-link" href="{{ prev_url or '' }}" >Previous</a>
+        </li>
+        <li class="page-item {{ 'disabled' if not has_next }}">
+            <a class="page-link" href="{{ next_url or '' }}">Next</a>
+        </li>
+    </ul>
+</nav>
+{% endmacro %}
+
 {% macro SubmissionCard(submission) %}
 {% set author_name = submission.author_full_name or submission.author %}
 {% set submitted_at = submission.submitted_at or submission.modified %}
@@ -32,7 +52,8 @@
         <div class="submission-card-header mb-4 d-flex justify-content-between">
             <div>
                 <div><strong>{{ author_name }}'s solution</strong></div>
-                <div class="text-muted">to {{ submission.problem_title }} in {{ submission.problem_set_title }}</div>
+                <div class="text-muted">to {{ submission.problem_title }} in {{ submission.problem_set_title }}
+                </div>
             </div>
             <div class="mt-1">
                 {% if submission.test_outcome == "passed" %}
@@ -86,11 +107,16 @@
 
 <div class="submissions">
     <div class="row">
+        {% if submissions %}
         {% for submission in submissions %}
         <div class="col-12 col-md-6 col-xl-4">{{ SubmissionCard(submission) }}</div>
+        {% endfor %}
+        <div class="col-12 d-flex justify-content-center">
+            {{ Pagination(training.name, current_page, total_pages) }}
+        </div>
         {% else %}
         {{ SubmissionsEmptyState() }}
-        {% endfor %}
+        {% endif %}
     </div>
 </div>
 {% endblock %}
