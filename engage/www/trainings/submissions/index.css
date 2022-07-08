@@ -84,3 +84,12 @@ h1 {
 .color-inherit:hover {
     color: inherit;
 }
+
+.submission-status {
+    max-height: 30px;
+    font-size: 0.8em;
+}
+
+.for-review {
+    color: var(--yellow-200);
+}

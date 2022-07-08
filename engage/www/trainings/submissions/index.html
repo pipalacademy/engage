@@ -55,12 +55,19 @@
                 <div class="text-muted">to {{ submission.problem_title }} in {{ submission.problem_set_title }}
                 </div>
             </div>
-            <div class="mt-1">
-                {% if submission.test_outcome == "passed" %}
-                <i class="fa-solid fa-circle-check tests-passed-icon"></i>
-                {% else %}
-                <i class="fa-solid fa-circle-xmark tests-failed-icon"></i>
+            <div class="d-flex mt-1 align-items-center submission-status">
+                {% if submission.for_review %}
+                <span class="mr-2 for-review">
+                    <i class="fa-solid fa-circle"></i>
+                </span>
                 {% endif %}
+                <span>
+                    {% if submission.test_outcome == "passed" %}
+                    <i class="fa-solid fa-circle-check tests-passed-icon"></i>
+                    {% else %}
+                    <i class="fa-solid fa-circle-xmark tests-failed-icon"></i>
+                    {% endif %}
+                </span>
             </div>
         </div>
         <div class="submission-card-body">

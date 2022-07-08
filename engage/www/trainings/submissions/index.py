@@ -34,6 +34,7 @@ def get_context(context, training):
             "modified",
             "test_outcome",
             "comment_count",
+            "for_review",
             "code",
         ],
         filters=submission_filters,
