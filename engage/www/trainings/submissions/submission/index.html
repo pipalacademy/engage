@@ -61,11 +61,19 @@
         </div>
     </div>
 
-    <pre class="code">
-        {{- submission.code -}}
-    </pre>
+    <div class="submission-code">
+        <pre><code>
+            {{- submission.code -}}
+        </code></pre>
+    </div>
 </div>
 {% endmacro %}
+
+{%- block style %}
+{{ super() }}
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css">
+{%- endblock -%}
 
 {% block page_content %}
 {{ Breadcrumbs(training, submission) }}
@@ -82,3 +90,9 @@
     {{ ReviewComments(submission) }}
 </div>
 {% endblock %}
+
+{%- block script %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+
+{{ super() }}
+{%- endblock %}
