@@ -206,11 +206,11 @@ website_route_rules = [{
     "to_route": "trainings/submissions"
 }, {
     "from_route":
-    "/trainings/<int:year>/<slug>/submission/<problem_set>/<problem>",
+    "/trainings/<int:year>/<slug>/submissions/<problem_set>/<problem>",
     "to_route": "trainings/submissions/submission"
 }, {
     "from_route":
-    "/trainings/<int:year>/<slug>/submission/<problem_set>/<problem_repository>/<problem>",
+    "/trainings/<int:year>/<slug>/submissions/<problem_set>/<problem_repository>/<problem>",
     "to_route": "trainings/submissions/submission"
 }, {
     "from_route": "/trainings/<int:year>/<slug>/invite",
