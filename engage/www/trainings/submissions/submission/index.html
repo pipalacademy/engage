@@ -29,7 +29,7 @@
 {% macro ReviewComments(submission) %}
 {% set doctype = "Practice Problem Latest Submission" %}
 {% set docname = submission.name %}
-{% set title = "Review Comments" %}
+{% set title = "Comments" %}
 {% set cta_title = "New Comment" %}
 {% set single_thread = True %}
 {% include "frappe/templates/discussions/discussions_section.html" %}
@@ -54,7 +54,7 @@
 
     <div class="submission-info">
         <div class="submission-title h6">
-            Submission made {{ submitted_ago }} ago
+            Submitted {{ submitted_ago }} ago
         </div>
         <div class="submission-test-status">
             {{- SubmissionTestStatus(submission.test_outcome) -}}
