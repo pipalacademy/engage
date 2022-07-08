@@ -5,7 +5,7 @@ import frappe
 
 from engage.utils import format_datetime_diff, require_login, require_trainer_role, with_training
 
-PAGE_LENGTH = 5
+PAGE_LENGTH = 60
 
 
 @require_login
