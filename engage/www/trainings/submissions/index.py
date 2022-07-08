@@ -28,6 +28,7 @@ def get_context(context, training):
             "comment_count",
             "code",
         ],
+        filters={"training": training.name},
         order_by="submitted_at desc, modified desc",
         **pagination_params)
 
