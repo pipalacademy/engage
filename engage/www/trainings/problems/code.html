@@ -124,7 +124,9 @@
 </div>
 
 <div class="mx-8">
+    {% if submission %}
     {{ Comments(submission) }}
+    {% endif %}
 </div>
 {% endblock %}
 
