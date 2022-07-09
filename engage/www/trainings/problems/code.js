@@ -214,7 +214,8 @@ class SidebarWriter extends WriterInterface {
     }
 
     parseOutput(output) {
-        let html = (output === null) ? this.outputEmptyState : escapeHTML(output);
+        let inner = (output === null) ? this.outputEmptyState : escapeHTML(output);
+        let html = `<pre class="output">${inner}</pre>`;
 
         return html;
     }

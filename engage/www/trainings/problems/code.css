@@ -113,6 +113,11 @@
     border-radius: 5px;
 }
 
+.sidebar-content pre.output {
+    padding: 8px;
+    background-color: inherit;
+}
+
 .sidebar-content pre.test-result {
     padding: 8px;
     background-color: inherit;
