@@ -7,13 +7,13 @@
 
 {%- block navbar -%}{%- endblock -%}
 
-{% macro TitleBar(problem_set, problem) %}
+{% macro TitleBar(training, problem_set, problem) %}
 <div class="title-bar row p-4 border-bottom mx-0">
 
     <div class="col-1 col-md-3 text-left">
-        <a class="text-decoration-none custom-link" href="{{problem.url}}">
+        <a class="text-decoration-none custom-link" href="/trainings/{{ training.name }}">
             <i class="fa-solid fa-arrow-left"></i>
-            <span class="d-none d-md-inline">Back to problem</span>
+            <span class="d-none d-md-inline">Back to training</span>
         </a>
     </div>
 
@@ -116,7 +116,7 @@
     "default-filepath": problem.code_files[0].relative_path,
     "problem-description": frappe.utils.md_to_html(problem.description)|e }) }}
 
-    {{ TitleBar(problem_set, problem) }}
+    {{ TitleBar(training, problem_set, problem) }}
 
     <div class="main-content">
         {{ Editor(problem) }}

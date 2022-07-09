@@ -91,7 +91,7 @@
 	<ul class="list-group list-group-flush">
 		{% for p in doc.problems %}
 		<li class="list-group-item"><a
-				href="/trainings/{{t.name}}/problems/{{pset.slug}}/{{p.problem}}">{{p.problem_title}}</a>
+				href="/trainings/{{t.name}}/problems/{{pset.slug}}/{{p.problem}}/code">{{p.problem_title}}</a>
 			{% if p.problem in submissions %} - submitted
 			{% endif %}
 		</li>
