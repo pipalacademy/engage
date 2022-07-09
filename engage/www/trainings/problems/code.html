@@ -100,7 +100,7 @@
 
 {%- macro Comments(latest_submission) -%}
 {% set doctype, docname = 'Practice Problem Latest Submission', latest_submission.name %}
-{% set title = 'Review Comments' %}
+{% set title = 'Comments' %}
 {% set cta_title = 'New Comment' %}
 {% set single_thread = True %}
 {% include "frappe/templates/discussions/discussions_section.html" %}
@@ -123,9 +123,9 @@
     </div>
 </div>
 
-{# <div classs="container">
+<div class="mx-8">
     {{ Comments(submission) }}
-</div>#}
+</div>
 {% endblock %}
 
 {%- block script %}
