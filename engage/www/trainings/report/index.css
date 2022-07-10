@@ -1,0 +1,20 @@
+body {
+    background: #F8F9FA;
+}
+
+h1 {
+    margin-top: 1.2rem;
+}
+
+.training-header {
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #eee;
+    border-radius: 8px;
+}
+
+.training-header .h2 {
+    font-weight: 500;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}

@@ -1,0 +1,54 @@
+{% extends "templates/custom_web.html" %}
+
+{% macro Breadcrumbs(training) %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/trainings/">Trainings</a></li>
+        <li class="breadcrumb-item"><a href="/trainings/{{ training.name }}/">{{ training.title }}</a></li>
+        <li class="breadcrumb-item active">Report</li>
+    </ol>
+</nav>
+{% endmacro %}
+
+{% macro TrainingHeader(training) %}
+<div class="training-header">
+    <div class="h2">{{training.title}}</div>
+    <div class="training-dates">{{frappe.utils.format_date(training.begin_date, "MMM dd")}} - {{
+        frappe.utils.format_date(training.end_date, "MMM dd") }}, {{training.end_date.year}}</div>
+    <div>
+        {% set client = frappe.get_doc("Client", training.client) %}
+        <div>{{client.title}}</div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro ReportTable(columns, rows) %}
+<div id="report-table" data-columns='{{ columns|tojson|e }}' data-rows='{{ rows|tojson|e }}'>
+</div>
+{% endmacro %}
+
+{%- block style %}
+{{ super() }}
+
+<link href="https://unpkg.com/frappe-datatable@0.0.5/dist/frappe-datatable.min.css" rel="stylesheet">
+{%- endblock -%}
+
+{% block page_content %}
+<div class="container my-4">
+    {{ Breadcrumbs(training) }}
+
+    {{ TrainingHeader(training) }}
+
+    {{ ReportTable(columns, rows) }}
+</div>
+{% endblock %}
+
+{%- block script %}
+<script src="https://unpkg.com/sortablejs@1.7.0/Sortable.min.js"></script>
+<script src="https://unpkg.com/clusterize.js@0.18.0/clusterize.min.js"></script>
+<!-- include the lib -->
+<script src="https://unpkg.com/frappe-datatable@0.0.5/dist/frappe-datatable.min.js"></script>
+
+
+{{ super() }}
+{%- endblock %}
