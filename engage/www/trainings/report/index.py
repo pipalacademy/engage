@@ -83,10 +83,4 @@ def group_submissions_by_participant_and_problem_set(submissions):
         submissions_dict[author].setdefault(problem_set, [])
         submissions_dict[author][problem_set].append(submission)
 
-    print(submissions_dict.keys())
-    for key, value in submissions_dict.items():
-        print(key, value.keys())
-        for key2, value2 in value.items():
-            print(key2, len(value2))
-
     return submissions_dict
