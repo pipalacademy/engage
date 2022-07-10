@@ -13,12 +13,14 @@ def get_context(context, training):
 
     submissions = get_submissions_for_training(training.name)
 
-    participants = sorted([p.user for p in training.participants],
-                          key=lambda x: x.lower())
+    participants = [p.user for p in training.participants]
     participant_full_names = {
         username: get_full_name(username)
         for username in participants
     }
+
+    # sort by full name
+    participants.sort(key=lambda x: participant_full_names[x].lower())
 
     problem_sets = [pset.problem_set for pset in training.problem_sets]
     problem_set_titles = {
