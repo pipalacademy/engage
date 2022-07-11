@@ -1,4 +1,7 @@
+import cProfile
+import pstats
 from functools import wraps
+from pstats import SortKey
 from urllib.parse import urlencode
 
 import frappe
@@ -111,6 +114,21 @@ def require_trainer_role(fn):
         return fn(context, *args, training, **kwargs)
 
     return check_role
+
+
+def with_profiler(fn):
+
+    @wraps(fn)
+    def wrapper(context, *args, **kwargs):
+        with cProfile.Profile() as pr:
+            return_value = fn(context, *args, **kwargs)
+
+        ps = pstats.Stats(pr)
+        ps.strip_dirs().sort_stats(SortKey.CUMULATIVE).print_stats(20)
+
+        return return_value
+
+    return wrapper
 
 
 def get_training(name):

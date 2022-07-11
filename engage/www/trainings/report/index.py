@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 import frappe
 
 from engage.utils import with_training, require_login, require_trainer_role
