@@ -151,8 +151,13 @@ class SidebarWriter extends WriterInterface {
         this.setLoading("Running code...");
     }
 
-    afterRun(output) {
-        this.setOutput(output);
+    afterRun(msg) {
+        if (msg.ok) {
+            this.setOutput(msg.output);
+        } else {
+            this.showError(msg.error, msg.message);
+            this.setLoading(`Error: ${msg.error}`);
+        }
     }
 
     beforeRunTests() {
@@ -163,6 +168,12 @@ class SidebarWriter extends WriterInterface {
 
     afterRunTests(result) {
         this.setResults(result);
+    }
+
+    showError(error, message) {
+        let html = "<p>Code execution failed due to an error. Please share the following log with your admin/instructor.</p>";
+        html += `<pre class="msgprint-error-log">error: ${escapeHTML(error)}\nmessage: ${escapeHTML(message)}</pre>`
+        frappe.msgprint({ title: "Error", indicator: "red", message: html });
     }
 
     showTestResult(result) {
@@ -242,6 +253,15 @@ class SidebarWriter extends WriterInterface {
         })
 
         return `<pre class="test-result">${html}</pre>`;
+    }
+
+    escapeHTML(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
     // other modification methods

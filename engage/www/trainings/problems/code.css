@@ -123,6 +123,12 @@
     background-color: inherit;
 }
 
+.msgprint-error-log {
+    border-radius: 8px;
+    background-color: var(--gray-200);
+    padding: 10px;
+}
+
 .code {
     width: 100%;
 }

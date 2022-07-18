@@ -28,7 +28,24 @@ class WriterInterface {
   beforeRun() {
   }
 
-  afterRun(output) {
+  /**
+   *  msg: {
+   *    ok: bool,
+   *    error: optional[string],
+   *    message: optional[string],
+   *    output: optional[object]
+   *  }
+   * 
+   * Not sure about using msg directly as the argument,
+   * it is not the most straightforward, but most flexible.
+   * 
+   */
+  afterRun(msg) {
+    // if (msg.ok) {
+    //   -> write output
+    // } else {
+    //   -> write error
+    // }
   }
 
   beforeRunTests() {
@@ -50,8 +67,12 @@ class DefaultWriter extends WriterInterface {
     this.reset();
   }
 
-  afterRun(output) {
-    this.writeOutput(output);
+  afterRun(msg) {
+    if (msg.ok) {
+      this.writeOutput(msg.output);
+    } else {
+      this.showError(msg.error, msg.message);
+    }
   }
 
   beforeRunTests() {
@@ -104,6 +125,21 @@ class DefaultWriter extends WriterInterface {
       }
     })
   }
+
+  showError(error, message) {
+    let html = "<p>Code execution failed due to an error. Please share the following log with your admin/instructor.</p>";
+    html += `<pre>error: ${escapeHTML(error)}\nmessage: ${escapeHTML(message)}</pre>`
+    frappe.msgprint(html);
+  }
+
+  escapeHTML(unsafe) {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 }
 
 // Initialized the editor and all controls.
@@ -145,7 +181,7 @@ class LiveCodeEditor {
     })
       .then(r => {
         var msg = r.message;
-        this.writer.afterRun(msg.output);
+        this.writer.afterRun(msg);
       })
   }
   runTests() {
