@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 import frappe
 
-from engage.utils import format_datetime_diff, require_login, require_trainer_role, with_training
+from engage.utils import format_datetime_diff, get_submissions, require_login, require_trainer_role, with_training
 
 PAGE_LENGTH = 60
 
@@ -14,35 +14,31 @@ PAGE_LENGTH = 60
 def get_context(context, training):
     context.training = training
 
-    submission_filters = {"training": training.name},
     pagination_params = get_pagination_parameters_from_form_dict(
         frappe.form_dict)
 
-    submissions_doctype = "Practice Problem Latest Submission"
-    context.submissions = frappe.get_all(
-        submissions_doctype,
-        fields=[
-            "name",
-            "author",
-            "author_full_name",
-            "problem_set",
-            "problem_set_title",
-            "problem",
-            "problem_title",
-            "training",
-            "submitted_at",
-            "modified",
-            "test_outcome",
-            "comment_count",
-            "for_review",
-            "code",
-        ],
-        filters=submission_filters,
-        order_by="submitted_at desc, modified desc",
-        **pagination_params)
+    context.submissions = get_submissions(training.name,
+                                          fields=[
+                                              "name",
+                                              "author",
+                                              "author_full_name",
+                                              "problem_set",
+                                              "problem_set_title",
+                                              "problem",
+                                              "problem_title",
+                                              "training",
+                                              "submitted_at",
+                                              "modified",
+                                              "test_outcome",
+                                              "comment_count",
+                                              "for_review",
+                                              "code",
+                                          ],
+                                          **pagination_params)
 
+    submissions_doctype = "Practice Problem Latest Submission"
     total_submissions = frappe.db.count(submissions_doctype,
-                                        filters=submission_filters)
+                                        filters={"training": training.name})
     context.total_pages = ceil(total_submissions / PAGE_LENGTH)
     context.current_page = get_current_page(frappe.form_dict)
 

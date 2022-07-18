@@ -103,7 +103,7 @@ def require_trainer_role(fn):
             context.template = NotFoundTemplate
             return
 
-        return fn(context, *args, training, **kwargs)
+        return fn(context, *args, training=training, **kwargs)
 
     return check_role
 
@@ -198,3 +198,45 @@ def format_datetime_diff(diff,
                                      if count or unit == "s")
 
     return "".join(most_significant_duration)
+
+
+def get_submissions(training_name,
+                    fields=("name", ),
+                    order_by="submitted_at desc, modified desc",
+                    **kwargs):
+    doctype = "Practice Problem Latest Submission"
+
+    filters = {"training": training_name}
+    if "filters" in kwargs:
+        filters.update(kwargs["filters"])
+        kwargs.pop("filters")
+
+    return frappe.get_all(doctype,
+                          filters=filters,
+                          fields=fields,
+                          order_by=order_by,
+                          **kwargs)
+
+
+def get_next_submission(submission):
+    subs_list = get_submissions(
+        submission.training,
+        filters={"submitted_at": ["<", submission.submitted_at]},
+        order_by="submitted_at desc, modified desc",
+        page_length=1)
+
+    return subs_list and subs_list[0] or None
+
+
+def get_prev_submission(submission):
+    subs_list = get_submissions(
+        submission.training,
+        filters={"submitted_at": [">", submission.submitted_at]},
+        order_by="submitted_at asc, modified asc",
+        page_length=1)
+
+    return subs_list and subs_list[0] or None
+
+
+def get_submission_url(training_name, submission_name):
+    return f"/trainings/{training_name}/submissions/{submission_name}"
