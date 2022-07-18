@@ -56,9 +56,7 @@ def get_submissions_url(training_name, **querydict):
 
 
 def get_submission_url(submission):
-    url = f"/trainings/{submission.training}/submissions/{submission.problem_set}/{submission.problem}"
-    qs = urlencode({"participant": submission.author})
-    return f"{url}?{qs}"
+    return f"/trainings/{submission.training}/submissions/{submission.name}"
 
 
 def get_pagination_parameters_from_form_dict(d):

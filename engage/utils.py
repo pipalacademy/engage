@@ -73,21 +73,13 @@ def with_submission(fn):
 
     @wraps(fn)
     def fetch_submission_or_404(context, *args, training, **kwargs):
-        problem_set_name = get_problem_set_name_from_form_dict(
-            frappe.form_dict)
-        problem_name = get_problem_name_from_form_dict(frappe.form_dict)
-        participant_name = get_participant_name_from_form_dict(
-            frappe.form_dict)
-
-        if not problem_set_name or not problem_name or not participant_name:
+        submission_name = frappe.form_dict.get("submission")
+        if not submission_name:
             context.template = NotFoundTemplate
             return
 
-        submission = get_submission(training_name=training.name,
-                                    problem_set_name=problem_set_name,
-                                    problem_name=problem_name,
-                                    author_name=participant_name)
-        if not submission:
+        submission = get_submission(submission_name)
+        if not submission or submission.training != training.name:
             context.template = NotFoundTemplate
             return
 
@@ -170,15 +162,10 @@ def get_participant_name_from_form_dict(d):
     return d.participant
 
 
-def get_submission(training_name, problem_set_name, problem_name, author_name):
+def get_submission(submission_name):
     try:
-        return frappe.get_last_doc("Practice Problem Latest Submission",
-                                   filters={
-                                       "training": training_name,
-                                       "problem_set": problem_set_name,
-                                       "problem": problem_name,
-                                       "author": author_name
-                                   })
+        return frappe.get_doc("Practice Problem Latest Submission",
+                              submission_name)
     except frappe.exceptions.DoesNotExistError:
         return
 
