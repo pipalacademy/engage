@@ -14,9 +14,21 @@
 </nav>
 {% endmacro %}
 
-{% macro SubmissionHeader(submission) %}
+{% macro SubmissionHeader(submission, has_prev=false, has_next=false) %}
 <div class="submission-header">
-    <div class="h2 font-weight-bold">{{ submission.author_full_name }}'s solution</div>
+    <div class="d-flex justify-content-between">
+        <div class="h2 font-weight-bold">{{ submission.author_full_name }}'s solution</div>
+
+        <div class="prev-next">
+            <a id="prev-link" class="btn {{ 'disabled' if not has_prev }}" href="{{ prev_submission_url if has_prev }}">
+                <i class="fa-solid fa-angle-left"></i>
+            </a>
+            {{- '' -}}
+            <a id="next-link" class="btn {{ 'disabled' if not has_next }}" href="{{ next_submission_url if has_next }}">
+                <i class="fa-solid fa-angle-right"></i>
+            </a>
+        </div>
+    </div>
     <div class="h5 font-weight-light">
         <span class="text-muted">to</span>
         <strong>{{ submission.problem_title }}</strong>
@@ -79,7 +91,7 @@
 {{ Breadcrumbs(training, submission) }}
 
 <div class="my-2">
-    {{ SubmissionHeader(submission) }}
+    {{ SubmissionHeader(submission, has_prev=has_prev, has_next=has_next) }}
 </div>
 
 <div class="my-2">
