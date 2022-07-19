@@ -21,11 +21,34 @@ h1 {
     border-radius: 8px;
 }
 
-.submission-body {
+.nav-tabs {
+    overflow: visible;
+    padding-bottom: 0;
+}
+
+.nav-tabs .nav-link {
+    padding: 0.5rem 1rem;
+    margin-right: 0.1rem;
+    background-color: var(--white);
+    border: 1px solid var(--card-border-color);
+    border-bottom: 0;
+}
+
+.nav-tabs .nav-link:focus {
+    outline: none;
+}
+
+.nav-tabs .nav-link.active {
     background-color: var(--card-background-color);
-    border-radius: 8px;
+}
+
+.content-body {
+    background-color: var(--card-background-color);
+    border-radius: 0 0 8px 8px;
+    border: 1px solid var(--card-border-color);
+    border-top: 0;
     padding: 20px;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    /*box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;*/
 }
 
 .submission-code pre {
