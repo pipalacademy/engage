@@ -89,9 +89,16 @@ h1 {
 }
 
 .submission-test-status {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.submission-review-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 10px;
 }
 
 .test-status-passed {
@@ -100,4 +107,8 @@ h1 {
 
 .test-status-failed {
     color: var(--red-500);
+}
+
+.review-status-needs-review {
+    color: var(--yellow-600);
 }

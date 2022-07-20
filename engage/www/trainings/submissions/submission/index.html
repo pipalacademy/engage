@@ -47,6 +47,12 @@
 {% include "frappe/templates/discussions/discussions_section.html" %}
 {% endmacro %}
 
+{% macro SubmissionReviewStatus(for_review) %}
+{% if for_review %}
+<pre class="review-status-needs-review"><i class="font-sm fa-solid fa-circle"></i> Needs Review</pre>
+{% endif %}
+{% endmacro %}
+
 {% macro SubmissionTestStatus(test_outcome) %}
 <pre
     class="{{ 'test-status-passed' if test_outcome == 'passed' else 'test-status-failed' }}"><i class="font-sm fa-solid fa-circle"></i> {{ test_outcome|capitalize }} </pre>
@@ -68,8 +74,13 @@
         <div class="submission-title h6">
             Submitted {{ submitted_ago }} ago
         </div>
-        <div class="submission-test-status">
-            {{- SubmissionTestStatus(submission.test_outcome) -}}
+        <div class="submission-status">
+            <div class="submission-review-status">
+                {{- SubmissionReviewStatus(submission.for_review) -}}
+            </div>
+            <div class="submission-test-status">
+                {{- SubmissionTestStatus(submission.test_outcome) -}}
+            </div>
         </div>
     </div>
 
