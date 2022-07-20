@@ -8,6 +8,7 @@
     --tab-active-color: var(--gray-800);
     --tab-active-bg-color: var(--gray-100);
 
+    --sidebar-content-padding: 8px;
     --btn-sidebar-color: var(--gray-700);
     --btn-sidebar-bg-color: none;
     --btn-sidebar-active-color: var(--gray-900);
@@ -103,7 +104,7 @@
 }
 
 .sidebar-content {
-    padding-top: 8px;
+    padding: var(--sidebar-content-padding);
     font-size: 0.9em;
 }
 
@@ -149,6 +150,34 @@
 .code-footer .buttons .btn {
     padding: 0.25rem 0.45rem;
     color: var(--content-color);
+}
+
+.test-result-summary {
+    margin-bottom: 8px;
+}
+
+.testcase-result {
+    margin: 0 calc(-1*var(--sidebar-content-padding));
+    border: 1px solid var(--gray-200);
+}
+
+.testcase-result-passed {
+    background-color: var(--green-200);
+    color: var(--dark-green-700);
+    font-weight: bold;
+    padding: 4px 8px;
+}
+
+.testcase-result-failed {
+    background-color: var(--red-200);
+    color: var(--red-700);
+    font-weight: bold;
+    padding: 4px 8px;
+}
+
+pre.testcase-result-error-detail {
+    background-color: var(--red-100);
+    margin-bottom: 0;
 }
 
 @media screen and (max-width: 768px) {

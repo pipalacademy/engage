@@ -243,16 +243,61 @@ class SidebarWriter extends WriterInterface {
             html += text + "\n";
         }
 
-        print(`Test Status: ${result.outcome} (${result.stats.passed} passed and ${result.stats.failed} failed)`)
+        print(`<div class="test-result-summary">Test Status: ${result.outcome} (${result.stats.passed} passed and ${result.stats.failed} failed)</div>`)
         result.testcases.forEach((t, i) => {
-            print(`\n${i + 1}. ${t.name} ... ${t.outcome}`);
-            if (t.outcome == "failed") {
-                print("")
-                print(t.error_detail.replaceAll(/^/mg, "    "));
-            }
+            print(this.renderTestCase(t));
+            // print(`\n${i + 1}. ${t.name} ... ${t.outcome}`);
+            // if (t.outcome == "failed") {
+            //     print("")
+            //     print(t.error_detail.replaceAll(/^/mg, "    "));
+            // }
         })
 
-        return `<pre class="test-result">${html}</pre>`;
+        return `<div class="test-result">${html}</div>`;
+    }
+
+    /**
+     * Returns presentable HTML for a test case
+     * 
+     * @param testCase Information about the test case and its outcome
+     * @param testCase.name Name of the test case
+     * @param testCase.outcome Whether the testcase was cleared, can be 'passed' or 'failed'
+     * @param testCase.error_detail [optional] Present if `outcome` is 'failed'
+     */
+    renderTestCase(testCase) {
+        var escapeHTML = this.escapeHTML;
+
+        function passedCase() {
+            return `\
+            <div class="testcase-result-passed">
+                <i class="fa-solid fa-circle-check"></i> ${escapeHTML(testCase.name)}
+            </div>`;
+        }
+
+        function failedCase() {
+            return `\
+            <div class="testcase-result-failed">
+                <i class="fa-solid fa-circle-xmark"></i> ${escapeHTML(testCase.name)}
+            </div>
+            <pre class="testcase-result-error-detail">${escapeHTML(testCase.error_detail)}</pre>
+            `
+        }
+
+        function enclose(inner) {
+            return `\
+            <div class="testcase-result">
+                ${inner}
+            </div>`
+        }
+
+        if (testCase.outcome == 'passed') {
+            return enclose(passedCase())
+        } else {
+            return enclose(failedCase())
+        }
+    }
+
+    renderPassedTest(name) {
     }
 
     escapeHTML(unsafe) {
