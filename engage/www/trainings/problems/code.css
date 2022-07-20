@@ -153,7 +153,23 @@
 }
 
 .test-result-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 8px;
+}
+
+.test-result-summary pre.status {
+    margin-bottom: 0;
+    background-color: transparent;
+}
+
+.test-result-summary.passed pre.status {
+    color: var(--green-600);
+}
+
+.test-result-summary.failed pre.status {
+    color: var(--red-500);
 }
 
 .testcase-result {
@@ -178,6 +194,10 @@
 pre.testcase-result-error-detail {
     background-color: var(--red-100);
     margin-bottom: 0;
+}
+
+.font-sm {
+    font-size: 0.8em;
 }
 
 @media screen and (max-width: 768px) {

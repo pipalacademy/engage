@@ -232,7 +232,6 @@ class SidebarWriter extends WriterInterface {
     }
 
     parseResults(result) {
-        // TODO: implement parseResults
         if (result === null) {
             return this.resultsEmptyState;
         }
@@ -243,17 +242,29 @@ class SidebarWriter extends WriterInterface {
             html += text + "\n";
         }
 
-        print(`<div class="test-result-summary">Test Status: ${result.outcome} (${result.stats.passed} passed and ${result.stats.failed} failed)</div>`)
+        print(this.renderTestSummary(result.outcome, result.stats));
         result.testcases.forEach((t, i) => {
             print(this.renderTestCase(t));
-            // print(`\n${i + 1}. ${t.name} ... ${t.outcome}`);
-            // if (t.outcome == "failed") {
-            //     print("")
-            //     print(t.error_detail.replaceAll(/^/mg, "    "));
-            // }
         })
 
         return `<div class="test-result">${html}</div>`;
+    }
+
+    /**
+     * Returns presentable HTML for test summary
+     * 
+     * @param outcome 'passed' or 'failed'
+     * @param stats Stats information about the tests run
+     * @param stats.passed Number of test cases that passed
+     * @param stats.failed Number of test cases that failed
+     */
+    renderTestSummary(outcome, stats) {
+        let className = outcome == 'passed' ? 'passed' : 'failed';
+        return `\
+        <div class="test-result-summary ${className}">
+            <pre class="status ${className}"><i class="font-sm fa-solid fa-circle"></i> ${outcome == 'passed' ? 'Passed' : 'Failed'}</pre>
+            <span>${stats.passed} passed, ${stats.failed} failed</span>
+        </div>`;
     }
 
     /**
