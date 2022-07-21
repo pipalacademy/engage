@@ -379,7 +379,7 @@ class SidebarWriter extends WriterInterface {
 
         let ctaButtonHTML = ctaButtonText && `\
             <div class="flex justify-content-center">
-                <button id="${this.ctaButtonID}" class="btn">${ctaButtonText}</button>
+                <button id="${this.ctaButtonID}" class="btn btn-primary">${ctaButtonText}</button>
             </div>`;
 
         return enclose(text + "\n" + ctaButtonHTML);
