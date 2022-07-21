@@ -142,6 +142,9 @@ class SidebarWriter extends WriterInterface {
         this.sidebarBtnClass = "btn-sidebar-header";
         this.sidebarBtnSelector = `.${this.sidebarBtnClass}`;
 
+        this.ctaButtonID = "cta-submit";
+        this.codeSubmitBtnSelector = "#code-submit";
+
         this.init();
     }
 
@@ -215,6 +218,8 @@ class SidebarWriter extends WriterInterface {
 
         this.setSidebarTab(this.resultsTab);
         this.setSidebarContent(html);
+
+        this.setupCtaButtonHandler();
     }
 
     setLoading(text) {
@@ -246,8 +251,26 @@ class SidebarWriter extends WriterInterface {
         result.testcases.forEach((t, i) => {
             print(this.renderTestCase(t));
         })
+        print(this.renderTestResultCta(result.outcome));
 
         return `<div class="test-result">${html}</div>`;
+    }
+
+    setupCtaButtonHandler() {
+        let ctaBtnSelector = "#" + this.ctaButtonID;
+
+        let $codeSubmitBtn = $(this.codeSubmitBtnSelector);
+        let $ctaSubmitBtn = $("#sidebar").find(ctaBtnSelector);
+
+        console.log("cta-submit-btn", $ctaSubmitBtn);
+
+        $ctaSubmitBtn.click(function (e) {
+            e.preventDefault();
+            $(this).addClass('disabled');
+            $codeSubmitBtn.click();
+            $(this).removeClass('disabled');
+            return false;
+        });
     }
 
     /**
@@ -308,7 +331,35 @@ class SidebarWriter extends WriterInterface {
         }
     }
 
-    renderPassedTest(name) {
+    renderTestResultCta(outcome) {
+        function enclose(inner) {
+            return `<div class="test-result-cta">${inner}</div>`;
+        }
+
+        let text = "";
+        let ctaButtonText = "";
+        if (outcome == 'passed') {
+            text = `\
+            <p>Congratulations!</p>
+            <p>All tests are passing! You are ready to submit.</p>`;
+            ctaButtonText = "Submit solution";
+        } else {
+            text = `\
+            <p>Tests failed.</p>
+            <p>
+                You need to get the tests to pass to submit the solution.
+                However, you can submit a draft now for the instructor to review.
+            </p>
+            `;
+            ctaButtonText = "Submit draft";
+        }
+
+        let ctaButtonHTML = `\
+            <div class="flex justify-content-center">
+                <button id="${this.ctaButtonID}" class="btn">${ctaButtonText}</button>
+            </div>`;
+
+        return enclose(text + "\n" + ctaButtonHTML);
     }
 
     escapeHTML(unsafe) {

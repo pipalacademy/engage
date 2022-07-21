@@ -196,6 +196,10 @@ pre.testcase-result-error-detail {
     margin-bottom: 0;
 }
 
+.test-result-cta {
+    margin-top: 1rem;
+}
+
 .font-sm {
     font-size: 0.8em;
 }
