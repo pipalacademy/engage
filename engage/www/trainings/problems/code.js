@@ -80,7 +80,7 @@ function updateSubmissionStatus() {
     // });
 }
 
-function makeSubmission(editor, data) {
+function makeSubmission(editor, sidebar, data) {
     let problem = data.problem;
     let training = data.training;
     let problemSet = data.problemSet;
@@ -104,7 +104,7 @@ function makeSubmission(editor, data) {
         callback: function (r) {
             let doc = r.message;
             let submission = doc.test_result ? JSON.parse(doc.test_result) : {};
-            showTestResult(".output", submission);
+            sidebar.afterSubmit(submission);
 
             frappe.msgprint("Successfully submitted solution for problem " + problem);
             submissions[problem] = { problem: problem, code: code };
@@ -126,7 +126,8 @@ class SidebarWriter extends WriterInterface {
         this.state = {
             instructions: options.instructions || null,
             output: options.output || null,
-            results: options.results || null
+            results: options.results || null,
+            submitted: options.submitted || null
         };
 
         this.instructionsEmptyState = options.instructionsEmptyState || "<em>This problem has no description. Contact your instructor/admin if you think this is a mistake.</em>";
@@ -170,16 +171,19 @@ class SidebarWriter extends WriterInterface {
     }
 
     afterRunTests(result) {
+        this.setSubmitted(false);
         this.setResults(result);
+    }
+
+    afterSubmit(submission) {
+        this.setSubmitted(true);
+        this.setResults(submission.test_result);
     }
 
     showError(error, message) {
         let html = "<p>Code execution failed due to an error. Please share the following log with your admin/instructor.</p>";
         html += `<pre class="msgprint-error-log">error: ${escapeHTML(error)}\nmessage: ${escapeHTML(message)}</pre>`
         frappe.msgprint({ title: "Error", indicator: "red", message: html });
-    }
-
-    showTestResult(result) {
     }
 
     // initialise hooks / perform init actions
@@ -191,6 +195,11 @@ class SidebarWriter extends WriterInterface {
         });
 
         this.activateDefaultTab();
+
+        if (this.state.results !== null) {
+            this.setSubmitted(true);
+            this.setResults();
+        }
     }
 
     // private helpers
@@ -214,12 +223,16 @@ class SidebarWriter extends WriterInterface {
             this.state.results = results;
         }
 
-        let html = this.parseResults(this.state.results);
+        let html = this.parseResults(this.state.results, this.state.submitted);
 
         this.setSidebarTab(this.resultsTab);
         this.setSidebarContent(html);
 
         this.setupCtaButtonHandler();
+    }
+
+    setSubmitted(value) {
+        this.state.submitted = value;
     }
 
     setLoading(text) {
@@ -236,7 +249,9 @@ class SidebarWriter extends WriterInterface {
         return html;
     }
 
-    parseResults(result) {
+    parseResults(result, submitted) {
+        submitted = submitted || false;
+
         if (result === null) {
             return this.resultsEmptyState;
         }
@@ -251,7 +266,7 @@ class SidebarWriter extends WriterInterface {
         result.testcases.forEach((t, i) => {
             print(this.renderTestCase(t));
         })
-        print(this.renderTestResultCta(result.outcome));
+        print(this.renderTestResultCta(result.outcome, submitted));
 
         return `<div class="test-result">${html}</div>`;
     }
@@ -261,8 +276,6 @@ class SidebarWriter extends WriterInterface {
 
         let $codeSubmitBtn = $(this.codeSubmitBtnSelector);
         let $ctaSubmitBtn = $("#sidebar").find(ctaBtnSelector);
-
-        console.log("cta-submit-btn", $ctaSubmitBtn);
 
         $ctaSubmitBtn.click(function (e) {
             e.preventDefault();
@@ -331,19 +344,19 @@ class SidebarWriter extends WriterInterface {
         }
     }
 
-    renderTestResultCta(outcome) {
+    renderTestResultCta(outcome, submitted) {
         function enclose(inner) {
             return `<div class="test-result-cta">${inner}</div>`;
         }
 
         let text = "";
         let ctaButtonText = "";
-        if (outcome == 'passed') {
+        if (!submitted && outcome == 'passed') {
             text = `\
             <p>Congratulations!</p>
             <p>All tests are passing! You are ready to submit.</p>`;
             ctaButtonText = "Submit solution";
-        } else {
+        } else if (!submitted) {
             text = `\
             <p>Tests failed.</p>
             <p>
@@ -352,9 +365,19 @@ class SidebarWriter extends WriterInterface {
             </p>
             `;
             ctaButtonText = "Submit draft";
+        } else if (submitted && outcome == 'passed') {
+            text = `\
+            <p>Congrats! You have submitted a working solution to the problem.</p>
+            <p>Any comments your instructor writes to this problem will be visible in the section below.</p>
+            `;
+        } else {
+            text = `\
+            <p>Your solution has been submitted as draft and is visible to the instructor.</p>
+            <p>Their comments will be visible in the section below.</p>
+            `;
         }
 
-        let ctaButtonHTML = `\
+        let ctaButtonHTML = ctaButtonText && `\
             <div class="flex justify-content-center">
                 <button id="${this.ctaButtonID}" class="btn">${ctaButtonText}</button>
             </div>`;
@@ -443,7 +466,7 @@ $(function () {
         editors[data.filepath] = editor;
 
         $(el).find(".submit").click(function () {
-            makeSubmission(editor, {
+            makeSubmission(editor, sidebar, {
                 ...globalData,
                 author: frappe.session.user
             });
