@@ -1,7 +1,20 @@
 import json
 import frappe
+from functools import wraps
 
 from engage.livecode import run_tests
+from engage.utils import get_submissions_with_listing_fields as _get_submissions
+
+
+def with_pagination_params(fn):
+
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        pagination_params = get_pagination_parameters_from_form_dict(
+            frappe.form_dict)
+        return fn(*args, **kwargs, pagination_params=pagination_params)
+
+    return wrapper
 
 
 @frappe.whitelist()
@@ -20,6 +33,35 @@ def get_problem_set_submissions():
     solutions = {row.problem: row for row in result}
 
     frappe.response["message"] = solutions
+
+
+@frappe.whitelist()
+@with_pagination_params
+def get_submissions(training,
+                    problem_set=None,
+                    for_review=None,
+                    test_outcome=None,
+                    pagination_params=None):
+    filters = {}
+
+    if problem_set is not None:
+        filters.update(problem_set=problem_set)
+
+    if for_review is not None:
+        for_review = True if for_review and for_review not in {"0", "false"
+                                                               } else False
+        filters.update(for_review=for_review)
+
+    if test_outcome is not None:
+        assert test_outcome in {
+            "passed", "failed"
+        }, "test_outcome must be one of: 'passed', 'failed'"
+        filters.update(test_outcome=test_outcome)
+
+    submissions = _get_submissions(training,
+                                   filters=filters,
+                                   **pagination_params)
+    frappe.response["message"] = {"ok": True, "submissions": submissions}
 
 
 @frappe.whitelist()
@@ -138,3 +180,16 @@ def add_user(email, first_name=None, last_name=None, send_welcome_mail=True):
     user.insert()
 
     return user
+
+
+def get_pagination_parameters_from_form_dict(d):
+    PAGE_LENGTH = 60
+
+    page = get_current_page(d)
+    start = (page - 1) * PAGE_LENGTH
+
+    return dict(page_length=PAGE_LENGTH, start=start)
+
+
+def get_current_page(d):
+    return int(d.page) if "page" in d else 1

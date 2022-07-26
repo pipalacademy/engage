@@ -218,6 +218,26 @@ def get_submissions(training_name,
                           **kwargs)
 
 
+def get_submissions_with_listing_fields(training_name, **kwargs):
+    fields = [
+        "name",
+        "author",
+        "author_full_name",
+        "problem_set",
+        "problem_set_title",
+        "problem",
+        "problem_title",
+        "training",
+        "submitted_at",
+        "modified",
+        "test_outcome",
+        "comment_count",
+        "for_review",
+        "code",
+    ]
+    return get_submissions(training_name, fields=fields, **kwargs)
+
+
 def get_next_submission(submission):
     subs_list = get_submissions(
         submission.training,
