@@ -2,12 +2,15 @@
     --card-border-color: var(--gray-200);
     --card-background-color: white;
 
-    --tests-passed-color: var(--green-700);
-    --tests-failed-color: var(--red-700);
+    --filters-bg-color: #eee;
+
+    --tests-passing-color: var(--green-600);
+    --tests-failing-color: var(--red-600);
+    --review-pending-color: var(--yellow-500);
 }
 
 body {
-    background: #F8F9FA;
+    background: var(--gray-50);
 }
 
 h1 {
@@ -25,6 +28,70 @@ h1 {
     font-weight: 500;
     margin-bottom: 0px;
     padding-bottom: 0px;
+}
+
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter-bar .custom-select {
+    background-color: var(--filters-bg-color);
+}
+
+.filter-bar .right-section {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.filter-bar .form-check {
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+    padding-left: 0;
+    font-size: 1.2em;
+}
+
+.filter-bar .form-check-input {
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+.filter-bar .form-check-label {
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
+
+.filter-bar .review-pending-check {
+    color: var(--review-pending-color);
+}
+
+.filter-bar .review-pending-check .form-check-input {
+    border-color: var(--review-pending-color);
+}
+
+.filter-bar .tests-passing-check {
+    color: var(--tests-passing-color);
+}
+
+.filter-bar .tests-passing-check .form-check-input {
+    border-color: var(--tests-passing-color);
+}
+
+.filter-bar .tests-failing-check {
+    color: var(--tests-failing-color);
+}
+
+.filter-bar .tests-failing-check .form-check-input {
+    border-color: var(--tests-failing-color);
+}
+
+.filter-bar .form-check-label {
+    font-weight: 600;
 }
 
 .submission-card {
@@ -50,11 +117,11 @@ h1 {
 }
 
 .tests-passed-icon {
-    color: var(--tests-passed-color);
+    color: var(--tests-passing-color);
 }
 
 .tests-failed-icon {
-    color: var(--tests-failed-color);
+    color: var(--tests-failing-color);
 }
 
 .mt-half {
@@ -87,9 +154,12 @@ h1 {
 
 .submission-status {
     max-height: 30px;
+}
+
+.submission-icon {
     font-size: 0.8em;
 }
 
 .for-review {
-    color: var(--yellow-200);
+    color: var(--review-pending-color);
 }

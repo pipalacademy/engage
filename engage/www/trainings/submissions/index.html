@@ -42,6 +42,55 @@
 </nav>
 {% endmacro %}
 
+{% macro TestsPassingIcon() %}
+<i class="fa-solid fa-circle-check tests-passed-icon submission-icon"></i>
+{% endmacro %}
+
+{% macro TestsFailingIcon() %}
+<i class="fa-solid fa-circle-xmark tests-failed-icon submission-icon"></i>
+{% endmacro %}
+
+{% macro ReviewPendingIcon() %}
+<i class="fa-solid fa-circle for-review submission-icon"></i>
+{% endmacro %}
+
+{% macro FilterBar(training) %}
+{% set problem_sets = training.problem_sets %}
+<div class="filter-bar">
+    <div class="left-section">
+        <select id="select-problem-set" class="custom-select">
+            {% for pset in problem_sets %}
+            {% set title, id = pset.title, pset.problem_set %}
+            <option value="{{ id }}">{{ title }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="right-section">
+        <span class="form-check review-pending-check">
+            <input class="form-check-input" type="checkbox" value="" id="check-review-pending">
+            {{- '' -}}
+            <label class="form-check-label" for="check-review-pending">
+                {{ ReviewPendingIcon() }}
+            </label>
+        </span>
+        <span class="form-check tests-passing-check">
+            <input class="form-check-input" type="checkbox" value="" id="check-tests-passing">
+            {{- '' -}}
+            <label class="form-check-label" for="check-tests-passing">
+                {{ TestsPassingIcon() }}
+            </label>
+        </span>
+        <span class="form-check tests-failing-check">
+            <input class="form-check-input" type="checkbox" value="" id="check-tests-failing">
+            {{- '' -}}
+            <label class="form-check-label" for="check-tests-failing">
+                {{ TestsFailingIcon() }}
+            </label>
+        </span>
+    </div>
+</div>
+{% endmacro %}
+
 {% macro SubmissionCard(submission) %}
 {% set author_name = submission.author_full_name or submission.author %}
 {% set submitted_at = submission.submitted_at or submission.modified %}
@@ -57,15 +106,15 @@
             </div>
             <div class="d-flex mt-1 align-items-center submission-status">
                 {% if submission.for_review %}
-                <span class="mr-2 for-review">
-                    <i class="fa-solid fa-circle"></i>
+                <span class="mr-2">
+                    {{ ReviewPendingIcon() }}
                 </span>
                 {% endif %}
                 <span>
                     {% if submission.test_outcome == "passed" %}
-                    <i class="fa-solid fa-circle-check tests-passed-icon"></i>
+                    {{ TestsPassingIcon() }}
                     {% else %}
-                    <i class="fa-solid fa-circle-xmark tests-failed-icon"></i>
+                    {{ TestsFailingIcon() }}
                     {% endif %}
                 </span>
             </div>
@@ -111,6 +160,8 @@
 {{ Breadcrumbs(training) }}
 
 {{ TrainingHeader(training) }}
+
+{{ FilterBar(training) }}
 
 <div class="submissions">
     <div class="row">
