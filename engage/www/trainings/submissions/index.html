@@ -22,24 +22,27 @@
 </div>
 {% endmacro %}
 
+{%- macro Data(data_kv) -%}
+<div id="data" class="d-none" {%- for k, v in data_kv.items() %} data-{{ k }}="{{ v }}" {% endfor -%}></div>
+{%- endmacro -%}
+
 {% macro Pagination(training_name, current_page, total_pages) %}
 
-{% set has_next = current_page < total_pages %}
-{% set has_prev = current_page > 1 %}
+{% set has_next = current_page < total_pages %} {% set has_prev=current_page> 1 %}
 
-{% set next_url = get_submissions_url(training_name, page=current_page+1) if has_next else none %}
-{% set prev_url = get_submissions_url(training_name, page=current_page-1) if has_prev else none %}
+    {% set next_url = get_submissions_url(training_name, page=current_page+1) if has_next else none %}
+    {% set prev_url = get_submissions_url(training_name, page=current_page-1) if has_prev else none %}
 
-<nav>
-    <ul class="pagination">
-        <li class="page-item {{ 'disabled' if not has_prev }}">
-            <a class="page-link" href="{{ prev_url or '' }}" >Previous</a>
-        </li>
-        <li class="page-item {{ 'disabled' if not has_next }}">
-            <a class="page-link" href="{{ next_url or '' }}">Next</a>
-        </li>
-    </ul>
-</nav>
+    <nav>
+        <ul class="pagination">
+            <li class="page-item {{ 'disabled' if not has_prev }}">
+                <a class="page-link" href="{{ prev_url or '' }}">Previous</a>
+            </li>
+            <li class="page-item {{ 'disabled' if not has_next }}">
+                <a class="page-link" href="{{ next_url or '' }}">Next</a>
+            </li>
+        </ul>
+    </nav>
 {% endmacro %}
 
 {% macro TestsPassingIcon() %}
@@ -163,6 +166,8 @@
 {{ TrainingHeader(training) }}
 
 {{ FilterBar(training) }}
+
+{{ Data({"training": training.name}) }}
 
 <div class="submissions">
     <div id="loading" style="display: none;"></div> 

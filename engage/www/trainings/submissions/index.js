@@ -4,6 +4,7 @@ const paginationDivSelector = "#pagination"
 
 const state = {
     training: "2022/python-fundamentals",
+    page: 1,
 }
 
 function loadFilters() {
@@ -34,6 +35,8 @@ function loadFilters() {
 }
 
 function refreshSubmissions(opts) {
+    opts = opts || {}
+
     setLoading("Refreshing submissions...")
 
     let training = state.training
@@ -43,7 +46,7 @@ function refreshSubmissions(opts) {
     filters.problem_set = problem_set !== undefined ? problem_set : filters.problem_set
     filters.for_review = for_review !== undefined ? for_review : filters.for_review
     filters.test_outcome = test_outcome !== undefined ? test_outcome : filters.test_outcome
-    filters.page = page !== undefined ? page : 1
+    filters.page = page !== undefined ? page : state.page
 
     getSubmissions(training, filters)
         .then(result => {
@@ -200,12 +203,16 @@ function goToPrevPage() {
     let data = $("#pagination-prev").data()
     let page = data.page
 
+    state.page = page
+
     refreshSubmissions({ page })
 }
 
 function goToNextPage() {
     let data = $("#pagination-next").data()
     let page = data.page
+
+    state.page = page
 
     refreshSubmissions({ page })
 }
@@ -240,4 +247,29 @@ function get_pretty_datetime_diff(d1, d2) {
 }
 
 $(function () {
+    let $data = $("#data")
+    let $selectProblemSet = $("#select-problem-set")
+    let $checkReviewPending = $("#check-review-pending")
+    let $checkTestsPassing = $("#check-tests-passing")
+    let $checkTestsFailing = $("#check-tests-failing")
+
+    let data = $data.data()
+
+    state.training = data.training
+    state.page = 1
+
+    refreshSubmissions()
+
+    $selectProblemSet.change(refreshSubmissions)
+    $checkReviewPending.change(refreshSubmissions)
+
+    $checkTestsPassing.change(() => {
+        $checkTestsFailing.prop("checked", false)
+        refreshSubmissions()
+    })
+
+    $checkTestsFailing.change(() => {
+        $checkTestsPassing.prop("checked", false)
+        refreshSubmissions()
+    })
 })
