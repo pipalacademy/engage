@@ -24,6 +24,7 @@ function setLoading(text) {
     $submissions.hide()
     $loading.show()
 
+    // NOTE: maybe an icon or animation would be better, as reading takes effort/time
     $loading.html(`<em>${text}</em>`)
 }
 
