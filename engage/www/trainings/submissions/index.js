@@ -8,7 +8,7 @@ const state = {
 
 function loadFilters() {
     let $problemSet = $("#select-problem-set")
-    let problem_set = $problemSet.find(":selected").val()
+    let problem_set = $problemSet.find(":selected").val() || undefined
 
     let $reviewPending = $("#check-review-pending")
     let for_review = ($reviewPending.prop("checked") == true) || undefined

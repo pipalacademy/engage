@@ -59,6 +59,7 @@
 <div class="filter-bar">
     <div class="left-section">
         <select id="select-problem-set" class="custom-select">
+            <option value="">Select problem set</option>
             {% for pset in problem_sets %}
             {% set title, id = pset.title, pset.problem_set %}
             <option value="{{ id }}">{{ title }}</option>
