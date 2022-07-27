@@ -238,6 +238,12 @@ def get_submissions_with_listing_fields(training_name, **kwargs):
     return get_submissions(training_name, fields=fields, **kwargs)
 
 
+def get_submissions_count(training_name, **kwargs):
+    fields = ["count(name) as count"]
+    result = get_submissions(training_name, fields=fields, **kwargs)
+    return result[0]["count"]
+
+
 def get_next_submission(submission):
     subs_list = get_submissions(
         submission.training,

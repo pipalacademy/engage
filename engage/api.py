@@ -1,9 +1,13 @@
 import json
 import frappe
 from functools import wraps
+from math import ceil
+from werkzeug.wrappers import Response
 
 from engage.livecode import run_tests
-from engage.utils import get_submissions_with_listing_fields as _get_submissions
+from engage.utils import get_submissions_with_listing_fields as _get_submissions, get_submissions_count
+
+SUBMISSIONS_PAGE_LENGTH = 60
 
 
 def with_pagination_params(fn):
@@ -42,6 +46,9 @@ def get_submissions(training,
                     for_review=None,
                     test_outcome=None,
                     pagination_params=None):
+    if not is_trainer(training, frappe.session.user):
+        return Response(status=404)
+
     filters = {}
 
     if problem_set is not None:
@@ -61,7 +68,14 @@ def get_submissions(training,
     submissions = _get_submissions(training,
                                    filters=filters,
                                    **pagination_params)
-    frappe.response["message"] = {"ok": True, "submissions": submissions}
+    total_count = get_submissions_count(training, filters=filters)
+    total_pages = ceil(total_count / SUBMISSIONS_PAGE_LENGTH)
+
+    frappe.response["message"] = {
+        "ok": True,
+        "submissions": submissions,
+        "total_pages": total_pages
+    }
 
 
 @frappe.whitelist()
@@ -183,13 +197,20 @@ def add_user(email, first_name=None, last_name=None, send_welcome_mail=True):
 
 
 def get_pagination_parameters_from_form_dict(d):
-    PAGE_LENGTH = 60
-
     page = get_current_page(d)
-    start = (page - 1) * PAGE_LENGTH
+    start = (page - 1) * SUBMISSIONS_PAGE_LENGTH
 
-    return dict(page_length=PAGE_LENGTH, start=start)
+    return dict(page_length=SUBMISSIONS_PAGE_LENGTH, start=start)
 
 
 def get_current_page(d):
     return int(d.page) if "page" in d else 1
+
+
+def is_trainer(training_name, user):
+    return frappe.db.exists({
+        "doctype": "Training Trainer",
+        "parenttype": "Training",
+        "parent": training_name,
+        "user": user
+    })

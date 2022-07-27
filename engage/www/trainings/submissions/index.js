@@ -1,12 +1,55 @@
 const submissionsDivSelector = "#submissions"
 const loadingDivSelector = "#loading"
+const paginationDivSelector = "#pagination"
 
-function refreshSubmissions(training, problemSet, reviewPending, testOutcome) {
+const state = {
+    training: "2022/python-fundamentals",
+}
+
+function loadFilters() {
+    let $problemSet = $("#select-problem-set")
+    let problem_set = $problemSet.find(":selected").val()
+
+    let $reviewPending = $("#check-review-pending")
+    let for_review = ($reviewPending.prop("checked") == true) || undefined
+
+    let $testsPassing = $("#check-tests-passing")
+    let testsPassing = ($testsPassing.prop("checked") == true) || undefined
+
+    let $testsFailing = $("#check-tests-failing")
+    let testsFailing = ($testsFailing.prop("checked") == true) || undefined
+
+    let test_outcome
+    if (testsPassing && testsFailing) {
+        throw new Error("passing and failing shouldn't both be selected")
+    } else if (testsPassing) {
+        test_outcome = 'passed'
+    } else if (testsFailing) {
+        test_outcome = 'failed'
+    }
+
+    return {
+        problem_set, for_review, test_outcome
+    }
+}
+
+function refreshSubmissions(opts) {
     setLoading("Refreshing submissions...")
 
-    getSubmissions(training, problemSet, reviewPending, testOutcome)
-        .then(submissions => {
+    let training = state.training
+    let { problemSet: problem_set, reviewPending: for_review, testOutcome: test_outcome, page } = opts
+
+    let filters = loadFilters()
+    filters.problem_set = problem_set !== undefined ? problem_set : filters.problem_set
+    filters.for_review = for_review !== undefined ? for_review : filters.for_review
+    filters.test_outcome = test_outcome !== undefined ? test_outcome : filters.test_outcome
+    filters.page = page !== undefined ? page : 1
+
+    getSubmissions(training, filters)
+        .then(result => {
+            let { submissions, total_pages: totalPages } = result
             setSubmissions(submissions)
+            setPagination(getPagination(filters.page, totalPages))
         })
         .catch(error => {
             console.error(error)
@@ -38,20 +81,18 @@ function unsetLoading() {
     $loading.html('')
 }
 
-async function getSubmissions(training, problemSet, reviewPending, testOutcome) {
+async function getSubmissions(training, opts) {
     let method = "engage.api.get_submissions"
     let args = {
         training: training,
-        ...(problemSet !== undefined && { problem_set: problemSet }),
-        ...(reviewPending !== undefined && { for_review: reviewPending }),
-        ...(testOutcome !== undefined && { test_outcome: testOutcome })
+        ...opts,
     }
 
     let response = await frappe.call({ method: method, args: args })
 
     if (!response.exc) {
         let msg = response.message;
-        return msg.submissions
+        return { submissions: msg.submissions, total_pages: msg.total_pages }
     } else {
         throw response.exc.join(",\n")
     }
@@ -131,6 +172,44 @@ function getSubmissionCard(submission) {
     `
 }
 
+function setPagination(html) {
+    let $pagination = $(paginationDivSelector)
+
+    $pagination.html(html)
+}
+
+function getPagination(currentPage, totalPages) {
+    let has_next = currentPage < totalPages
+    let has_prev = currentPage > 1
+
+    return `\
+    <nav>
+        <ul class="pagination">
+            <li class="page-item ${!has_prev ? 'disabled' : ''}">
+                <button class="page-link" ${has_prev ? 'onclick="goToPrevPage()"' : ''} id="pagination-prev" data-page="${has_prev ? currentPage - 1 : 1}">Previous</a>
+            </li>
+            <li class="page-item ${!has_next ? 'disabled' : ''}">
+                <button class="page-link" ${has_next ? 'onclick="goToNextPage()"' : ''} id="pagination-next" data-page="${has_next ? currentPage + 1 : currentPage}">Next</a>
+            </li>
+        </ul>
+    </nav>
+    `
+}
+
+function goToPrevPage() {
+    let data = $("#pagination-prev").data()
+    let page = data.page
+
+    refreshSubmissions({ page })
+}
+
+function goToNextPage() {
+    let data = $("#pagination-next").data()
+    let page = data.page
+
+    refreshSubmissions({ page })
+}
+
 function get_pretty_datetime_diff(d1, d2) {
     let milliseconds = d1 - d2
     let seconds = parseInt(milliseconds / 1000)
@@ -159,3 +238,6 @@ function get_pretty_datetime_diff(d1, d2) {
             return `${s}s`
     }
 }
+
+$(function () {
+})
