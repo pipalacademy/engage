@@ -164,6 +164,7 @@
 {{ FilterBar(training) }}
 
 <div class="submissions">
+    <div id="loading" style="display: none;"></div> 
     <div class="row" id="submissions">
         {% if submissions %}
         {% for submission in submissions %}

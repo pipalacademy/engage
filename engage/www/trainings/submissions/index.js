@@ -1,4 +1,43 @@
-async function refreshSubmissions(training, problemSet, reviewPending, testOutcome) {
+const submissionsDivSelector = "#submissions"
+const loadingDivSelector = "#loading"
+
+function refreshSubmissions(training, problemSet, reviewPending, testOutcome) {
+    setLoading("Refreshing submissions...")
+
+    getSubmissions(training, problemSet, reviewPending, testOutcome)
+        .then(submissions => {
+            setSubmissions(submissions)
+        })
+        .catch(error => {
+            console.error(error)
+            frappe.msgprint({ title: "Error", indicator: "red", message: error.toString() })
+        })
+        .finally(() => {
+            unsetLoading()
+        })
+}
+
+function setLoading(text) {
+    let $submissions = $(submissionsDivSelector)
+    let $loading = $(loadingDivSelector)
+
+    $submissions.hide()
+    $loading.show()
+
+    $loading.html(`<em>${text}</em>`)
+}
+
+function unsetLoading() {
+    let $submissions = $(submissionsDivSelector)
+    let $loading = $(loadingDivSelector)
+
+    $loading.hide()
+    $submissions.show()
+
+    $loading.html('')
+}
+
+async function getSubmissions(training, problemSet, reviewPending, testOutcome) {
     let method = "engage.api.get_submissions"
     let args = {
         training: training,
@@ -11,14 +50,14 @@ async function refreshSubmissions(training, problemSet, reviewPending, testOutco
 
     if (!response.exc) {
         let msg = response.message;
-        setSubmissions(msg.submissions)
+        return msg.submissions
     } else {
-        frappe.msgprint({ indicator: "red", title: "Error", message: response.exc })
+        throw response.exc.join(",\n")
     }
 }
 
 function setSubmissions(submissions) {
-    let $submissions = $("#submissions")
+    let $submissions = $(submissionsDivSelector)
 
     function enclose(inner) {
         return `<div class="col-12 col-md-6 col-xl-4">${inner}</div>`
@@ -37,6 +76,8 @@ function setSubmissions(submissions) {
         let cardHTML = getSubmissionCard(submission)
         append(cardHTML);
     })
+
+    hljs.highlightAll()
 }
 
 function reviewPendingIcon() {

@@ -163,3 +163,10 @@ h1 {
 .for-review {
     color: var(--review-pending-color);
 }
+
+#loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+}
