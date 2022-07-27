@@ -95,6 +95,8 @@ function testsFailingIcon() {
 
 function getSubmissionCard(submission) {
     let submissionURL = `/trainings/${submission.training}/submissions/${submission.name}`
+    let now = new Date()
+    let submittedAt = new Date(submission.submitted_at)
 
     return `\
 <a class="text-decoration-none color-inherit" href="${submissionURL}">
@@ -117,7 +119,7 @@ function getSubmissionCard(submission) {
         </div>
         <div class="submission-card-footer d-flex justify-content-between align-items-center">
             <div>
-                ${false ? "Published {{ published_ago }} ago" : submission.submitted_at}
+                Submitted ${get_pretty_datetime_diff(now, submittedAt)} ago
             </div>
 
             <div class="d-flex align-items-center">
@@ -127,4 +129,33 @@ function getSubmissionCard(submission) {
     </div>
 </a>
     `
+}
+
+function get_pretty_datetime_diff(d1, d2) {
+    let milliseconds = d1 - d2
+    let seconds = parseInt(milliseconds / 1000)
+    let days = parseInt(seconds / (60 * 60 * 24))
+
+    let y = parseInt(days / 360)
+    let mo = parseInt((days - 360 * y) / 30)
+    let d = days % 30
+
+    let h = parseInt(seconds / (60 * 60))
+    let m = parseInt((seconds - (h * 60 * 60)) / 60)
+    let s = seconds % 30
+
+    switch (true) {
+        case (y !== 0):
+            return `${y}y`
+        case (mo !== 0):
+            return `${mo}mo`
+        case (d !== 0):
+            return `${d}d`
+        case (h !== 0):
+            return `${h}h`
+        case (m !== 0):
+            return `${m}m`
+        default:
+            return `${s}s`
+    }
 }
