@@ -28,21 +28,22 @@
 
 {% macro Pagination(training_name, current_page, total_pages) %}
 
-{% set has_next = current_page < total_pages %} {% set has_prev=current_page> 1 %}
+{% set has_next = current_page < total_pages %}
+{% set has_prev = current_page > 1 %}
 
-    {% set next_url = get_submissions_url(training_name, page=current_page+1) if has_next else none %}
-    {% set prev_url = get_submissions_url(training_name, page=current_page-1) if has_prev else none %}
+{% set next_url = get_submissions_url(training_name, page=current_page+1) if has_next else none %}
+{% set prev_url = get_submissions_url(training_name, page=current_page-1) if has_prev else none %}
 
-    <nav>
-        <ul class="pagination">
-            <li class="page-item {{ 'disabled' if not has_prev }}">
-                <a class="page-link" href="{{ prev_url or '' }}">Previous</a>
-            </li>
-            <li class="page-item {{ 'disabled' if not has_next }}">
-                <a class="page-link" href="{{ next_url or '' }}">Next</a>
-            </li>
-        </ul>
-    </nav>
+<nav>
+    <ul class="pagination">
+        <li class="page-item {{ 'disabled' if not has_prev }}">
+            <a class="page-link" href="{{ prev_url or '' }}" >Previous</a>
+        </li>
+        <li class="page-item {{ 'disabled' if not has_next }}">
+            <a class="page-link" href="{{ next_url or '' }}">Next</a>
+        </li>
+    </ul>
+</nav>
 {% endmacro %}
 
 {% macro TestsPassingIcon() %}
@@ -172,13 +173,13 @@
 <div class="submissions">
     <div id="loading" style="display: none;"></div> 
     <div class="row" id="submissions">
-        {% for submission in submissions %}
+        {#{% for submission in submissions %}
         <div class="col-12 col-md-6 col-xl-4">{{ SubmissionCard(submission) }}</div>
-        {% endfor %}
+        {% endfor %}#}
     </div>
     <div class="row">
         <div class="col-12 d-flex justify-content-center" id="pagination">
-            {{ Pagination(training.name, current_page, total_pages) }}
+            {#{{ Pagination(training.name, current_page, total_pages) }}#}
         </div>
     </div>
 </div>

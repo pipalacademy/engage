@@ -14,38 +14,6 @@ PAGE_LENGTH = 60
 def get_context(context, training):
     context.training = training
 
-    pagination_params = get_pagination_parameters_from_form_dict(
-        frappe.form_dict)
-
-    context.submissions = get_submissions(training.name,
-                                          fields=[
-                                              "name",
-                                              "author",
-                                              "author_full_name",
-                                              "problem_set",
-                                              "problem_set_title",
-                                              "problem",
-                                              "problem_title",
-                                              "training",
-                                              "submitted_at",
-                                              "modified",
-                                              "test_outcome",
-                                              "comment_count",
-                                              "for_review",
-                                              "code",
-                                          ],
-                                          **pagination_params)
-
-    submissions_doctype = "Practice Problem Latest Submission"
-    total_submissions = frappe.db.count(submissions_doctype,
-                                        filters={"training": training.name})
-    context.total_pages = ceil(total_submissions / PAGE_LENGTH)
-    context.current_page = get_current_page(frappe.form_dict)
-
-    context.format_datetime_diff = format_datetime_diff
-    context.get_submissions_url = get_submissions_url
-    context.get_submission_url = get_submission_url
-
 
 def get_submissions_url(training_name, **querydict):
     return f"/trainings/{training_name}/submissions?" + urlencode(querydict)
