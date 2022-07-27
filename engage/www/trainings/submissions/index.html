@@ -164,7 +164,7 @@
 {{ FilterBar(training) }}
 
 <div class="submissions">
-    <div class="row">
+    <div class="row" id="submissions">
         {% if submissions %}
         {% for submission in submissions %}
         <div class="col-12 col-md-6 col-xl-4">{{ SubmissionCard(submission) }}</div>
