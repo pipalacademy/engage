@@ -84,7 +84,7 @@
 
         <div class="ls-item">
             {% set values, titles = authors|map(attribute='username'), authors|map(attribute='full_name') %}
-            {% set options = zip(values, titles)|sort(attribute='1')|unique %}
+            {% set options = zip(values, titles)|sort(attribute='1') %}
             {{ SelectField("select-author", "Select author", options) }}
         </div>
     </div>

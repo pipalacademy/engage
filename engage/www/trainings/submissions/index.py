@@ -1,4 +1,3 @@
-from math import ceil
 from urllib.parse import urlencode
 
 import frappe
@@ -23,11 +22,12 @@ def get_context(context, training):
                                           "parent": ["IN", pset_names]
                                       })
 
-    author_usernames = [p.user for p in training.participants] + [p.user for p in training.trainers]
+    author_usernames = [p.user for p in training.participants
+                        ] + [p.user for p in training.trainers]
     context.possible_authors = [{
         "username": username,
         "full_name": get_fullname(username)
-    } for username in author_usernames]
+    } for username in unique(author_usernames)]
 
     context.zip = zip
 
@@ -49,3 +49,7 @@ def get_pagination_parameters_from_form_dict(d):
 
 def get_current_page(d):
     return int(d.page) if "page" in d else 1
+
+
+def unique(ls: "List[Hashable]") -> "List[Hashable]":
+    return list(set(ls))
