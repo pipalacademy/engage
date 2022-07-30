@@ -2,6 +2,7 @@ from math import ceil
 from urllib.parse import urlencode
 
 import frappe
+from frappe.utils import get_fullname
 
 from engage.utils import format_datetime_diff, get_submissions, require_login, require_trainer_role, with_training
 
@@ -13,6 +14,22 @@ PAGE_LENGTH = 60
 @require_trainer_role
 def get_context(context, training):
     context.training = training
+
+    pset_names = [pset.problem_set for pset in training.problem_sets]
+    context.problems = frappe.get_all("Problem Reference",
+                                      fields=["problem", "problem_title"],
+                                      filters={
+                                          "parenttype": "Problem Set",
+                                          "parent": ["IN", pset_names]
+                                      })
+
+    author_usernames = [p.user for p in training.participants] + [p.user for p in training.trainers]
+    context.possible_authors = [{
+        "username": username,
+        "full_name": get_fullname(username)
+    } for username in author_usernames]
+
+    context.zip = zip
 
 
 def get_submissions_url(training_name, **querydict):

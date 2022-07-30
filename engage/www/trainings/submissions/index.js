@@ -11,6 +11,12 @@ function loadFilters() {
     let $problemSet = $("#select-problem-set")
     let problem_set = $problemSet.find(":selected").val() || undefined
 
+    let $problem = $("#select-problem")
+    let problem = $problem.find(":selected").val() || undefined
+
+    let $author = $("#select-author")
+    let author = $author.find(":selected").val() || undefined
+
     let $reviewPending = $("#check-review-pending")
     let for_review = ($reviewPending.prop("checked") == true) || undefined
 
@@ -30,7 +36,7 @@ function loadFilters() {
     }
 
     return {
-        problem_set, for_review, test_outcome
+        problem_set, problem, author, for_review, test_outcome
     }
 }
 
@@ -40,10 +46,12 @@ function refreshSubmissions(opts) {
     setLoading("Refreshing submissions...")
 
     let training = state.training
-    let { problemSet: problem_set, reviewPending: for_review, testOutcome: test_outcome, page } = opts
+    let { problemSet: problem_set, problem, author, reviewPending: for_review, testOutcome: test_outcome, page } = opts
 
     let filters = loadFilters()
     filters.problem_set = problem_set !== undefined ? problem_set : filters.problem_set
+    filters.problem = problem !== undefined ? problem : filters.problem
+    filters.author = author !== undefined ? author : filters.author
     filters.for_review = for_review !== undefined ? for_review : filters.for_review
     filters.test_outcome = test_outcome !== undefined ? test_outcome : filters.test_outcome
     filters.page = page !== undefined ? page : state.page
@@ -249,6 +257,8 @@ function get_pretty_datetime_diff(d1, d2) {
 $(function () {
     let $data = $("#data")
     let $selectProblemSet = $("#select-problem-set")
+    let $selectProblem = $("#select-problem")
+    let $selectAuthor = $("#select-author")
     let $checkReviewPending = $("#check-review-pending")
     let $checkTestsPassing = $("#check-tests-passing")
     let $checkTestsFailing = $("#check-tests-failing")
@@ -261,6 +271,8 @@ $(function () {
     refreshSubmissions()
 
     $selectProblemSet.change(refreshSubmissions)
+    $selectProblem.change(refreshSubmissions)
+    $selectAuthor.change(refreshSubmissions)
     $checkReviewPending.change(refreshSubmissions)
 
     $checkTestsPassing.change(() => {

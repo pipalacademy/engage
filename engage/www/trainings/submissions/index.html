@@ -58,17 +58,35 @@
 <i class="fa-solid fa-circle for-review submission-icon"></i>
 {% endmacro %}
 
-{% macro FilterBar(training) %}
-{% set problem_sets = training.problem_sets %}
+{% macro SelectField(id, placeholder, options) %}
+    <select id="{{ id }}" class="custom-select">
+        <option value="">{{ placeholder }}</option>
+        {% for value, title in options %}
+        <option value="{{ value }}">{{ title }}</option>
+        {% endfor %}
+    </select>
+{% endmacro %}
+
+{% macro FilterBar(training, problems, authors) %}
 <div class="filter-bar">
     <div class="left-section">
-        <select id="select-problem-set" class="custom-select">
-            <option value="">Select problem set</option>
-            {% for pset in problem_sets %}
-            {% set title, id = pset.title, pset.problem_set %}
-            <option value="{{ id }}">{{ title }}</option>
-            {% endfor %}
-        </select>
+        <div class="ls-item">
+            {% set values, titles = training.problem_sets|map(attribute='problem_set'), training.problem_sets|map(attribute='title') %}
+            {% set options = zip(values, titles)|sort(attribute='1') %}
+            {{ SelectField("select-problem-set", "Select problem set", options) }}
+        </div>
+
+        <div class="ls-item">
+            {% set values, titles = problems|map(attribute='problem'), problems|map(attribute='problem_title') %}
+            {% set options = zip(values, titles)|sort(attribute='1') %}
+            {{ SelectField("select-problem", "Select problem", options) }}
+        </div>
+
+        <div class="ls-item">
+            {% set values, titles = authors|map(attribute='username'), authors|map(attribute='full_name') %}
+            {% set options = zip(values, titles)|sort(attribute='1')|unique %}
+            {{ SelectField("select-author", "Select author", options) }}
+        </div>
     </div>
     <div class="right-section">
         <span class="form-check review-pending-check">
@@ -166,7 +184,7 @@
 
 {{ TrainingHeader(training) }}
 
-{{ FilterBar(training) }}
+{{ FilterBar(training, problems, possible_authors) }}
 
 {{ Data({"training": training.name}) }}
 

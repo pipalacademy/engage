@@ -40,14 +40,19 @@ h1 {
     background-color: var(--filters-bg-color);
 }
 
+.filter-bar .left-section,
 .filter-bar .right-section {
     display: flex;
     justify-content: end;
     align-items: center;
 }
 
-.filter-bar .form-check {
+.filter-bar .left-section .ls-item {
     margin-right: 16px;
+}
+
+.filter-bar .form-check {
+    margin-left: 16px;
     display: flex;
     align-items: center;
     padding-left: 0;

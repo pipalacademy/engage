@@ -43,6 +43,8 @@ def get_problem_set_submissions():
 @with_pagination_params
 def get_submissions(training,
                     problem_set=None,
+                    problem=None,
+                    author=None,
                     for_review=None,
                     test_outcome=None,
                     pagination_params=None):
@@ -51,8 +53,11 @@ def get_submissions(training,
 
     filters = {}
 
-    if problem_set is not None:
-        filters.update(problem_set=problem_set)
+    update_if(filters, {
+        "problem_set": problem_set,
+        "problem": problem,
+        "author": author
+    }, lambda x: x is not None)
 
     if for_review is not None:
         for_review = True if for_review and for_review not in {"0", "false"
@@ -214,3 +219,9 @@ def is_trainer(training_name, user):
         "parent": training_name,
         "user": user
     })
+
+
+def update_if(d1, d2, condition):
+    for key, val in d2.items():
+        if condition(val):
+            d1.update({key: val})
