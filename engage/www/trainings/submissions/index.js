@@ -112,25 +112,34 @@ async function getSubmissions(training, opts) {
 function setSubmissions(submissions) {
     let $submissions = $(submissionsDivSelector)
 
-    function enclose(inner) {
-        return `<div class="col-12 col-md-6 col-xl-4">${inner}</div>`
-    }
-
-    function append(card) {
-        $submissions.append(enclose(card));
+    function print(html) {
+        $submissions.append(html);
     }
 
     function clear() {
         $submissions.html('');
     }
 
-    clear()
-    submissions.forEach(function (submission) {
-        let cardHTML = getSubmissionCard(submission)
-        append(cardHTML);
-    })
+    function encloseCard(inner) {
+        return `<div class="col-12 col-md-6 col-xl-4">${inner}</div>`
+    }
 
-    hljs.highlightAll()
+    clear()
+    if (submissions.length > 0) {
+        submissions.forEach(function (submission) {
+            let cardHTML = getSubmissionCard(submission)
+            print(encloseCard(cardHTML));
+        })
+
+        hljs.highlightAll()
+    } else {
+        print(`\
+        <div class="col-12">
+            <div class="d-block text-center border rounded-lg p-8">
+                <em>No submissions found with given filters</em>
+            </div>
+        </div>`)
+    }
 }
 
 function reviewPendingIcon() {
