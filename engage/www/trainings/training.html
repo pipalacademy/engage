@@ -11,12 +11,14 @@
 
 {% macro Sidebar() %}
 <div class="sidebar">
+	{% if t.live_notes_url %}
 	<div class="card">
 		<div class="card-body">
 			<h5 class="card-title">Training Notes</h5>
 			<a href="{{ t.live_notes_url }}" class="btn btn-secondary" target="_blank">Open Training Notes</a>
 		</div>
 	</div>
+	{% endif %}
 
 	{% if t.jupyterhub_url %}
 	<div class="card">
@@ -33,30 +35,6 @@
 		</div>
 	</div>
 	{% endif %}
-
-	{#
-	<div class="card">
-		<div class="card-body">
-			<h5 class="card-title">Leaderboard</h5>
-		</div>
-
-		<ul class="list-group list-group-flush">
-			{% for count_solved in count_solved_by_user %}
-			<div class="list-group-item list-group-item-action {{'active' if count_solved.active}}">
-				<div class="row px-0 mx-0 ">
-					<div class="col-2 p-0 text-left">
-						{% if loop.first %}
-						<span class="crown-icon"><i class="fa-solid fa-crown"></i></span>
-						{% endif %}
-					</div>
-					<div class="col-8 p-0 leaderboard_participant-name">{{ count_solved.full_name }}</div>
-					<div class="col-2 p-0 text-right">{{ count_solved.count }}</div>
-				</div>
-			</div>
-			{% endfor %}
-		</ul>
-	</div>
-	#}
 
 	{% for s in t.sidebar_sections %}
 	<div class="card">
