@@ -59,5 +59,27 @@
 		</div>
 		{% endif %}
 	</div>
+
+	<a id="archived-trainings-toggle"
+	   class="mt-4"
+	   href="javascript:;"
+	   data-show-text='<i class="fa-solid fa-caret-down"></i> Show archived trainings'
+	   data-hide-text='<i class="fa-solid fa-caret-up"></i> Hide archived trainings'
+	   data-target="#archived-trainings">
+	</a>
+	<div id="archived-trainings" class="mb-2" style="display: none;">
+		<div class="h2">Archived</div>
+		{% if trainings['Archived'] %}
+		<div class="col-12 p-0 align-items-center rounded border border-dark bg-white text-dark">
+			{% for training in trainings['Archived'] %}
+			{{ training_row(training, is_last=loop.last) }}
+			{% endfor %}
+		</div>
+		{% else %}
+		<div>
+			<em>No archived trainings</em>
+		</div>
+		{% endif %}
+	</div>
 </div>
 {% endblock %}
