@@ -9,8 +9,6 @@ from engage.utils import with_training, require_login, require_trainer_role
 def get_context(context, training):
     context.training = training
 
-    submissions = get_submissions_for_training(training.name)
-
     participants = [p.user for p in training.participants]
     participant_full_names = {
         username: get_full_name(username)
@@ -26,6 +24,7 @@ def get_context(context, training):
         for pset in training.problem_sets
     }
 
+    submissions = get_submissions_for_training(training.name)
     submissions_dict = group_submissions_by_participant_and_problem_set(
         submissions)
 
@@ -56,10 +55,14 @@ def get_context(context, training):
 
 
 def get_submissions_for_training(training_name):
-    doctype = "Practice Problem Latest Submission"
+    doctype = "Practice Problem Submission"
     return frappe.get_all(doctype,
                           fields="*",
-                          filters={"training": training_name})
+                          filters={
+                              "training": training_name,
+                              "test_outcome": "passed"
+                          },
+                          group_by="problem, author")
 
 
 def get_full_name(username):
