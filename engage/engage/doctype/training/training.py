@@ -53,6 +53,7 @@ class Training(Document):
                 recipients=[user.name],
                 subject="[Engage] Invitation to join training",
                 template="training_invitation",
+                delayed=False,
                 args={
                     "training": self,
                     "invitee": user,
