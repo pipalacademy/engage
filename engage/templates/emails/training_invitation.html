@@ -1,0 +1,25 @@
+<h1>Invitation to Join Training</h1>
+
+<p>
+    Hey {{ invitee.first_name }},<br />
+    {{ inviter.first_name }} has invited you to join the training *{{ training.title }}*.
+</p>
+
+<p>
+    Some markdown content for testing:
+    **This must be bold**.
+    *This must be italic*.
+</p>
+
+<p>
+    You may have already received an email asking you to set your password.
+    Once done and logged in, you can select your training from the home page.
+
+    Alternatively, you can use <a href="{{ training_url }}">this link</a> to get to the page for this
+    training.
+</p>
+
+<p>
+    Regards,<br />
+    Pipal Academy
+</p>
