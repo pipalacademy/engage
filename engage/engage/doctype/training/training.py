@@ -4,21 +4,6 @@
 import frappe
 from frappe.model.document import Document
 
-participant_invitation_message = """
-# Invitation to Join Training
-
-Hey {{ invitee.first_name }}, 
-**{{ inviter.first_name }}** has invited you to join the training **{{ training.title }}**.
-
-You may have already received an email asking you to set your password.
-Once done, you will be able to see the trainings you have been invited to.
-Alternatively, you can use [this link]({{ training_url }}) to get to the
-page for this training.
-
-Regards,
-Pipal Academy
-"""
-
 
 class Training(Document):
 
@@ -66,9 +51,8 @@ class Training(Document):
         if send_invitation_mail:
             frappe.sendmail(
                 recipients=[user.name],
-                subject=frappe._(f"[Engage] Invitation to join training"),
-                as_markdown=True,
-                message=participant_invitation_message,
+                subject="[Engage] Invitation to join training",
+                template="training_invitation",
                 args={
                     "training": self,
                     "invitee": user,
