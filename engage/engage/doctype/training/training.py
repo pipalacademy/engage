@@ -4,6 +4,10 @@
 import frappe
 from frappe.model.document import Document
 
+import requests
+
+JUPYTERHUB_DASHBOARD_ENDPOINT = "/services/dashboard"
+
 
 class Training(Document):
 
@@ -89,9 +93,31 @@ class Training(Document):
             if not pset_ref.slug:
                 pset_ref.slug = slugify(pset_ref.title)
 
+    def create_jupyterhub_user(self, jh_username, jh_password):
+        if not self.jupyterhub_url:
+            raise Exception("JupyterHub URL is not set")
+        if not self.jupyterhub_token:
+            raise Exception("JupyterHub Token is not set")
+
+        url = self.jupyterhub_url + JUPYTERHUB_DASHBOARD_ENDPOINT + "/users"
+        headers = {"Authorization": f"token {self.jupyterhub_token}"}
+        r = requests.post(url, headers=headers,
+                          json={"username": jh_username, "password": jh_password})
+        r.raise_for_status()
+
+        return r.ok
+
     @property
     def url(self):
         return frappe.utils.get_url(f"/trainings/{self.name}/")
+
+
+@frappe.whitelist()
+def create_jupyterhub_user(training_name, jh_username, jh_password):
+    training = frappe.get_doc("Training", training_name)
+    ok = training.create_jupyterhub_user(jh_username=jh_username, jh_password=jh_password)
+    frappe.response["ok"] = ok
+    return ok
 
 
 def slugify(s):

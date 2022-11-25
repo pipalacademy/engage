@@ -16,6 +16,7 @@
   "live_notes_url",
   "column_break_4",
   "jupyterhub_url",
+  "jupyterhub_token",
   "trainers_section",
   "trainers",
   "participants_section",
@@ -155,11 +156,16 @@
    "fieldtype": "Table",
    "label": "Problem Sets",
    "options": "Problem Set Reference"
+  },
+  {
+   "fieldname": "jupyterhub_token",
+   "fieldtype": "Data",
+   "label": "JupyterHub Token"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-06-13 14:48:31.881716",
+ "modified": "2022-11-25 16:39:46.872532",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Training",
