@@ -3,6 +3,8 @@
 
 const jhubCreateUser = "engage.engage.doctype.training.training.create_jupyterhub_user";
 
+let someForm;
+
 frappe.ui.form.on('Training', {
   refresh: function(frm) {
     if (!frm.is_new()) {
@@ -20,25 +22,33 @@ frappe.ui.form.on('Training', {
               fieldname: 'jh_password',
               fieldtype: 'Data'
             },
+            {
+              label: 'Select Participant',
+              fieldname: 'participant_name',
+              fieldtype: 'Select',
+              options: frm.doc.participants.map(p => {return {value: p.name, label: p.user}})
+            },
           ],
           primary_action_label: 'Submit',
           primary_action(values) {
-            console.log(values);
             frappe.call(
               {
                 method: jhubCreateUser,
                 type: "POST",
                 args: {
                   training_name: frm.doc.name,
+                  participant_name: values.participant_name,
                   jh_username: values.jh_username,
                   jh_password: values.jh_password,
                 },
                 freeze: true,
               }).then((data) => {
                 if (data.ok) {
-                  frappe.msgprint(`User added to JupyterHub. Username: ${values.jh_username}. Password: ${values.jh_password}`);
+                  frappe.msgprint("User added to JupyterHub.");
+                  frm.refresh();
+                } else {
+                  frappe.msgprint({title: "Something went wrong", indicator: "red", message: data.message})
                 }
-                frm.refresh();
               });
             d.hide();
           }

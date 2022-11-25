@@ -103,9 +103,7 @@ class Training(Document):
         headers = {"Authorization": f"token {self.jupyterhub_token}"}
         r = requests.post(url, headers=headers,
                           json={"username": jh_username, "password": jh_password})
-        r.raise_for_status()
-
-        return r.ok
+        return r
 
     @property
     def url(self):
@@ -113,11 +111,20 @@ class Training(Document):
 
 
 @frappe.whitelist()
-def create_jupyterhub_user(training_name, jh_username, jh_password):
+def create_jupyterhub_user(training_name, participant_name, jh_username, jh_password):
     training = frappe.get_doc("Training", training_name)
-    ok = training.create_jupyterhub_user(jh_username=jh_username, jh_password=jh_password)
-    frappe.response["ok"] = ok
-    return ok
+    participant = next(p for p in training.participants if p.name == participant_name)
+    response = training.create_jupyterhub_user(jh_username=jh_username, jh_password=jh_password)
+    if response.ok:
+        participant.jh_username = jh_username
+        participant.jh_password = jh_password
+        participant.save()
+    elif "json" in response.headers["content-type"]:
+        frappe.response.update(response.json())
+    else:
+        frappe.response["message"] = f"{response.status_code} {response.reason}"
+
+    frappe.response["ok"] = response.ok
 
 
 def slugify(s):
