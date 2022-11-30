@@ -34,6 +34,7 @@ def get_context(context, training, problem):
     context.data = {
         "problem_set": pset_ref.problem_set,
         "problem": problem.name,
+        "runtime": problem.runtime,
         "training": training.name,
         "submission_json": solution and solution.test_result or "null"
     }
