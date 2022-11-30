@@ -42,7 +42,8 @@ class ParsedProblem:
                  description: Optional[str] = None,
                  description_file: Optional[str] = None,
                  source: Optional[str] = None,
-                 source_url: Optional[str] = None):
+                 source_url: Optional[str] = None,
+                 runtime: Optional[str] = None):
 
         self.base_path = Path(base_path)  # path to problem's base dir
 
@@ -73,6 +74,7 @@ class ParsedProblem:
 
         self.source = source
         self.source_url = source_url
+        self.runtime = runtime
 
 
 def parse_problem_repository(

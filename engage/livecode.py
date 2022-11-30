@@ -87,7 +87,7 @@ class ProblemRunner:
         return files
 
     def post(self, files, headers):
-        runtime = "python"
+        runtime = self.problem.runtime
         base_url = get_livecode_url()
         url = f"{base_url}/runtimes/{runtime}"
         return requests.post(url, files=files, headers=headers)

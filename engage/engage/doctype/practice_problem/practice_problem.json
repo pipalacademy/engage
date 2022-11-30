@@ -10,6 +10,7 @@
   "title",
   "column_break_3",
   "problem_repository",
+  "runtime",
   "section_break_5",
   "blurb",
   "description",
@@ -83,11 +84,17 @@
    "fieldtype": "Table",
    "label": "Files",
    "options": "Problem File"
+  },
+  {
+   "default": "python",
+   "fieldname": "runtime",
+   "fieldtype": "Data",
+   "label": "Runtime"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-06-29 15:31:25.243073",
+ "modified": "2022-11-30 19:32:13.685405",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Practice Problem",

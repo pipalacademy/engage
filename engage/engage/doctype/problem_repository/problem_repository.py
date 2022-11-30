@@ -46,7 +46,7 @@ class ProblemRepository(Document):
     def clone(self, to_path):
         """
         `git clone` repository to a local path (as given by path)
-        
+
         Note: Performs a shallow clone only
         """
         clone_url = get_github_repo_url(self.github_repo_owner,
@@ -92,6 +92,7 @@ class ProblemRepository(Document):
 
         update_problem("source", parsed_problem.source)
         update_problem("source_url", parsed_problem.source_url)
+        update_problem("runtime", parsed_problem.runtime)
 
         old_files = [
             serialize_file(f.kind, f.relative_path, f.content)
