@@ -74,7 +74,7 @@ class ParsedProblem:
 
         self.source = source
         self.source_url = source_url
-        self.runtime = runtime
+        self.runtime = runtime or "python"
 
 
 def parse_problem_repository(
