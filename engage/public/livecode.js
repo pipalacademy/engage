@@ -16,9 +16,6 @@ LIVECODE_CODEMIRROR_OPTIONS = {
       }
     }
   },
-  python: {
-    mode: "python"
-  }
 }
 
 class WriterInterface {
@@ -213,6 +210,7 @@ class LiveCodeEditor {
 
     if (this.options.codemirror) {
       const options = {
+        mode: this.runtime,
         ...LIVECODE_CODEMIRROR_OPTIONS.common,
         ...LIVECODE_CODEMIRROR_OPTIONS[this.runtime]
       }
