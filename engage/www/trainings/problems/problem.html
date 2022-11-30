@@ -61,10 +61,11 @@
     {% include "frappe/templates/discussions/discussions_section.html" %}
     {% endif %}
 
-    <div id="data" 
+    <div id="data"
 	 data-problem-set='{{data.problem_set}}'
 	 data-training='{{data.training}}'
 	 data-problem='{{data.problem | e}}'
+	 data-runtime='{{data.runtime}}'
 	 data-submission='{{data.submission_json | e}}'>
     </div>
 </div>
@@ -76,6 +77,9 @@
 
 <script src="/assets/engage/codemirror/lib/codemirror.js"></script>
 <script src="/assets/engage/codemirror/mode/python/python.js"></script>
+
+<script src="https://assets.pipal.in/codemirror/5/mode/scheme/scheme.js"></script>
+
 <script src="/assets/engage/codemirror/keymap/sublime.js"></script>
 
 <script src="/assets/engage/codemirror/addon/edit/matchbrackets.js"></script>

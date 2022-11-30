@@ -31,7 +31,7 @@ $(function () {
 
   $(".code-editor").each(function (index, e) {
     var editor = new LiveCodeEditor(e, {
-      runtime: "python",
+      runtime: data.runtime,
       codemirror: true,
       problem: data.problem
     });

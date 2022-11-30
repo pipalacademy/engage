@@ -112,6 +112,7 @@
     "training": training.name,
     "problem-set": problem_set.problem_set,
     "problem": problem.name,
+    "runtime": problem.runtime,
     "submission": (submission and submission.test_result or (none|tojson))|e,
     "default-filepath": problem.code_files[0].relative_path,
     "problem-description": frappe.utils.md_to_html(problem.description)|e }) }}
@@ -134,6 +135,7 @@
 
 <script src="/assets/engage/codemirror/lib/codemirror.js"></script>
 <script src="/assets/engage/codemirror/mode/python/python.js"></script>
+<script src="https://assets.pipal.in/codemirror/5/mode/scheme/scheme.js"></script>
 <script src="/assets/engage/codemirror/keymap/sublime.js"></script>
 
 <script src="/assets/engage/codemirror/addon/edit/matchbrackets.js"></script>

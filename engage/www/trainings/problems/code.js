@@ -455,7 +455,7 @@ $(function () {
         let data = $(el).data();
 
         let editor = new LiveCodeEditor(el, {
-            runtime: "python",
+            runtime: globalData.runtime,
             codemirror: true,
             problem: globalData.problem,
             writer: sidebar,
