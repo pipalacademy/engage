@@ -422,6 +422,9 @@ class SidebarWriter extends WriterInterface {
     onSidebarInstructions() {
         this.setSidebarTab(this.instructionsTab);
         this.setSidebarContent(this.state.instructions);
+        if (MathJax !== undefined) {
+            MathJax.typeset()
+        }
     }
 
     onSidebarOutput() {
