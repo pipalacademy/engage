@@ -43,6 +43,20 @@
 	</div>
 	{% endif %}
 
+	{% if t.capstone_url %}
+	<div class="card">
+		<div class="card-body">
+			<h5 class="card-title">Capstone</h5>
+
+            <form method="POST" action="{{ t.capstone_url }}/login">
+                <input type="hidden" name="username" value="{{ participant.capstone_username }}">
+                <input type="hidden" name="password" value="{{ participant.capstone_password }}">
+                <button type="submit" class="btn btn-secondary" target="_blank">Go to Projects</button>
+            </form>
+		</div>
+	</div>
+	{% endif %}
+
 	{% for s in t.sidebar_sections %}
 	<div class="card">
 		<div class="card-body">

@@ -8,7 +8,9 @@
  "field_order": [
   "user",
   "jh_username",
-  "jh_password"
+  "jh_password",
+  "capstone_username",
+  "capstone_password"
  ],
  "fields": [
   {
@@ -28,12 +30,22 @@
    "fieldname": "jh_password",
    "fieldtype": "Data",
    "label": "Jupyter Hub Password"
+  },
+  {
+   "fieldname": "capstone_username",
+   "fieldtype": "Data",
+   "label": "Capstone Username"
+  },
+  {
+   "fieldname": "capstone_password",
+   "fieldtype": "Data",
+   "label": "Capstone Password"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-05-24 00:37:22.709930",
+ "modified": "2023-02-27 16:01:20.419991",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Training Participant",

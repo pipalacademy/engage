@@ -14,6 +14,7 @@
   "slug",
   "urls_section",
   "live_notes_url",
+  "capstone_url",
   "column_break_4",
   "jupyterhub_url",
   "jupyterhub_token",
@@ -161,11 +162,17 @@
    "fieldname": "jupyterhub_token",
    "fieldtype": "Data",
    "label": "JupyterHub Token"
+  },
+  {
+   "fieldname": "capstone_url",
+   "fieldtype": "Data",
+   "label": "Capstone URL",
+   "options": "URL"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-11-25 16:39:46.872532",
+ "modified": "2023-02-27 16:03:55.334645",
  "modified_by": "Administrator",
  "module": "Engage",
  "name": "Training",
