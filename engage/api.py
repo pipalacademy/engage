@@ -151,6 +151,99 @@ def invite_participants():
     return
 
 
+@frappe.whitelist()
+def update_problem_sets():
+    training = frappe.get_doc("Training", frappe.form_dict["training"])
+    problem_sets = frappe.form_dict["problem_sets"]
+
+    def get_pset_name(training_name, pset_slug):
+        return f"{training_name.replace('/', '-')}-{pset_slug}"
+
+    result = {}
+
+    keep_problem_sets = []
+    for pset in problem_sets:
+        slug = pset["slug"]
+        title = pset["title"]
+        published = bool(pset["published"])
+        problem_names = pset["problems"]
+
+        pset_name = get_pset_name(training_name=training.name, pset_slug=slug)
+        try:
+            pset_doc = frappe.get_doc("Problem Set", pset_name)
+        except frappe.exceptions.DoesNotExistError:
+            # if not pset_doc:
+            pset_doc = frappe.get_doc({"doctype": "Problem Set", "title": title, "published": published})
+            pset_doc.insert()
+            frappe.rename_doc("Problem Set", pset_doc.name, pset_name)
+            pset_doc = frappe.get_doc("Problem Set", pset_name)
+
+        old_problem_names = [p_ref.problem for p_ref in pset_doc.problems]
+
+        additions = [name for name in problem_names if name not in old_problem_names]
+        deletions = [p_ref for p_ref in pset_doc.problems if p_ref.problem not in problem_names]
+
+        result[slug] = {"+": len(additions), "-": len(deletions)}
+
+        for ref in deletions:
+            pset_doc.remove(ref)
+            ref.delete()
+
+        for p_name in additions:
+            if not frappe.db.exists("Practice Problem", p_name):
+                frappe.response["result"] = f"Problem {p_name} not found"
+                raise Exception(f"Problem {p_name} not found")
+            pset_doc.append(
+                "problems",
+                frappe.get_doc({"doctype": "Problem Reference", "problem": p_name})
+           )
+
+        pset_doc.save()
+
+        for p_ref in pset_doc.problems:
+            p_ref.idx = problem_names.index(p_ref.problem) + 1
+
+        pset_doc.save()
+        keep_problem_sets.append(pset_doc)
+
+    old_pset_names = [pset_ref.problem_set for pset_ref in training.problem_sets]
+    new_pset_names = [pset_doc.name for pset_doc in keep_problem_sets]
+
+    additions = [
+        pset for pset in keep_problem_sets if pset.name not in old_pset_names
+    ]
+    deletions = [
+        pset_ref for pset_ref in training.problem_sets if pset_ref.problem_set not in new_pset_names
+    ]
+
+    for pset_ref in deletions:
+        pset_doc = frappe.get_doc("Problem Set", pset_ref.problem_set)
+        training.remove(pset_ref)
+        training.save()
+        pset_doc.delete()
+
+        result[pset_ref.slug] = {"op": "deleted"}
+
+    for pset_doc in additions:
+        pset_ref = frappe.get_doc({
+            "doctype": "Problem Set Reference",
+            "problem_set": pset_doc.name,
+            "status": "Published" if pset_doc.published else "Pending",
+            "slug": pset_doc.name.removeprefix(f"{training.name.replace('/', '-')}-"),
+        })
+        training.append("problem_sets", pset_ref)
+
+        result[pset_ref.slug]["op"] = "added"
+
+    training.save()
+
+    for pset_ref in training.problem_sets:
+        pset_ref.idx = new_pset_names.index(pset_ref.problem_set) + 1
+
+    training.save()
+    frappe.response["result"] = result
+
+
 def update_comment(problem_set,
                    problem,
                    user,
