@@ -89,9 +89,25 @@
 
 	<ul class="list-group list-group-flush">
 		{% for p in doc.problems %}
-		<li class="list-group-item"><a
-				href="/trainings/{{t.name}}/problems/{{pset.slug}}/{{p.problem}}/code">{{p.problem_title}}</a>
-			{% if p.problem in submissions %} - submitted
+		<li class="list-group-item">
+			{% set solution = submissions.get(p.problem) %}
+			<span style="padding-right: 5px;">
+				{% if not solution %}
+				<span style="color: #aaa;">
+					<i class="fa-solid fa-circle-dot"></i>
+				</span>
+				{% elif solution.test_outcome == "passed" %}
+				<i class="text-success fa-solid fa-circle-check"></i>
+				{% else %}
+				<i class="text-danger fa-solid fa-circle-xmark"></i>
+				{% endif %}
+			</span>
+			<a href="/trainings/{{t.name}}/problems/{{pset.slug}}/{{p.problem}}/code">{{p.problem_title}}</a>
+
+			{% if solution and solution.get("comments") %}
+			<span class="align-items-bottom pull-right">
+				<i class="fa-regular fa-comment"></i> {{solution['comments']}}
+			</span>
 			{% endif %}
 		</li>
 		{% endfor %}
