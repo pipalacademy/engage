@@ -50,7 +50,7 @@ def get_comment_counts(training, user):
     FROM `tabPractice Problem Latest Submission` as doc
     LEFT OUTER JOIN `tabDiscussion Topic` as t ON  t.reference_doctype='Practice Problem Latest Submission' AND t.reference_docname=doc.name
     LEFT OUTER JOIN `tabDiscussion Reply` as r ON r.topic=t.name
-    WHERE author="hima.varghese@strandls.com" and training="2023/strand-python-for-bioinformatics"
+    WHERE doc.author="%(user)s" and training="%(training)s"
     GROUP BY doc.name"""
     values = {"user": user, "training": training}
     rows = frappe.db.sql(q, values=values, as_dict=True)
