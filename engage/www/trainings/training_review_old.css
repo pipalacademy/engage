@@ -35,3 +35,49 @@ h1 {
 .tick {
     color: green;
 }
+
+
+
+.test-result-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.test-result-summary pre.status {
+    margin-bottom: 0;
+    background-color: transparent;
+}
+
+.test-result-summary.passed pre.status {
+    color: var(--green-600);
+}
+
+.test-result-summary.failed pre.status {
+    color: var(--red-500);
+}
+
+.testcase-result {
+    margin: 0 calc(-1*var(--sidebar-content-padding));
+    border: 1px solid var(--gray-200);
+}
+
+.testcase-result-passed {
+    background-color: var(--green-200);
+    color: var(--dark-green-700);
+    font-weight: bold;
+    padding: 4px 8px;
+}
+
+.testcase-result-failed {
+    background-color: var(--red-200);
+    color: var(--red-700);
+    font-weight: bold;
+    padding: 4px 8px;
+}
+
+pre.testcase-result-error-detail {
+    background-color: var(--red-100);
+    margin-bottom: 0;
+}

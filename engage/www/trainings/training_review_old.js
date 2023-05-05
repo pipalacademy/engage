@@ -89,21 +89,119 @@ function truncate(text, limit) {
 // $(function () {
 //     firstProblem = $("#nav-problem").data().firstProblem;
 //     loadProblemFromURL();
-// 
+//
 //     $(".problem-link").on('click', function () {
 //         document.location = getProblemLink(this.id.slice("problem-".length));
-// 
+//
 //         beforeShowProblem(this);
 //         showProblem(this);
-// 
+//
 //         return false;
 //     });
-// 
+//
 //     $("#nav-problem").on('click', ".problem-nav-link", function () {
 //         document.location = this.href;
 //         loadProblemFromURL();
-// 
+//
 //         return false;
 //     });
 // });
-// 
+//
+
+function showTestResult(output, d) {
+    if (!d) {
+        return;
+    }
+
+    function clear() {
+        $(output).text("");
+    }
+
+    function print(text) {
+        $(output).append(text + "\n");
+    }
+
+    clear();
+
+    print(`Test Status: ${d.outcome} (${d.stats.passed} passed and ${d.stats.failed} failed)`)
+    d.testcases.forEach((t, i) => {
+        print(`\n${i + 1}. ${t.name} ... ${t.outcome}`);
+        if (t.outcome == "failed") {
+            print("")
+            print(t.error_detail.replaceAll(/^/mg, "    "));
+        }
+    })
+}
+
+$(function () {
+    // var submission = $(".test-result").data("submission");
+
+    //$(".test-result").html($(".test-result"))
+    console.log(["Test Result:", submission])
+
+    if (submission) {
+        renderResults($(".test-result"), JSON.parse(submission.test_result));
+    }
+});
+
+function renderResults(element, result) {
+    var html = "";
+
+    function print(text) {
+        html += text + "\n";
+    }
+
+    print(renderTestSummary(result.outcome, result.stats));
+    result.testcases.forEach((t, i) => {
+        print(renderTestCase(t));
+    })
+
+    console.log("renderResults", html);
+
+    $(element).html(html);
+}
+
+function renderTestSummary(outcome, stats) {
+    let className = outcome == 'passed' ? 'passed' : 'failed';
+    return `\
+    <div class="test-result-summary ${className}">
+        <pre class="status ${className}"><i class="font-sm fa-solid fa-circle"></i> ${outcome == 'passed' ? 'Passed' : 'Failed'}</pre>
+        <span>${stats.passed} passed, ${stats.failed} failed</span>
+    </div>`;
+}
+
+function escapeHTML(text) {
+    return new Option(text).innerHTML;
+}
+
+
+function renderTestCase(testCase) {
+    function passedCase() {
+        return `\
+        <div class="testcase-result-passed">
+            <i class="fa-solid fa-circle-check"></i> ${escapeHTML(testCase.name)}
+        </div>`;
+    }
+
+    function failedCase() {
+        return `\
+        <div class="testcase-result-failed">
+            <i class="fa-solid fa-circle-xmark"></i> ${escapeHTML(testCase.name)}
+        </div>
+        <pre class="testcase-result-error-detail">${escapeHTML(testCase.error_detail)}</pre>
+        `
+    }
+
+    function enclose(inner) {
+        return `\
+        <div class="testcase-result">
+            ${inner}
+        </div>`
+    }
+
+    if (testCase.outcome == 'passed') {
+        return enclose(passedCase())
+    } else {
+        return enclose(failedCase())
+    }
+}

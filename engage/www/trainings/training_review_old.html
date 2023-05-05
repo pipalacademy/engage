@@ -81,22 +81,16 @@ href="{{ url }}"
     href="{{ get_review_link(training.name, problem=problem_ref.problem, participant=participant.user) }}">
     <div class="d-flex justify-content-between">
       <span>
-        <svg class="icon icon-sm">
-          {% if not solution %}
-          {% elif solution.test_outcome == "passed" %}
-          <use href="#icon-tick"></use>
-          {% elif solution.test_outcome == "failed" %}
-          <use href="#icon-close"></use>
-          {% else %}
-          {% endif %}
-        </svg>
+        {% if not solution %}
+        <i class="fa-solid fa-circle-dot" style="padding-right: 10px; color: #aaa;"></i>
+        {% elif solution.test_outcome == "passed" %}
+        <i class="text-success fa-solid fa-circle-check" style="padding-right: 10px"></i>
+        {% elif solution.test_outcome == "failed" or solution.test_outcome == "error" %}
+        <i class="text-danger fa-solid fa-circle-xmark" style="padding-right: 10px"></i>
+        {% else %}
+        {% endif %}
         <span>{{problem_ref.problem_title}}</span>
       </span>
-      {% if problem_ref.problem in user_submissions %}
-      <span class="align-items-bottom">
-        <i class="fa-solid fa-circle-check"></i>
-      </span>
-      {% endif %}
     </div>
   </a>
   {% endfor %}
@@ -118,6 +112,18 @@ href="{{ url }}"
     {%- endif -%}
   </pre>
 </div>
+
+
+{% if submission %}
+<script type="text/javascript">
+  var submission = {{ submission | tojson }};
+</script>
+<h3>Test Result</h3>
+<div style="margin: 20px 0px; padding: 20px; background-color: white; border: 1px solid #eee; border-radius: 10px;">
+  <div class="test-result">
+  </div>
+</div>
+{% endif %}
 
 <div>
   {{ Discussions(problem) }}
