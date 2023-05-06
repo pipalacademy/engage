@@ -25,7 +25,7 @@ def get_context(context, training):
         pset for pset in training.problem_sets if pset.is_published
     ]
 
-    context.problem_sets = problem_sets
+    context.problem_sets = problem_sets[::-1]
     context.submissions = get_user_submissions(training.name, member.user)
 
 
