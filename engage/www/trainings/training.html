@@ -34,9 +34,9 @@
 
 			<a href="{{ t.jupyterhub_url }}" class="btn btn-secondary" target="_blank">Launch Jupyter Lab</a>
             -->
-            <form method="POST" action="{{ t.jupyterhub_url }}/hub/login2">
+            <form method="GET" action="{{ t.jupyterhub_url }}/hub/login2">
                 <input type="hidden" name="username" value="{{ participant.jh_username }}">
-                <input type="hidden" name="password" value="{{ participant.jh_password }}">
+                <input type="hidden" name="token" value="{{ participant.jh_password }}">
                 <button type="submit" class="btn btn-secondary" target="_blank">Launch Jupyter Lab</button>
             </form>
 		</div>
