@@ -45,7 +45,7 @@ def get_context(context, training):
 
         name_column = [participant_full_names[participant]]
         score_columns = [
-            len(user_submissions.get(pset, [])) for pset in problem_sets
+            sum(1 for s in user_submissions.get(pset, []) if s.get('outcome') == 'passed') for pset in problem_sets
         ]
         total_score_column = [sum(score_columns)]
         return name_column + score_columns + total_score_column
